@@ -1,0 +1,49 @@
+[
+    {
+        "palavra": "guarda chuva",
+        "chances": 5,
+        "dicas": [
+            "Utilizo quando est\u00e1 chovendo"
+        ]
+    },
+    {
+        "palavra": "garrafa",
+        "chances": 5,
+        "dicas": [
+            "Guardo l\u00edquidos dentro"
+        ]
+    },
+    {
+        "palavra": "mouse",
+        "chances": 5,
+        "dicas": [
+            "Sou usado no computador",
+            "Tenho uma rodinha",
+            "Sou usado se quero abrir um arquivo no computador"
+        ]
+    },
+    {
+        "palavra": "teclado",
+        "chances": 5,
+        "dicas": [
+            "Sou usado no computador",
+            "Sou usado para digitar"
+        ]
+    },
+    {
+        "palavra": "celular",
+        "chances": "1",
+        "dicas": [
+            "teste"
+        ]
+    },
+    {
+        "palavra": "chave de roda",
+        "chances": "4",
+        "dicas": [
+            "Sou usado no carro",
+            "Sou usado em emerg\u00eancias",
+            "Meu formato pode ser de um X"
+        ]
+    }
+]
