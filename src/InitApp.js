@@ -1,11 +1,11 @@
 if(typeof entryPoint == 'undefined') { console.log('Access Denied!'); process.exit(); }
 
-const { REST, Routes, Client, GatewayIntentBits , Collection,EmbedBuilder, Events} = require("discord.js");
+const { REST, Routes, Client, GatewayIntentBits , Collection, Events} = require("discord.js");
 global.Discord = require("discord.js");
 
 class discordAppClient extends Client
 {
-	constructor(options)
+	constructor()
 	{
 		super({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages,GatewayIntentBits.MessageContent,GatewayIntentBits.GuildMembers] });
 		
@@ -34,6 +34,7 @@ class discordAppClient extends Client
 
 		const cooldownCls = require('./utils/coolDown.js');
 		this.cooldown = new cooldownCls();
+		this.author = {name: bot_cfg.discordOptions.name, iconURL: bot_cfg.discordOptions.icon}
 	}
 
 	async checkRunningStartVars()
@@ -51,7 +52,7 @@ class discordAppClient extends Client
 	
 	load_class()
 	{
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 			this.log.Debug('Trying to connect into database');
 			let response = this.db.TestConnection();
 				
@@ -71,24 +72,31 @@ class discordAppClient extends Client
 				//After loaded all Commands files, let's do on event
 				client.on(Events.InteractionCreate, async interaction => {
 					if (!interaction.isChatInputCommand()) return;
-
-					const command = interaction.client.commands.get(interaction.commandName);
+					let command = interaction.client.commands.get(interaction.commandName);
+					let commandCD = interaction.commandName;
+					let commandName = commandCD;
+					let coolDown = command.cooldown;
+					if(interaction.options._subcommand){
+						commandCD += interaction.options._subcommand;
+						commandName += ':'+interaction.options._subcommand;
+						command = command.subcommands[interaction.options._subcommand];
+					}
 
 					if (!command) {
-						this.log.Error(`No command matching ${interaction.commandName} was found.`);
+						this.log.Error(`No command matching ${commandName} was found.`);
 						return;
 					}
-					this.log.Debug(`Received command: ${interaction.commandName}`);
+					this.log.Debug(`Received command: ${commandName}`);
 
 					let cooldownLeft = 0;
-					if(!!command.cooldown){
-						cooldownLeft = this.cooldown.checkUserCd(interaction.user.id, interaction.commandName);
+					if(!!coolDown){
+						cooldownLeft = this.cooldown.checkUserCd(interaction.user.id, commandCD);
 					}
 					if(!cooldownLeft){
 						try {
 							await command.execute(interaction);
-							if(!!command.cooldown){
-								this.cooldown.insertUserCd(interaction.user.id, interaction.commandName, command.cooldown);
+							if(!!coolDown){
+								this.cooldown.insertUserCd(interaction.user.id, commandCD, coolDown);
 							}
 						} catch (error) {
 							this.log.Fatal('Error executing command: '+error);
@@ -103,89 +111,11 @@ class discordAppClient extends Client
 							ephemeral: true
 						});
 					}
-					this.log.Debug(`Received command: ${interaction.commandName} DONE`);
+					this.log.Debug(`Received command: ${commandName} DONE`);
 				});
 				resolve(status_conn.status);
 			});
 		});
-	}
-
-	async sendMessageReturn(message, result, command)
-	{
-		/*
-		POSSIBLES RETURNS VALIDS:
-		-> {
-			err: 'test',
-			msg: 'tested',
-		}
-
-		-> new EmbedBuilder()
-		-> (string) argsError (for generic args error passed)
-		-> string
-		-> {
-			text: 'test',
-			'option': new EmbedBuilder()
-		}
-		*/
-		let sendInfo = {
-			'text': null,
-			'option': null
-		};
-		let isError = false;
-		if(typeof result == 'object'|| (typeof result == 'string' && result == 'argsError')){
-			if(result.constructor.name == 'EmbedBuilder'){
-				sendInfo.option = result;
-			}else{
-				if(typeof result.err == 'undefined'
-				&& (typeof result !== 'string' && result !== 'argsError')){
-					sendInfo.text = result.text;
-					sendInfo.option = result.option;
-					sendInfo.timeout = result.timeout;
-				}else{
-					if(typeof result == 'string' && result == 'argsError'){
-						result = {};
-						result.err = 'Ops! Comando inválido!';
-						result.msg = 'Digite o comando corretamente: {usage}';
-					}
-					result.msg = result.msg.replace('{usage}', '``'+command.usage()+'``');
-					sendInfo.text = '<@!'+message.author.id+'>';
-					sendInfo.option = new EmbedBuilder()
-					.setAuthor({ name: bot_cfg.discordOptions.name, iconURL: global.super_admin_channel.guild.iconURL()})
-					.setTitle(result.err)
-					.setDescription(result.msg);
-					isError = true;
-				}
-			}
-		}else if(result !== true){
-			sendInfo.text = result;
-		}
-		if(sendInfo.text || sendInfo.option){
-			message.channel.send(sendInfo.text, sendInfo.option).then(messageSended => {
-				if(!!sendInfo.timeout){
-					messageSended.delete({timeout: sendInfo.timeout});
-				}
-			});
-		}
-		if(
-			(isError && command.deleteMsgOnError)
-			|| (!isError && command.deleteMsgOnSuccess)
-			){
-			message.delete();
-		}
-	}
-	
-	checkGuildPermission(message)
-	{
-		if(typeof message.channel.guild == 'undefined'){
-			return false;
-		}
-		let guild_id = message.channel.guild.id;
-		
-		if(typeof bot_cfg['servers_allow'][guild_id] == 'undefined'){
-			return false;
-		}
-		
-		return true;
 	}
 	
 	async loadCommands()

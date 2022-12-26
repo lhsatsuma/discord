@@ -20,6 +20,7 @@ global.bot_cfg = {
     "discordOptions": {
         "name": "<NAME_OF_BOT>",
         "token": "<TOKEN_APP>",
+        "icon": "<ICON_URL>",
         "description": "<DESCRIPTION_BOT>",
         "defaultHelpCommand": false //Keep false for default
     },

@@ -1,5 +1,5 @@
 global.entryPoint = 'app';
-global.app_version = '3.0';
+global.app_version = '3.0.1';
 
 global.startAppTime = new Date();
 
@@ -22,8 +22,6 @@ try {
 				client.log.Info("--------------------------");
 				client.log.Info('BOT IS UP AND RUNNING!');
 				client.log.Info("--------------------------");
-
-				await sendHeartbeat();
 				if (parseInt(bot_cfg.heartbeat) > 0) {
 					setTimeout(() => {
 						sendHeartbeat();

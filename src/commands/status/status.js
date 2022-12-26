@@ -1,9 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder,PermissionFlagsBits} = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('status')
-        .setDescription('[ADMIN] Status of System BOT'),
+        .setDescription('[ADMIN] Status of System BOT')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     cooldown: 3,
     async execute(interaction) {
 
@@ -13,8 +14,7 @@ module.exports = {
             .setColor(getColor('GREEN'))
             .setTitle('Status '+bot_cfg.discordOptions.name)
             .setDescription(running.mount_str_check_run())
-            .setThumbnail('https://cdn.discordapp.com/icons/710607431410909185/e1e9494ab23f245cf12619a65518738c.jpg?size=512');
-
+            .setThumbnail(bot_cfg.discordOptions.icon);
         await interaction.reply({
             embeds: [embedMsg]
         });

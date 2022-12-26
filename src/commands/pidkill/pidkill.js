@@ -1,21 +1,24 @@
-const { SlashCommandBuilder, EmbedBuilder} = require('discord.js');
-const ProcessRunning = require("../../Process/ProcessRunning");
-
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require('discord.js');
+const ProcessRunning  = require('../../Process/ProcessRunning.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('pidkill')
-        .setDescription('[ADMIN] Kill PID BOT'),
+        .setDescription('[ADMIN] Kill PID BOT')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     cooldown: 3,
     async execute(interaction) {
-        const ProcessRunning = require('../../Process/ProcessRunning.js');
+        if(interaction.channelId !== bot_cfg.admin_channel_id){
+            await interaction.reply({
+                content: 'Not allowed to execute this command here.',
+                ephemeral: true,
+            });
+            return false;
+        }
         let running = new ProcessRunning();
-
-
-        const channel = client.channels.cache.find(channel => channel.id === interaction.channelId);
 
         let embedError = new EmbedBuilder()
             .setColor(getColor('RED'))
-            .setAuthor({name: bot_cfg.discordOptions.name, iconURL: channel.guild.iconURL()})
+            .setAuthor(client.author)
             .setTitle('R.I.P BOT '+new Date().toLocaleString('pt-BR'))
             .setDescription('Foi bom enquanto durou, vou sentir sua falta!\n Nos vemos mais tarde... :wave: :wave:');
         await interaction.reply({

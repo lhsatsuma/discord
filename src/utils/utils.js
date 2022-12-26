@@ -62,10 +62,8 @@ global.adicionaZero = function(numero)
 global.fileExists = function(path)
 {
 	try{
-		if(fs.existsSync(path)){
-			return true;
-		}
-		return false;
+		return fs.existsSync(path);
+
 	}catch(err){
 		return false;
 	}
@@ -87,7 +85,7 @@ global.sendHeartbeat = async () => {
 		const exampleEmbed = new EmbedBuilder()
 			.setColor('#0099ff')
 			.setTitle("Sending a heartbeat! I'm still alive!!!")
-			.setAuthor({ name: bot_cfg.discordOptions.name, iconURL: global.super_admin_channel.guild.iconURL()})
+			.setAuthor(client.author)
 			.setThumbnail(global.super_admin_channel.guild.iconURL())
 			.setDescription("Data: "+dateNow.toLocaleString('pt-BR'));
 		global.last_message_heartbeat = await global.super_admin_channel.send({ embeds: [exampleEmbed] });
