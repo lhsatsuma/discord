@@ -3,7 +3,7 @@ class BeanBase
 	fields = {};
 	constructor()
 	{
-		const HelperDataBase = require('./DataBase/Helper.js');
+		const HelperDataBase = require('./database/Helper.js');
 		
 		this.dbh = new HelperDataBase(client.db);
 		
@@ -25,7 +25,6 @@ class BeanBase
 	mountFieldsObj(vals)
 	{
 		for(let field in this.fields){
-			console.log(vals[field]);
 			if(vals[field] !== undefined){
 				this[field] = this.unformatField(this.fields[field]['type'], vals[field]);
 			}

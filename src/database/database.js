@@ -1,4 +1,4 @@
-class DataBase
+class database
 {
 	constructor(origem, params)
 	{
@@ -30,4 +30,4 @@ class DataBase
 	}
 }
 
-module.exports = DataBase;
+module.exports = database;

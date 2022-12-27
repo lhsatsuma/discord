@@ -1,6 +1,7 @@
-const DataBase = require("./DataBase.js");
+const database = require("./database.js");
+const MySQL = require('mysql');
 
-class MysqliDataBase extends DataBase
+class MysqliDataBase extends database
 {
 	constructor(org, params)
 	{
@@ -10,7 +11,6 @@ class MysqliDataBase extends DataBase
 	Connect()
 	{
 		return new Promise((resolve, reject) => {
-			const MySQL = require('mysql');
 			let conn = new MySQL.createConnection({
 				host: this.host,
 				user: this.host_user,
@@ -31,7 +31,7 @@ class MysqliDataBase extends DataBase
 				});
 				conn.on('error', function(err) {
 					if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
-						CloseConn();                         // lost due to either server restart, or a
+						this.CloseConn();                         // lost due to either server restart, or a
 					} else {                                      // connnection idle timeout (the wait_timeout
 						throw err;                                  // server variable configures this)
 					}
@@ -53,8 +53,8 @@ class MysqliDataBase extends DataBase
 	}
 	
 	ErrorQuery(sql, err_msg = ''){
+		client.log.Error('SQL Failed: '+sql+' : '+err_msg, 0, 1);
 		this.last_error = 'SQL Failed: '+sql+' : '+err_msg;
-		this.CloseConn();
 	}
 	
 	Query(sql, show_sql = false)
@@ -68,21 +68,18 @@ class MysqliDataBase extends DataBase
 					let result = this.connection.query(sql, (err, result) => {
 						try{
 							if(err){
+								console.log(err, result);
 								this.ErrorQuery(sql, err.sqlMessage);
-								this.CloseConn();
 								resolve(false);
 							}else{
-								this.CloseConn();
 								resolve(result);
 							}
 						}catch(err){
 							this.ErrorQuery(sql, err.sqlMessage);
-							this.CloseConn();
 							resolve(false);
 						}
 					});
 				}else{
-					this.CloseConn();
 					resolve(false);
 				}
 			});

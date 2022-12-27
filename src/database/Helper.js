@@ -65,11 +65,11 @@ class HelperDataBase
 				let c_fields = '';
 				for(var field in insert_tables[table]){
 					let val = insert_tables[table][field];
-					columns += c_fields+"\n"+field;
+					columns += c_fields+field;
 					if(val !== null){
 						val = "'"+val+"'";
 					}
-					values += c_fields+""+val+"\n";
+					values += c_fields+""+val;
 					c_fields = ',';	
 				}
 				SQL += columns;
@@ -99,7 +99,7 @@ class HelperDataBase
 			var keyObj = 0;
 			for(var table in update_tables){
 				keyObj++;
-				let SQL = "UPDATE "+table+" SET";
+				let SQL = "UPDATE "+table+" SET ";
 				let columns = '';
 				let values = '';
 				let c_fields = '';
@@ -109,7 +109,7 @@ class HelperDataBase
 					if(val !== null){
 						val = "'"+val+"'";
 					}
-					columns += c_fields+"\n"+field+" = "+val+"";
+					columns += c_fields+field+" = "+val+"";
 					c_fields = ",";
 				}
 				

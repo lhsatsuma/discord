@@ -22,58 +22,58 @@ class BeanJokenpo extends BeanBase
                 type: 'varchar',
                 default: null,
             },
-            played_pedra: {
+            played_rock: {
                 type: 'int',
                 default: 0,
             },
-            played_tesoura: {
+            played_scissors: {
                 type: 'int',
                 default: 0,
             },
-            played_papel: {
+            played_paper: {
                 type: 'int',
                 default: 0,
             },
-            win_pedra: {
+            win_rock: {
                 type: 'int',
                 default: 0,
             },
-            win_tesoura: {
+            win_scissors: {
                 type: 'int',
                 default: 0,
             },
-            win_papel: {
+            win_paper: {
                 type: 'int',
                 default: 0,
             },
-            lose_pedra: {
+            lose_rock: {
                 type: 'int',
                 default: 0,
             },
-            lose_tesoura: {
+            lose_scissors: {
                 type: 'int',
                 default: 0,
             },
-            lose_papel: {
+            lose_paper: {
                 type: 'int',
                 default: 0,
             },
-            draw_pedra: {
+            draw_rock: {
                 type: 'int',
                 default: 0,
             },
-            draw_tesoura: {
+            draw_scissors: {
                 type: 'int',
                 default: 0,
             },
-            draw_papel: {
+            draw_paper: {
                 type: 'int',
                 default: 0,
             },
         };
         this.mountDefaultFieldsObj();
         this.stats_play = {
-            'pedra': {
+            'rock': {
                 'perc': {
                     'total': 0,
                     'win': 0,
@@ -81,7 +81,7 @@ class BeanJokenpo extends BeanBase
                     'draw': 0,
                 },
             },
-            'papel': {
+            'paper': {
                 'perc': {
                     'total': 0,
                     'win': 0,
@@ -89,7 +89,7 @@ class BeanJokenpo extends BeanBase
                     'draw': 0,
                 },
             },
-            'tesoura': {
+            'scissors': {
                 'perc': {
                     'total': 0,
                     'win': 0,
@@ -117,7 +117,7 @@ class BeanJokenpo extends BeanBase
     calc_total_played()
 	{
 		this.total_played = 0;
-		let options = ['pedra', 'papel', 'tesoura'];
+		let options = ['rock', 'paper', 'scissors'];
 		options.forEach((option, idx) =>{
             let played_card = 'played_'+option;
 			this.total_played += this[played_card];
@@ -131,12 +131,12 @@ class BeanJokenpo extends BeanBase
 			this.stats[type]['total'] = 0;
 			this.stats[type]['perc'] = 0;
 			
-			let papel = type+'_papel';
-			let pedra = type+'_pedra';
-			let tesoura = type+'_tesoura';
-			this.stats[type]['total'] += this[papel];
-			this.stats[type]['total'] += this[pedra];
-			this.stats[type]['total'] += this[tesoura];
+			let paper = type+'_paper';
+			let rock = type+'_rock';
+			let scissors = type+'_scissors';
+			this.stats[type]['total'] += this[paper];
+			this.stats[type]['total'] += this[rock];
+			this.stats[type]['total'] += this[scissors];
 			
 			if(this.stats[type]['total'] > 0){
 				this.stats[type]['perc'] = parseInt(this.stats[type]['total'] * 100);
@@ -177,18 +177,18 @@ class BeanJokenpo extends BeanBase
     async resetScore()
 	{
 		await this.select();
-		this.played_pedra = 0;
-		this.played_papel = 0;
-		this.played_tesoura = 0;
-		this.win_pedra = 0;
-		this.win_papel = 0;
-		this.win_tesoura = 0;
-		this.lose_pedra = 0;
-		this.lose_papel = 0;
-		this.lose_tesoura = 0;
-		this.draw_pedra = 0;
-		this.draw_papel = 0;
-		this.draw_tesoura = 0;
+		this.played_rock = 0;
+		this.played_paper = 0;
+		this.played_scissors = 0;
+		this.win_rock = 0;
+		this.win_paper = 0;
+		this.win_scissors = 0;
+		this.lose_rock = 0;
+		this.lose_paper = 0;
+		this.lose_scissors = 0;
+		this.draw_rock = 0;
+		this.draw_paper = 0;
+		this.draw_scissors = 0;
 		this.save();
 	}
 

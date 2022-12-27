@@ -27,8 +27,8 @@ class discordAppClient extends Client
 		this.checkRunningStartVars();
 
 		
-		this.log.Debug('Initializing DataBase class');
-		const MySQLDB = require('./DataBase/MysqlDataBase.js');
+		this.log.Debug('Initializing database class');
+		const MySQLDB = require('./database/MysqlDataBase.js');
 		
 		this.db = new MySQLDB('app', bot_cfg['db']);
 
@@ -143,14 +143,15 @@ class discordAppClient extends Client
 		}
 
 		// The put method is used to fully refresh all commands in the guild with the current set
+		if(!!bot_cfg.discordOptions.sendCommandsAPI || typeof bot_cfg.discordOptions.sendCommandsAPI == 'undefined') {
+			this.log.Debug(`Sending ${commandsTmp.length} commands to Discord API`);
 
-		this.log.Debug(`Sending ${commandsTmp.length} commands to Discord API`);
-
-		const data = await rest.put(
-			Routes.applicationCommands(bot_cfg.discordOptions.bot_id),
-			{ body: commandsTmp },
-		);
-		this.log.Debug(`Sended ${data.length} commands to Discord API!`);
+			const data = await rest.put(
+				Routes.applicationCommands(bot_cfg.discordOptions.bot_id),
+				{body: commandsTmp},
+			);
+			this.log.Debug(`Sended ${data.length} commands to Discord API!`);
+		}
 	}
 }
 
