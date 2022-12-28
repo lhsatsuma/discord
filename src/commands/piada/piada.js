@@ -1,9 +1,14 @@
 const { SlashCommandBuilder } = require('discord.js');
 
-module.exports = {
-    data: new SlashCommandBuilder()
+const returned = client.create(
+    new SlashCommandBuilder()
         .setName('piada')
-        .setDescription('Piadas/Trocadilhos ruins!'),
+        .setDescription('Piadas/Trocadilhos ruins!')
+);
+
+module.exports = {
+    data: returned.data,
+    subcommands: returned.subcommands,
     cooldown: 2,
     async execute(interaction) {
         let piadas_prontas = require(process.cwd() + '/uploads/trocadilhos.json');

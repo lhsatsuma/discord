@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-
-module.exports = {
-    data: new SlashCommandBuilder()
+const returned = client.create(
+    new SlashCommandBuilder()
         .setName('sorteio')
         .setDescription('Sorteio de um número!')
         .addIntegerOption(option =>
@@ -17,7 +16,11 @@ module.exports = {
                 .setDescription('Número máximo para o sorteio')
                 .setRequired(true)
                 .setMinValue(1)
-                .setMaxValue(9999999)),
+                .setMaxValue(9999999))
+);
+module.exports = {
+    data: returned.data,
+    subcommands: returned.subcommands,
     cooldown: 2,
     async execute(interaction) {
         let min = interaction.options.getInteger('numero_min');

@@ -1,21 +1,25 @@
 const { SlashCommandBuilder} = require('discord.js');
+const returned = client.create(
+	new SlashCommandBuilder()
+		.setName('pinguser')
+		.setDescription('Ping user X times!')
+		.addUserOption(option =>
+			option
+				.setName('target')
+				.setDescription('The member to ping')
+				.setRequired(true))
+		.addIntegerOption(option =>
+			option
+				.setName('times')
+				.setDescription('Times to ping')
+				.setRequired(true)
+				.setMinValue(1)
+				.setMaxValue(10))
+);
 
 module.exports = {
-	data: new SlashCommandBuilder()
-	.setName('pinguser')
-	.setDescription('Ping user X times!')
-	.addUserOption(option =>
-		option
-			.setName('target')
-			.setDescription('The member to ping')
-			.setRequired(true))
-	.addIntegerOption(option =>
-		option
-			.setName('times')
-			.setDescription('Times to ping')
-			.setRequired(true)
-			.setMinValue(1)
-			.setMaxValue(10)),
+	data: returned.data,
+	subcommands: returned.subcommands,
 	cooldown: 10,
 	async execute(interaction) {
 		const target = interaction.options.getUser('target');

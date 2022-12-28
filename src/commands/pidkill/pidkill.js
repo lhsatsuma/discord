@@ -1,10 +1,16 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require('discord.js');
 const ProcessRunning  = require('../../Process/ProcessRunning.js');
-module.exports = {
-    data: new SlashCommandBuilder()
+
+const returned = client.create(
+    new SlashCommandBuilder()
         .setName('pidkill')
         .setDescription('[ADMIN] Kill PID BOT')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+);
+
+module.exports = {
+    data: returned.data,
+    subcommands: returned.subcommands,
     cooldown: 3,
     async execute(interaction) {
         if(interaction.channelId !== bot_cfg.admin_channel_id){

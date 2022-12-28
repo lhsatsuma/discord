@@ -1,16 +1,19 @@
 const { SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 
-module.exports = {
-    data: new SlashCommandBuilder()
+const returned = client.create(
+    new SlashCommandBuilder()
         .setName('cantada')
         .setDescription('Cantadas Engraçadas!')
         .addUserOption(option =>
             option
                 .setName('usuario')
-                .setDescription('Membro para enviar a cantada')),
+                .setDescription('Membro para enviar a cantada'))
+);
+module.exports = {
+    data: returned.data,
+    subcommands: returned.subcommands,
     cooldown: 3,
     async execute(interaction) {
-
         let usuario = interaction.options.getUser('usuario');
         let embedMsg = new EmbedBuilder()
         .setColor(getColor('BLUE'));

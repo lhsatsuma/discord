@@ -124,20 +124,24 @@ class discordAppClient extends Client
 		const commandPaths = this.fs.readdirSync(basePath);
 		const rest = new REST().setToken(bot_cfg.discordOptions.token);
 		let commandsTmp = [];
+		this.commands = new Collection();
 		for (const commandName of commandPaths) {
 			let commandPath = basePath+commandName+'/';
 			
 			let commandFile = commandPath+commandName+'.js';
+			if(this.commands.get(commandName)){
+				this.log.Error('Command already loaded: '+commandFile);
+				continue;
+			}
 			
 			if(this.fs.existsSync(commandFile)){
-			
 				this.log.Debug('Loading command: '+commandName);
 				const command = requireAgain(process.cwd()+'/src/commands/'+commandName+'/'+commandName+'.js');
+
 				this.commands.set(command.data.name, command);
 				commandsTmp.push(command.data.toJSON());
 				this.log.Debug('Loaded command: '+commandName);
 			}else{
-				
 				this.log.Error('Command: '+commandName+' dont have JS');
 			}
 		}
@@ -152,6 +156,45 @@ class discordAppClient extends Client
 			);
 			this.log.Debug(`Sended ${data.length} commands to Discord API!`);
 		}
+	}
+	create(commandData)
+	{
+		let dataReturn = {
+			data: commandData,
+			subcommands: {},
+		};
+		const command = commandData.name;
+		let subReturn = {};
+		const subPath = process.cwd()+'/src/commands/'+command+'/subs/';
+		try {
+			if(this.fs.existsSync(subPath)) {
+				const subs = this.fs.readdirSync(subPath);
+				for (const subFileName of subs) {
+					let subName = subFileName.replace('.js', '');
+					let subFile = subPath + subFileName;
+					let subFullname = command + ':' + subName;
+					this.log.Debug('Loading subcommand: ' + subFullname);
+					const subcommand = requireAgain(subFile);
+					if (!!subcommand.inactive) {
+						this.log.Debug('Subcommand: ' + subFullname + ' is inactive');
+						continue;
+					}
+					subReturn[subName] = subcommand;
+					this.log.Debug('Loaded subcommand: ' + subFullname);
+				}
+			}
+		}catch(e){
+			this.log.Error('Error loading subcommands: '+e);
+		}
+		if(Object.keys(subReturn).length){
+			for (const [key, value] of Object.entries(subReturn)) {
+				commandData.addSubcommand(value.data);
+				dataReturn.subcommands[key] = value;
+			}
+			dataReturn.data = commandData;
+		}
+
+		return dataReturn;
 	}
 }
 

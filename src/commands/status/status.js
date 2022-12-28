@@ -1,10 +1,13 @@
 const { SlashCommandBuilder, EmbedBuilder,PermissionFlagsBits} = require('discord.js');
-
-module.exports = {
-    data: new SlashCommandBuilder()
+const returned = client.create(
+    new SlashCommandBuilder()
         .setName('status')
         .setDescription('[ADMIN] Status of System BOT')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+);
+module.exports = {
+    data: returned.data,
+    subcommands: returned.subcommands,
     cooldown: 3,
     async execute(interaction) {
 
