@@ -18,10 +18,6 @@ module.exports = {
     ),
     async execute(interaction) {
         const choose = interaction.options.getString('choose').toString();
-        let embedMsg = new EmbedBuilder()
-            .setColor(getColor('ORANGE'))
-            .setTitle('Ops! Erro ao jogar o jokenpo!')
-            .setDescription('Erro ao ');
 
         let options = ['paper', 'scissors', 'rock'];
 
@@ -54,7 +50,7 @@ module.exports = {
                 result = 'lose';
             }
 
-            embedMsg = new EmbedBuilder();
+            let embedMsg = new EmbedBuilder();
             embedMsg.setTitle(interaction.user.username+' played jokenpo!');
             let description = "You played: **"+choose.toUpperCase()+"**\n";
             let color = getColor('ORANGE');
