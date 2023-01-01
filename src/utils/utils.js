@@ -37,6 +37,13 @@ global.getRandColor = function() {
 	
 	return colorsSet[keys[ keys.length * Math.random() << 0]];
 }
+
+
+global.array_rand = function(array) {
+	let keys = Object.keys(array);
+
+	return array[keys[keys.length * Math.random() << 0]];
+}
 global.create_guid = function() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -99,5 +106,36 @@ global.sendHeartbeat = async () => {
 global.sleep = (ms) => {
 	return new Promise((resolve) => {
 	  setTimeout(resolve, ms);
+	});
+}
+
+
+const { getEmoji, getShortcode } = require("discord-emoji-converter");
+global.strToEmoji = (str) => {
+	return getEmoji(str);
+}
+global.emojiToStr = (emoji) => {
+	return getShortcode(emoji);
+}
+
+global.strToNumber = (str) => {
+	const strs = {'zero': 0, 'one':1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9};
+	return strs[str];
+}
+
+global.numberToStr = (str) => {
+	const strs = {0: 'zero', 1:'one', 2:'two', 3:'three', 4:'four', 5:'five', 6:'six', 7:'seven', 8:'eight', 9:'nine'};
+	return strs[str];
+}
+
+global.reacts = async (message, reacts) => {
+	return new Promise((resolve, reject) => {
+		reacts.forEach((emoji, idx) => {
+			message.react(emoji).then(() => {
+				if(idx == reacts.length-1){
+					resolve(true);
+				}
+			});
+		});
 	});
 }

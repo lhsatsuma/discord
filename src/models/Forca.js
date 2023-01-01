@@ -41,7 +41,14 @@ class BeanForca extends BeanBase
                 type: 'serialize',
             },
         };
+        this.options = {
+            'thumb': 'http://www.cjdinfo.com.br/images/diversao/forca/vazia.png',
+        }
 	}
+
+    mountFieldsObj(vals) {
+        super.mountFieldsObj(vals);
+    }
 }
 
 module.exports = BeanForca;

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder} = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
 const returned = client.create(
 	new SlashCommandBuilder()
 		.setName('pinguser')
@@ -15,6 +15,7 @@ const returned = client.create(
 				.setRequired(true)
 				.setMinValue(1)
 				.setMaxValue(10))
+		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 );
 
 module.exports = {
@@ -25,10 +26,9 @@ module.exports = {
 		const target = interaction.options.getUser('target');
 		const times = interaction.options.getInteger('times');
 		interaction.reply('Pingando usuario...');
-		const channel = client.channels.cache.find(channel => channel.id === interaction.channelId);
 		let messageSended = null;
 		for(let i=0;i<times;i++){
-		 	messageSended = await channel.send('<@'+target.id+'> Você foi pingado!');
+		 	messageSended = await interaction.channel.send('<@'+target.id+'> Você foi pingado!');
 			await sleep(2000);
 			if(i<times-1) {
 				await messageSended.delete();

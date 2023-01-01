@@ -1,13 +1,16 @@
 if(typeof entryPoint == 'undefined') { console.log('Access Denied!'); process.exit(); }
 
-const { REST, Routes, Client, GatewayIntentBits , Collection, Events} = require("discord.js");
+const { REST, Routes, Client, GatewayIntentBits , Collection, Events,Partials} = require("discord.js");
 global.Discord = require("discord.js");
 
 class discordAppClient extends Client
 {
 	constructor()
 	{
-		super({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages,GatewayIntentBits.MessageContent,GatewayIntentBits.GuildMembers] });
+		super({
+			intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages,GatewayIntentBits.MessageContent,GatewayIntentBits.GuildMembers, GatewayIntentBits.DirectMessageReactions, GatewayIntentBits.GuildMessageReactions],
+			partials: [Partials.Message, Partials.Channel, Partials.Reaction]
+		});
 		
 		const LogControl = require('./utils/LogControl.js');
 		require('./utils/utils.js');
@@ -138,6 +141,11 @@ class discordAppClient extends Client
 				this.log.Debug('Loading command: '+commandName);
 				const command = requireAgain(process.cwd()+'/src/commands/'+commandName+'/'+commandName+'.js');
 
+				if (!!command.inactive) {
+					this.log.Info('Command: '+commandName+' is inactive!');
+					continue;
+				}
+
 				this.commands.set(command.data.name, command);
 				commandsTmp.push(command.data.toJSON());
 				this.log.Debug('Loaded command: '+commandName);
@@ -184,7 +192,7 @@ class discordAppClient extends Client
 				}
 			}
 		}catch(e){
-			this.log.Error('Error loading subcommands: '+e);
+			this.log.Error('Error loading subcommands: '+e.message+' on line: '+e.lineNumber);
 		}
 		if(Object.keys(subReturn).length){
 			for (const [key, value] of Object.entries(subReturn)) {

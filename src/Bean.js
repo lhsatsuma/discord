@@ -50,7 +50,7 @@ class BeanBase
 		return this.select("user_id = '"+this.user_id+"' AND status <> 'done'");
 	}
 	
-	save()
+	async save()
 	{
 		let dataSave = {};
 		
@@ -69,27 +69,27 @@ class BeanBase
 			}
 		}
 		if(!isInsert){
-			return this.update(dataSave);
+			return await this.update(dataSave);
 		}else{
-			return this.insert(dataSave);
+			return await this.insert(dataSave);
 		}
 	}
 
-	update(data)
+	async update(data)
 	{
 		let UpdateTables = {};
 		UpdateTables[this.dbh.table] = {
 			fields: data,
 			where: `id = '${data.id}'`,
 		};
-		return this.dbh.Update(UpdateTables);
+		return await this.dbh.Update(UpdateTables);
 	}
 
-	insert(data)
+	async insert(data)
 	{
 		let InsertTables = {};
 		InsertTables[this.dbh.table] = data;
-		return this.dbh.Insert(InsertTables);
+		return await this.dbh.Insert(InsertTables);
 	}
 	unformatField(type, value)
 	{
