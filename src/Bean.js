@@ -27,6 +27,8 @@ class BeanBase
 		for(let field in this.fields){
 			if(vals[field] !== undefined){
 				this[field] = this.unformatField(this.fields[field]['type'], vals[field]);
+			}else{
+				this[field] = null;
 			}
 		}
 	}
@@ -103,6 +105,9 @@ class BeanBase
 			case 'serialize':
 				const {serialize, unserialize} = require('php-serialize');
 				value = unserialize(value);
+				break;
+			case 'json':
+				value = JSON.parse(value);
 				break;
 			case 'int':
 				value = parseInt(value);

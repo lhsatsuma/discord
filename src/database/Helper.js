@@ -1,3 +1,5 @@
+const LogControl = require("../utils/LogControl");
+
 class HelperDataBase
 {
 	constructor(db)
@@ -10,6 +12,7 @@ class HelperDataBase
 		this.order_by = '';
 		this.limit = '';
 		this.group_by = '';
+		this.log = new LogControl(global.bot_cfg.log_dir, 'database.log', global.bot_cfg.log_options);
 	}
 	
 	Select(show_sql = false){
@@ -76,6 +79,7 @@ class HelperDataBase
 				SQL += ") VALUES (";
 				SQL += values;
 				SQL += ")";
+				this.log.Debug('INSERT QUERY: '+SQL);
 				let query = this.db.Query(SQL, show_sql).then((result) => {
 					if(result === false){
 						client.log.Fatal(this.db.last_error, 0, 1);
@@ -117,6 +121,7 @@ class HelperDataBase
 				if (args['where']) {
 					SQL += "\nWHERE "+args['where'];
 				}
+				this.log.Debug('UPDATE QUERY: '+SQL);
 				let query = this.db.Query(SQL, show_sql).then((result) => {
 					if(result === false){
 						client.log.Fatal(this.db.last_error, 0, 1);
@@ -147,6 +152,7 @@ class HelperDataBase
 				if(where){
 					SQL += " WHERE "+where;
 				}
+				this.log.Debug('DELETE QUERY: '+SQL);
 				let query = this.db.Query(SQL, show_sql).then((result) => {
 					if(result === false){
 						client.log.Fatal(this.db.last_error, 0, 1);
@@ -180,10 +186,11 @@ class HelperDataBase
 					value = serialize(value);
 				}
 				break;
+			case 'json':
+				value = JSON.stringify(value);
+				break;
 			case 'int':
-				if(typeof value !== 'int'){
-					value = parseInt(value);
-				}
+				value = (!isNaN(value)) ? parseInt(value) : 0;
 				break;
 			default:
 				break;

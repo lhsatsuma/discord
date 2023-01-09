@@ -1,5 +1,6 @@
 [
     {
+        "level": 1,
         "palavra": "guarda chuva",
         "chances": 5,
         "dicas": [
@@ -7,6 +8,7 @@
         ]
     },
     {
+        "level": 1,
         "palavra": "garrafa",
         "chances": 5,
         "dicas": [
@@ -14,6 +16,7 @@
         ]
     },
     {
+        "level": 1,
         "palavra": "mouse",
         "chances": 5,
         "dicas": [
@@ -23,6 +26,7 @@
         ]
     },
     {
+        "level": 1,
         "palavra": "teclado",
         "chances": 5,
         "dicas": [
@@ -31,19 +35,57 @@
         ]
     },
     {
+        "level": 1,
         "palavra": "celular",
-        "chances": "1",
+        "chances": 2,
         "dicas": [
-            "teste"
+            "Sou muito comum hoje em dia",
+            "Sou usado para se comunicar com as outras pessoas"
         ]
     },
     {
+        "level": 2,
         "palavra": "chave de roda",
-        "chances": "4",
+        "chances": 4,
         "dicas": [
             "Sou usado no carro",
             "Sou usado em emerg\u00eancias",
             "Meu formato pode ser de um X"
+        ]
+    },
+    {
+        "level": 1,
+        "palavra": "amarelo",
+        "chances": 3,
+        "dicas": [
+            "Sou uma cor",
+            "Sou uma fruta"
+        ]
+    },
+    {
+        "level": 1,
+        "palavra": "faca",
+        "chances": 3,
+        "dicas": [
+            "Sou utilizado na cozinha"
+        ]
+    },
+    {
+        "level": 1,
+        "palavra": "prato",
+        "chances": 3,
+        "dicas": [
+            "Toda casa tem um",
+            "Sou utilizado na cozinha"
+        ]
+    },
+    {
+        "level": 1,
+        "palavra": "chuveiro",
+        "chances": 3,
+        "dicas": [
+            "Posso ser frio ou quente",
+            "Toda casa tem um"
         ]
     }
 ]

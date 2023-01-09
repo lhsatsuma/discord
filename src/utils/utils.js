@@ -111,8 +111,15 @@ global.sleep = (ms) => {
 
 
 const { getEmoji, getShortcode } = require("discord-emoji-converter");
-global.strToEmoji = (str) => {
-	return getEmoji(str);
+global.strToEmoji = (convert) => {
+	if(typeof convert == 'object'){
+		let return_array = [];
+		convert.forEach(emoji => {
+			return_array.push(getEmoji(emoji));
+		});
+		return return_array;
+	}
+	return getEmoji(convert);
 }
 global.emojiToStr = (emoji) => {
 	return getShortcode(emoji);

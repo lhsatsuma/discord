@@ -8,8 +8,19 @@ class discordAppClient extends Client
 	constructor()
 	{
 		super({
-			intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages,GatewayIntentBits.MessageContent,GatewayIntentBits.GuildMembers, GatewayIntentBits.DirectMessageReactions, GatewayIntentBits.GuildMessageReactions],
-			partials: [Partials.Message, Partials.Channel, Partials.Reaction]
+			intents: [
+				GatewayIntentBits.Guilds,
+				GatewayIntentBits.GuildMessages,
+				GatewayIntentBits.MessageContent,
+				GatewayIntentBits.GuildMembers,
+				GatewayIntentBits.DirectMessageReactions,
+				GatewayIntentBits.GuildMessageReactions
+			],
+			partials: [
+				Partials.Message,
+				Partials.Channel,
+				Partials.Reaction
+			]
 		});
 		
 		const LogControl = require('./utils/LogControl.js');
