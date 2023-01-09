@@ -113,8 +113,8 @@ class discordAppClient extends Client
 								this.cooldown.insertUserCd(interaction.user.id, commandCD, coolDown);
 							}
 						} catch (error) {
-							this.log.Fatal('Error executing command: '+error);
-							await interaction.reply({
+							this.log.Fatal('Error executing command: '+error.message+ ' on line '+error.line);
+							await interaction.channel.send({
 								content: 'There was an error while executing this command!',
 								ephemeral: true
 							});

@@ -63,7 +63,7 @@ class BeanForca extends BeanBase
     {
         const words = requireAgain(process.cwd() + '/uploads/forca.json');
         const word = array_rand(words);
-        this.word_json = words;
+        this.word_json = word;
         this.palavra = word.palavra;
         this.dicas = [];
         this.letras = [];
