@@ -1,11 +1,15 @@
 global.entryPoint = 'app';
-global.app_version = '3.4.0';
+global.app_version = '3.4.2';
 
 global.startAppTime = new Date();
+try {
+	global.bot_cfg = require('./config/config.json');
+}catch(e){
+	console.log('Unable to Load config.json');
+	process.exit();
+}
 
 global.fs = require('fs');
-
-require('./config/config.js');
 
 discordAppClient = require('./src/InitApp.js');
 
