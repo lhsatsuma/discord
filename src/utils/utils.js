@@ -85,7 +85,11 @@ global.requireAgain = function(path)
 global.sendHeartbeat = async () => {
 	if(parseInt(global.bot_cfg.heartbeat) > 0 && !!global.client.log && global.super_admin_channel){
 		if(global.last_message_heartbeat){
-			await global.last_message_heartbeat.delete();
+			try {
+				await global.last_message_heartbeat.delete();
+			}catch(e){
+				client.log.Error('Cannot delete heartbeat message: '+e);
+			}
 		}
 		let dateNow = new Date();
 		const { EmbedBuilder} = require("discord.js");
