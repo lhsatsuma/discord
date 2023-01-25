@@ -1,14 +1,9 @@
-const { SlashCommandBuilder, EmbedBuilder,PermissionFlagsBits} = require('discord.js');
-const returned = client.create(
-    new SlashCommandBuilder()
-        .setName('status')
-        .setDescription('[SUPERADMIN] Status of System BOT')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
-);
+const { EmbedBuilder} = require('discord.js');
 module.exports = {
-    data: returned.data,
-    subcommands: returned.subcommands,
-    cooldown: 3,
+    data: (subcommand) =>
+        subcommand
+            .setName('status')
+            .setDescription('[SUPERADMIN] Status of System BOT'),
     async execute(interaction) {
         if(!client.channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({
@@ -17,7 +12,7 @@ module.exports = {
             });
             return false;
         }
-        const ProcessRunning = require('../Process/ProcessRunning.js');
+        const ProcessRunning = require('../../../Process/ProcessRunning.js');
         let running = new ProcessRunning();
         let embedMsg = new EmbedBuilder()
             .setColor(getColor('GREEN'))

@@ -1,5 +1,5 @@
 global.entryPoint = 'app';
-global.app_version = '3.5.0';
+global.app_version = '3.5.1';
 
 global.startAppTime = new Date();
 try {

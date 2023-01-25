@@ -56,13 +56,13 @@ class ProcessRunning
 	{
 		let BeanBase = require('../Bean.js');
 		let bean = new BeanBase();
-		var process = require('process');
 		
 		let returnStr = '**GERADO EM: '+bean.dbh.formatField('datetime', new Date())+'**';
 
 		returnStr += "\n\n**===>DBIKE BOT:<===**\n";
 		returnStr += "STATUS: **RUNNING ON PID: "+process.pid+"**\n";
 		returnStr += "UPTIME: **"+parseInt(process.uptime())+" seconds**\n";
+		returnStr += "HEARTBEAT: **"+bot_cfg.heartbeat+" seconds**\n";
 		return returnStr;
 	}
 
