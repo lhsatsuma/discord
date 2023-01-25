@@ -139,30 +139,43 @@ class discordAppClient extends Client
 		const rest = new REST().setToken(bot_cfg.discordOptions.token);
 		let commandsTmp = [];
 		this.commands = new Collection();
+
 		for (const commandName of commandPaths) {
 			let commandPath = basePath+commandName+'/';
-			
-			let commandFile = commandPath+commandName+'.js';
-			if(this.commands.get(commandName)){
-				this.log.Error('Command already loaded: '+commandFile);
-				continue;
-			}
-			
-			if(this.fs.existsSync(commandFile)){
-				this.log.Debug('Loading command: '+commandName);
-				const command = requireAgain(process.cwd()+'/src/commands/'+commandName+'/'+commandName+'.js');
+			let commandFile = commandPath + commandName + '.js';
+			let command = null;
+			let absolutePath = null;
 
-				if (!!command.inactive) {
-					this.log.Info('Command: '+commandName+' is inactive!');
+			if(!this.fs.lstatSync(basePath+commandName).isDirectory()){
+				commandPath = basePath;
+				if (this.commands.get(commandName)) {
+					this.log.Error('Command already loaded: ' + commandFile);
 					continue;
 				}
+				absolutePath = process.cwd() + '/src/commands/' + commandName;
+			}else {
 
-				this.commands.set(command.data.name, command);
-				commandsTmp.push(command.data.toJSON());
-				this.log.Debug('Loaded command: '+commandName);
-			}else{
-				this.log.Error('Command: '+commandName+' dont have JS');
+				if (this.fs.existsSync(commandFile)) {
+					absolutePath = process.cwd() + '/src/commands/' + commandName + '/' + commandName + '.js';
+				} else {
+					this.log.Error('CommandDir: ' + commandName + ' dont have JS');
+				}
 			}
+
+			if (this.commands.get(commandName)) {
+				this.log.Error('Command already loaded: ' + commandFile);
+				continue;
+			}
+
+			this.log.Debug('Loading command: ' + commandName);
+			command = requireAgain(absolutePath);
+			if (!!command.inactive) {
+				this.log.Info('Command: ' + commandName + ' is inactive!');
+				continue;
+			}
+			this.commands.set(command.data.name, command);
+			commandsTmp.push(command.data.toJSON());
+			this.log.Debug('Loaded command: ' + commandName);
 		}
 
 		// The put method is used to fully refresh all commands in the guild with the current set
@@ -214,6 +227,22 @@ class discordAppClient extends Client
 		}
 
 		return dataReturn;
+	}
+	channelSuperAdmin(compare)
+	{
+		if(typeof bot_cfg.admin_channel_id === 'string'){
+			return compare.toString() === bot_cfg.admin_channel_id.toString();
+		}
+
+		let valid = false;
+		bot_cfg.admin_channel_id.forEach((idx, channel) => {
+			if(!valid && compare.toString() === channel.toString()){
+				valid = true;
+				return true;
+			}
+		});
+
+		return valid;
 	}
 }
 

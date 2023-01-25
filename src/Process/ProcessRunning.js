@@ -23,15 +23,21 @@ class ProcessRunning
 
 	startPid()
 	{
+		process.on('exit', async (code) => {
+			console.log('Exiting process with code: '+code.toString());
+			await this.deletePid();
+		});
 		return fs.writeFileSync('./processRunning.pid', process.pid.toString());
 	}
 
-	deletePid(pid)
+	async deletePid(pid=0)
 	{
-		return new Promise((resolve) => {
+		await fs.rmSync('./processRunning.pid');
+		if(pid) {
 			process.kill(pid, 0);
-			resolve(true);
-		});
+		}
+
+		return true;
 	}
 	exit()
 	{

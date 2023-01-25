@@ -1,10 +1,10 @@
 const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits} = require('discord.js');
-const ProcessRunning  = require('../../Process/ProcessRunning.js');
+const ProcessRunning  = require('../Process/ProcessRunning.js');
 
 const returned = client.create(
     new SlashCommandBuilder()
         .setName('pidkill')
-        .setDescription('[ADMIN] Kill PID BOT')
+        .setDescription('[SUPERADMIN] Kill PID BOT')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 );
 
@@ -13,7 +13,7 @@ module.exports = {
     subcommands: returned.subcommands,
     cooldown: 3,
     async execute(interaction) {
-        if(interaction.channelId !== bot_cfg.admin_channel_id){
+        if(!client.channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({
                 content: 'Not allowed to execute this command here.',
                 ephemeral: true,
@@ -31,7 +31,7 @@ module.exports = {
             embeds: [embedError]
         });
 
-        client.log.Info(interaction.user.username+' used pidkill!');
+        client.log.Info(`${interaction.user.username} [#${interaction.user.id}] on ${interaction.guild.name} [#${interaction.guild.id}] used pidkill!`);
 
         await running.exit();
     },

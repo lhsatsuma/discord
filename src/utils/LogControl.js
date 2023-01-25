@@ -25,7 +25,9 @@ class LogControl
 		if(dirPath.substring(dirPath.length - 1, dirPath.length) !== '/'){
 			dirPath += '/';
 		}
-		this.path = dirPath;
+		let date = new Date();
+		let dateFormat = date.getFullYear()+(parseInt(date.getMonth())+1).toString().padStart(2, '0')+date.getDate().toString().padStart(2, '0');
+		this.path = dirPath+dateFormat+'/';
 		this.logFile = fileName;
 		if(typeof options.default_op !== 'undefined'){
 			for (var prop in this.default_options) {
@@ -123,9 +125,8 @@ class LogControl
 		if(echo){
 			options.echo = 1;
 		}
-		let added = this.Add(str, options);
-		
-		return added;
+
+		return this.Add(str, options);
 	}
 	
 	Info(str, die = 0, echo = 0)
@@ -140,9 +141,8 @@ class LogControl
 		if(echo){
 			options.echo = 1;
 		}
-		let added = this.Add(str, options);
 		
-		return added;
+		return this.Add(str, options);
 	}
 	
 	Error(str, die = 0, echo = 0)
@@ -157,9 +157,8 @@ class LogControl
 		if(echo){
 			options.echo = 1;
 		}
-		let added = this.Add(str, options);
 		
-		return added;
+		return this.Add(str, options);
 	}
 	
 	Warning(str, die = 0, echo = 0)
@@ -174,9 +173,8 @@ class LogControl
 		if(echo){
 			options.echo = 1;
 		}
-		let added = this.Add(str, options);
 		
-		return added;
+		return this.Add(str, options);
 	}
 	
 	Fatal(str, die = 0, echo = 0)
@@ -191,9 +189,8 @@ class LogControl
 		if(echo){
 			options.echo = 1;
 		}
-		let added = this.Add(str, options);
 		
-		return added;
+		return this.Add(str, options);
 	}
 	
 }

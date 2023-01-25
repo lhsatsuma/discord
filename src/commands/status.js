@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder,PermissionFlagsBits} = require('discor
 const returned = client.create(
     new SlashCommandBuilder()
         .setName('status')
-        .setDescription('[ADMIN] Status of System BOT')
+        .setDescription('[SUPERADMIN] Status of System BOT')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 );
 module.exports = {
@@ -10,8 +10,14 @@ module.exports = {
     subcommands: returned.subcommands,
     cooldown: 3,
     async execute(interaction) {
-
-        const ProcessRunning = require('../../Process/ProcessRunning.js');
+        if(!client.channelSuperAdmin(interaction.channel.id)){
+            await interaction.reply({
+                content: 'Not allowed to execute this command here.',
+                ephemeral: true,
+            });
+            return false;
+        }
+        const ProcessRunning = require('../Process/ProcessRunning.js');
         let running = new ProcessRunning();
         let embedMsg = new EmbedBuilder()
             .setColor(getColor('GREEN'))
