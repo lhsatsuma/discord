@@ -4,7 +4,7 @@
 Project tested and running with:
 
 [![NPM Version](https://img.shields.io/badge/npm-9.4.0-green)](https://www.npmjs.com/)
-[![Node Version](https://img.shields.io/badge/nodejs-18.13.0-green)](https://nodejs.org/)
+[![Node Version](https://img.shields.io/badge/nodejs-19.5.0-green)](https://nodejs.org/)
 
 ## NPM Dependecies
 [![Discord Emoji Converter](https://img.shields.io/npm/v/discord-emoji-converter?color=success&label=Discord%20Emoji%20Converter)](https://www.npmjs.com/package/discord-emoji-converter)
