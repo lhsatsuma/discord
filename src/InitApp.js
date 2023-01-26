@@ -235,7 +235,7 @@ class discordAppClient extends Client
 		}
 
 		let valid = false;
-		bot_cfg.admin_channel_id.forEach((idx, channel) => {
+		bot_cfg.admin_channel_id.forEach((channel) => {
 			if(!valid && compare.toString() === channel.toString()){
 				valid = true;
 				return true;

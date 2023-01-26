@@ -56,14 +56,24 @@ class ProcessRunning
 	{
 		let BeanBase = require('../Bean.js');
 		let bean = new BeanBase();
-		
-		let returnStr = '**DATE: '+bean.dbh.formatField('datetime', new Date())+'**';
 
-		returnStr += "\n\n**===>DBIKE BOT:<===**\n";
-		returnStr += "STATUS: **RUNNING ON PID: "+process.pid+"**\n";
-		returnStr += "UPTIME: **"+parseInt(process.uptime())+" seconds**\n";
-		returnStr += "HEARTBEAT: **"+bot_cfg.heartbeat+" seconds**\n";
-		return returnStr;
+		let platform = process.platform;
+		const date = bean.dbh.formatField('datetime', new Date());
+		const uptime = parseInt(process.uptime());
+		switch (process.platform) {
+			case 'win32' : platform = 'Windows'; break;
+			case 'darwin' : platform = 'Mac'; break;
+			case 'linux' : platform = 'Linux'; break;
+			default: break;
+		}
+
+		return `**DATE: ${date}**
+		
+		**PID:** ${process.pid}
+		**OS:** ${platform}
+		**UPTIME:** ${uptime} seconds
+		**HEARTBEAT:** ${bot_cfg.heartbeat} seconds
+		`;
 	}
 
 	calcUpTime
