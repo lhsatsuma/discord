@@ -59,7 +59,12 @@ class ProcessRunning
 
 		let platform = process.platform;
 		const date = bean.dbh.formatField('datetime', new Date());
-		const uptime = parseInt(process.uptime());
+		let uptime = process.uptime();
+
+		uptime = Math.floor(uptime / (60*60)).toString().padStart(2, '0') + ':' + Math.floor(uptime % (60*60) / 60).toString().padStart(2, '0') + ':' + Math.floor(uptime % 60).toString().padStart(2, '0');
+
+
+
 		switch (process.platform) {
 			case 'win32' : platform = 'Windows'; break;
 			case 'darwin' : platform = 'Mac'; break;
@@ -71,8 +76,12 @@ class ProcessRunning
 		
 		**PID:** ${process.pid}
 		**OS:** ${platform}
-		**UPTIME:** ${uptime} seconds
+		**UPTIME:** ${uptime}
 		**HEARTBEAT:** ${bot_cfg.heartbeat} seconds
+		
+		**NPM Version:** ${process.version}
+		**Discord.JS Version:** v${Discord.version}
+		**App Version:** v${app_version}
 		`;
 	}
 
