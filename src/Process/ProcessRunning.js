@@ -61,7 +61,11 @@ class ProcessRunning
 		const date = bean.dbh.formatField('datetime', new Date());
 		let uptime = process.uptime();
 
-		uptime = Math.floor(uptime / (60*60)).toString().padStart(2, '0') + ':' + Math.floor(uptime % (60*60) / 60).toString().padStart(2, '0') + ':' + Math.floor(uptime % 60).toString().padStart(2, '0');
+		let days = Math.floor(uptime / (3600*24));
+		let hours = Math.floor(uptime % (3600*24) / 3600);
+		let minutes = Math.floor(uptime % 3600 / 60);
+		let seconds = Math.floor(uptime % 60);
+		uptime = (days ? days+' days ' : '')+(hours ? hours+ ' hours ' : '')+(minutes ? minutes+ ' minutes ' : '')+(seconds ? seconds+ ' seconds' : '');
 
 
 
