@@ -1,5 +1,7 @@
 {
-    "admin_channel_id": "<CHANNEL_ID_FOR_GENERAL_ADMIN_COMMANDS>",
+    "admin_channel_id": [
+        "<CHANNEL_ID_FOR_GENERAL_ADMIN_COMMANDS>"
+    ],
     "log_dir": "./logs/",
     "log_options": {
         "default_op": {

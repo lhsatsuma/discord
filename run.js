@@ -1,5 +1,5 @@
 global.entryPoint = 'app';
-global.app_version = '3.5.1';
+global.app_version = '3.6.0';
 
 global.startAppTime = new Date();
 try {
@@ -22,7 +22,8 @@ try {
 				console.error(err);
 			});
 			client.once('ready', async () => {
-				global.super_admin_channel = client.channels.cache.find(channel => channel.id === bot_cfg.admin_channel_id);
+				let channel_admin = typeof bot_cfg.admin_channel_id === 'string' ? bot_cfg.admin_channel_id : bot_cfg.admin_channel_id[0];
+				global.super_admin_channel = client.channels.cache.find(channel => channel.id === channel_admin);
 				client.log.Info("--------------------------");
 				client.log.Info('BOT IS UP AND RUNNING!');
 				client.log.Info("--------------------------");

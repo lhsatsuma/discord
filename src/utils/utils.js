@@ -82,29 +82,34 @@ global.requireAgain = function(path)
 	return require(path);
 }
 
+let heartbeatInterval = null;
+let msgHeartbeat = null;
 global.sendHeartbeat = async () => {
-	if(parseInt(global.bot_cfg.heartbeat) > 0 && !!global.client.log && global.super_admin_channel){
-		if(global.last_message_heartbeat){
-			try {
-				await global.last_message_heartbeat.delete();
-			}catch(e){
-				client.log.Error('Cannot delete heartbeat message: '+e);
-			}
-		}
-		let dateNow = new Date();
-		const { EmbedBuilder} = require("discord.js");
-		const exampleEmbed = new EmbedBuilder()
-			.setColor('#0099ff')
-			.setTitle("Sending a heartbeat! I'm still alive!!!")
-			.setAuthor(client.author)
-			.setThumbnail(global.super_admin_channel.guild.iconURL())
-			.setDescription("Data: "+dateNow.toLocaleString('pt-BR'));
-		global.last_message_heartbeat = await global.super_admin_channel.send({ embeds: [exampleEmbed] });
-
-		setTimeout(async () => {
-			await sendHeartbeat();
-		}, global.bot_cfg.heartbeat * 1000);
+	if(heartbeatInterval) {
+		client.log.Info('Clearing interval of heartbeat');
+		clearInterval(heartbeatInterval);
 	}
+	heartbeatInterval = setInterval(async () => {
+		if(parseInt(global.bot_cfg.heartbeat) > 0 && !!global.client.log && global.super_admin_channel){
+			let dateNow = new Date();
+			const { EmbedBuilder} = require("discord.js");
+			const exampleEmbed = new EmbedBuilder()
+				.setColor('#0099ff')
+				.setTitle("Sended a heartbeat!")
+				.setAuthor(client.author)
+				.setThumbnail(global.super_admin_channel.guild.iconURL())
+				.setDescription("Last Update: "+dateNow.toLocaleString('pt-BR'));
+			if(msgHeartbeat){
+				try{
+					await msgHeartbeat.edit({ embeds: [exampleEmbed] });
+					return true;
+				}catch(e){
+					client.log.Error('Error updating heartbeat: ' + e);
+				}
+			}
+			msgHeartbeat = await global.super_admin_channel.send({ embeds: [exampleEmbed] });
+		}
+	}, global.bot_cfg.heartbeat * 1000);
 }
 
 global.sleep = (ms) => {
@@ -140,7 +145,7 @@ global.numberToStr = (str) => {
 }
 
 global.reacts = async (message, reacts) => {
-	return new Promise((resolve, reject) => {
+	return new Promise((resolve) => {
 		reacts.forEach((emoji, idx) => {
 			message.react(emoji).then(() => {
 				if(idx == reacts.length-1){

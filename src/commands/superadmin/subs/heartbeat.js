@@ -42,6 +42,7 @@ module.exports = {
                 global.bot_cfg = requireAgain(process.cwd() + '/config/config.json');
                 client.log.Info('Reloaded config.json');
             }
+            await sendHeartbeat();
         }catch(e) {
             client.log.Error('Failed to set new heartbeat: ' + e);
         }
