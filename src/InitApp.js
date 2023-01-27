@@ -36,7 +36,6 @@ class discordAppClient extends Client
 		this.log.Info("=".repeat(40));
 
 		this.commands = new Collection();
-		this.fs = require("fs");
 		
 		this.checkRunningStartVars();
 
@@ -135,7 +134,7 @@ class discordAppClient extends Client
 	async loadCommands()
 	{
 		const basePath = './src/commands/';
-		const commandPaths = this.fs.readdirSync(basePath);
+		const commandPaths = fs.readdirSync(basePath);
 		const rest = new REST().setToken(bot_cfg.discordOptions.token);
 		let commandsTmp = [];
 		this.commands = new Collection();
@@ -146,7 +145,7 @@ class discordAppClient extends Client
 			let command = null;
 			let absolutePath = null;
 
-			if(!this.fs.lstatSync(basePath+commandName).isDirectory()){
+			if(!fs.lstatSync(basePath+commandName).isDirectory()){
 				commandPath = basePath;
 				if (this.commands.get(commandName)) {
 					this.log.Error('Command already loaded: ' + commandFile);
@@ -155,7 +154,7 @@ class discordAppClient extends Client
 				absolutePath = process.cwd() + '/src/commands/' + commandName;
 			}else {
 
-				if (this.fs.existsSync(commandFile)) {
+				if (fs.existsSync(commandFile)) {
 					absolutePath = process.cwd() + '/src/commands/' + commandName + '/' + commandName + '.js';
 				} else {
 					this.log.Error('CommandDir: ' + commandName + ' dont have JS');
@@ -199,8 +198,8 @@ class discordAppClient extends Client
 		let subReturn = {};
 		const subPath = process.cwd()+'/src/commands/'+command+'/subs/';
 		try {
-			if(this.fs.existsSync(subPath)) {
-				const subs = this.fs.readdirSync(subPath);
+			if(fs.existsSync(subPath)) {
+				const subs = fs.readdirSync(subPath);
 				for (const subFileName of subs) {
 					let subName = subFileName.replace('.js', '');
 					let subFile = subPath + subFileName;

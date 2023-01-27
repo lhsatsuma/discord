@@ -1,5 +1,5 @@
 global.entryPoint = 'app';
-global.app_version = '3.6.3';
+global.app_version = '3.6.4';
 
 global.startAppTime = new Date();
 try {
@@ -28,9 +28,7 @@ try {
 				client.log.Info('BOT IS UP AND RUNNING!');
 				client.log.Info("--------------------------");
 				if (parseInt(bot_cfg.heartbeat) > 0) {
-					setTimeout(() => {
-						sendHeartbeat();
-					}, bot_cfg.heartbeat * 1000);
+					await sendHeartbeat();
 				}
 			});
 			client.log.Debug('Trying to connect into Discord');

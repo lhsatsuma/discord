@@ -88,6 +88,7 @@ global.sendHeartbeat = async () => {
 	if(heartbeatInterval) {
 		client.log.Info('Clearing interval of heartbeat');
 		clearInterval(heartbeatInterval);
+		msgHeartbeat = null;
 	}
 	heartbeatInterval = setInterval(async () => {
 		if(parseInt(global.bot_cfg.heartbeat) > 0 && !!global.client.log && global.super_admin_channel){
