@@ -99,7 +99,7 @@ class discordAppClient extends Client
 						this.log.Error(`No command matching ${commandName} was found.`);
 						return;
 					}
-					this.log.Debug(`Received command: ${commandName}`);
+					this.log.Debug(`[${interaction.channel.id}][${interaction.user.id}] Issued command: ${commandName}`);
 
 					let cooldownLeft = 0;
 					if(!!coolDown){
@@ -124,7 +124,7 @@ class discordAppClient extends Client
 							ephemeral: true
 						});
 					}
-					this.log.Debug(`Received command: ${commandName} DONE`);
+					this.log.Debug(`[${interaction.channel.id}][${interaction.user.id}] Issued command: ${commandName} DONE`);
 				});
 				resolve(status_conn.status);
 			});
