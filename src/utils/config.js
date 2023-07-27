@@ -1,4 +1,4 @@
-global.app_version = '4.1.2a';
+global.app_version = '1.0r';
 
 /**
  *
