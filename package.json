@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@devraelfreeze/discordjs-pagination": "^2.7.6",
+    "cronstrue": "^2.28.0",
+    "discord-emoji-converter": "^1.2.8",
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.3.0",
+    "moment": "^2.29.4",
+    "mysql2": "^3.3.5",
+    "node-cron": "^3.0.2",
+    "pidusage": "^3.0.2",
+    "read-last-lines": "^1.8.0"
+  }
+}
