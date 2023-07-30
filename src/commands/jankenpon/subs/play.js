@@ -1,5 +1,5 @@
 const { EmbedBuilder} = require('discord.js');
-const BeanJokenpo = getUtils().requireAgain(process.cwd()+'/src/models/Jokenpo.js');
+const BeanJankenpon = getUtils().requireAgain(process.cwd()+'/src/models/Jankenpon.js');
 
 module.exports = {
     data: (subcommand) =>
@@ -8,7 +8,7 @@ module.exports = {
     .setDescription('Play a match!')
     .addStringOption(option =>
         option.setName('choose')
-            .setDescription('The gif category')
+            .setDescription('Choose your play')
             .setRequired(true)
             .addChoices(
                 { name: 'Paper', value: 'paper' },
@@ -23,7 +23,7 @@ module.exports = {
 
         if(options.indexOf(choose) !== -1){
 
-            let bean = new BeanJokenpo();
+            let bean = new BeanJankenpon();
 
             bean.user_id = interaction.user.id;
             let random = Math.floor(Math.random() * options.length);
@@ -51,7 +51,7 @@ module.exports = {
             }
 
             let embedMsg = new EmbedBuilder();
-            embedMsg.setTitle(interaction.user.username+' played jokenpo!');
+            embedMsg.setTitle(interaction.user.username+' played jankenpon!');
             let description = "You played: **"+choose.toUpperCase()+"**\n";
             let color = getUtils().getColor('ORANGE');
 
@@ -83,7 +83,7 @@ module.exports = {
 
 
         await interaction.reply({
-            content: 'Error while playing jokenpo',
+            content: 'Error while playing jankenpon',
             ephemeral: true,
         });
         return false;

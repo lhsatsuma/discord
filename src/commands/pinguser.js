@@ -25,10 +25,10 @@ module.exports = {
 	async execute(interaction) {
 		const target = interaction.options.getUser('target');
 		const times = interaction.options.getInteger('times');
-		interaction.reply('Pingando usuario...');
+		interaction.reply('Pinging user...');
 		let messageSended = null;
 		for(let i=0;i<times;i++){
-		 	messageSended = await interaction.channel.send('<@'+target.id+'> Você foi pingado!');
+		 	messageSended = await interaction.channel.send('<@'+target.id+'> You were pinged!');
 			await getUtils().sleep(2000);
 			if(i<times-1) {
 				await messageSended.delete();

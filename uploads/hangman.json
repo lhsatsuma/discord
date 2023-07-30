@@ -1,25 +1,25 @@
 [
     {
         "level": 1,
-        "palavra": "guarda chuva",
+        "word": "guarda chuva",
         "chances": 5,
-        "dicas": [
+        "hints": [
             "Utilizo quando est\u00e1 chovendo"
         ]
     },
     {
         "level": 1,
-        "palavra": "garrafa",
+        "word": "garrafa",
         "chances": 5,
-        "dicas": [
+        "hints": [
             "Guardo l\u00edquidos dentro"
         ]
     },
     {
         "level": 1,
-        "palavra": "mouse",
+        "word": "mouse",
         "chances": 5,
-        "dicas": [
+        "hints": [
             "Sou usado no computador",
             "Tenho uma rodinha",
             "Sou usado se quero abrir um arquivo no computador"
@@ -27,27 +27,27 @@
     },
     {
         "level": 1,
-        "palavra": "teclado",
+        "word": "teclado",
         "chances": 5,
-        "dicas": [
+        "hints": [
             "Sou usado no computador",
             "Sou usado para digitar"
         ]
     },
     {
         "level": 1,
-        "palavra": "celular",
+        "word": "celular",
         "chances": 2,
-        "dicas": [
+        "hints": [
             "Sou muito comum hoje em dia",
             "Sou usado para se comunicar com as outras pessoas"
         ]
     },
     {
         "level": 2,
-        "palavra": "chave de roda",
+        "word": "chave de roda",
         "chances": 4,
-        "dicas": [
+        "hints": [
             "Sou usado no carro",
             "Sou usado em emerg\u00eancias",
             "Meu formato pode ser de um X"
@@ -55,35 +55,35 @@
     },
     {
         "level": 1,
-        "palavra": "amarelo",
+        "word": "amarelo",
         "chances": 3,
-        "dicas": [
+        "hints": [
             "Sou uma cor",
             "Sou uma fruta"
         ]
     },
     {
         "level": 1,
-        "palavra": "faca",
+        "word": "faca",
         "chances": 3,
-        "dicas": [
+        "hints": [
             "Sou utilizado na cozinha"
         ]
     },
     {
         "level": 1,
-        "palavra": "prato",
+        "word": "prato",
         "chances": 3,
-        "dicas": [
+        "hints": [
             "Toda casa tem um",
             "Sou utilizado na cozinha"
         ]
     },
     {
         "level": 1,
-        "palavra": "chuveiro",
+        "word": "chuveiro",
         "chances": 3,
-        "dicas": [
+        "hints": [
             "Posso ser frio ou quente",
             "Toda casa tem um"
         ]

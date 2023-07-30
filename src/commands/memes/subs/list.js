@@ -10,7 +10,7 @@ module.exports = {
     async execute(interaction) {
 
         let bean = new BeanMemes();
-        bean.server = interaction.guild.id;
+        bean.server = interaction.guildId;
         let results = await bean.getList();
         if(!results.length){
             interaction.reply({

@@ -13,7 +13,7 @@ module.exports = {
             .setColor(getUtils().getColor('BLUE'));
 
         let bean = new BeanMemes();
-        bean.server = interaction.guild.id;
+        bean.server = interaction.guildId;
         await bean.selectRandom();
 
 

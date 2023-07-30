@@ -7,7 +7,7 @@ module.exports = {
             .setDescription('List channels to notify birthdays'),
     async execute(interaction) {
         let bean = new BeanServers();
-        bean.server = interaction.guild.id;
+        bean.server = interaction.guildId;
 
         await bean.selectActive();
 

@@ -20,11 +20,12 @@ module.exports = {
                     )
             ),
     async execute(interaction) {
-        const againstOption = interaction.options.getUser('against');
-        const dificulty = interaction.options.getString('dificulty');
+        const against = interaction.options.getUser('against') ?? bot_cfg.BOT_ID;
+        const dificulty = interaction.options.getString('dificulty') ?? 'easy';
 
-        const BeanVelha = getUtils().requireAgain(process.cwd()+'/src/models/Velha.js');
+        const BeanVelha = getUtils().requireAgain(process.cwd()+'/src/models/Ttt.js');
         let bean = new BeanVelha();
+        bean.server = interaction.guildId;
         bean.user_id = interaction.user.id;
         await bean.selectActive();
 
@@ -34,10 +35,6 @@ module.exports = {
         }
 
         await bean.selectActive();
-        let against = bot_cfg.BOT_ID;
-        if(!!againstOption){
-            against = againstOption.id;
-        }
 
         bean.against = against;
         bean.status = 'running';

@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('sorteio')
+        .setName('sortition')
         .setDescription('Sorteio de um número!')
         .addIntegerOption(option =>
             option

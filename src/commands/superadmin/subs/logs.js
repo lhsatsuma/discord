@@ -1,16 +1,11 @@
 const logControl = require("../../../utils/LogControl");
+const {pagination, ButtonTypes, ButtonStyles} = require("@devraelfreeze/discordjs-pagination");
+const {get} = require("pidusage/lib/history");
 module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('logs')
             .setDescription('[SUPERADMIN] Check logs')
-            .addIntegerOption(option =>
-                option
-                    .setName('lines')
-                    .setDescription('Lines to return')
-                    .setRequired(true)
-                    .setMinValue(1)
-                    .setMaxValue(100))
             .addStringOption(option =>
                 option.setName('run')
                     .setDescription('Log of app or scheduler')
@@ -27,21 +22,33 @@ module.exports = {
             });
             return false;
         }
-        const lines = interaction.options.getInteger('lines') ? interaction.options.getInteger('lines') : 10;
-        const run = interaction.options.getString('run') ? interaction.options.getString('run') : 'app';
+        const run = interaction.options.getString('run') ?? 'app';
 
         let logCheck = new logControl(bot_cfg.LOG_DIR, run+'.log', {level_register: []});
-        let result = await logCheck.getLines(lines);
+        let result = await logCheck.getLines(30);
+        result = result.toString().split('\n');
 
-
-        if(result.length > 1900){
-            result = result.slice(-1900);
+        let resultArr = [];
+        let description = '```';
+        result.forEach((line) => {
+            if(description.length + line.length > 1900){
+                description += '```';
+                resultArr.push(description);
+                description = '```';
+            }
+            description += '\n'+line;
+        });
+        if(description !== '```'){
+            description += '```';
+            resultArr.push(description);
         }
 
-        interaction.reply({
-            content: '```'+result+'```',
-            ephemeral: true
-        })
+        for (const ipt of resultArr) {
+            await interaction.channel.send({
+               content: ipt,
+               ephemeral: true,
+            });
+        }
         return true;
     },
 };

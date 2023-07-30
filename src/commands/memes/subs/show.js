@@ -15,7 +15,7 @@ module.exports = {
         const searchStr = interaction.options.getString('search').toString();
 
         let bean = new BeanMemes();
-        bean.server = interaction.guild.id;
+        bean.server = interaction.guildId;
 
         await bean.searchMeme(searchStr);
 

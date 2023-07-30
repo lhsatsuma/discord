@@ -1,5 +1,5 @@
 const { EmbedBuilder} = require('discord.js');
-const BeanJokenpo = getUtils().requireAgain(process.cwd()+'/src/models/Jokenpo.js');
+const BeanJankenpon = getUtils().requireAgain(process.cwd()+'/src/models/Jankenpon.js');
 
 module.exports = {
     data: (subcommand) =>
@@ -9,10 +9,10 @@ module.exports = {
     async execute(interaction) {
             let embedMsg = new EmbedBuilder()
                 .setColor(getUtils().getColor('GREEN'))
-                .setTitle('Status Jokenpo of '+interaction.user.username)
+                .setTitle('Status Jankenpon of '+interaction.user.username)
                 .setDescription('**status reseted!**');
 
-            let bean = new BeanJokenpo();
+            let bean = new BeanJankenpon();
 
             bean.user_id = interaction.user.id;
             await bean.resetScore();

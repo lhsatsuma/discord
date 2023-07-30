@@ -13,7 +13,7 @@ module.exports = {
     cooldown: 2,
     async execute(interaction) {
         let description = `**CHANNEL INFO**
-        Server: ${interaction.guild.name} [#${interaction.guild.id}]
+        Server: ${interaction.guild.name} [#${interaction.guildId}]
         Channel: ${interaction.channel.name} [#${interaction.channel.id}]
         Author: ${interaction.user.username} [#${interaction.user.id}]`;
 

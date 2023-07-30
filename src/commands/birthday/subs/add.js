@@ -48,7 +48,7 @@ module.exports = {
         }
 
         let bean = new BeanServerMembers();
-        bean.server = interaction.guild.id;
+        bean.server = interaction.guildId;
         bean.user_id = user.id;
 
         await bean.selectActive();

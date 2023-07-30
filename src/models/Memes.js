@@ -35,8 +35,10 @@ class BeanMemes extends BeanBase
 	}
     selectRandom()
     {
-        this.dbh.order_by = 'counter ASC,rand()';
-        return this.select(`server = '${this.server}' AND counter <= COALESCE((SELECT CAST(SUM(counter)/count(id) as UNSIGNED) as media FROM ${this.dbh.table} WHERE server = '${this.server}'), 0)`);
+        // this.dbh.order_by = 'counter ASC,rand()';
+        // return this.select(`server = '${this.server}' AND counter <= COALESCE((SELECT CAST(SUM(counter)/count(id) as UNSIGNED) as media FROM ${this.dbh.table} WHERE server = '${this.server}'), 0)`);
+        this.dbh.order_by = 'rand()';
+        return this.select(`server = '${this.server}'`);
     }
     searchMeme(search)
     {

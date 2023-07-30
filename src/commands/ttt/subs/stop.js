@@ -1,4 +1,4 @@
-const BeanVelha = getUtils().requireAgain(process.cwd()+'/src/models/Velha.js');
+const BeanVelha = getUtils().requireAgain(process.cwd()+'/src/models/Ttt.js');
 
 module.exports = {
     data: (subcommand) =>
@@ -8,6 +8,7 @@ module.exports = {
     async execute(interaction) {
         let bean = new BeanVelha();
         bean.user_id = interaction.user.id;
+        bean.server = interaction.guildId;
         await bean.selectActive();
 
         if(!bean.id){

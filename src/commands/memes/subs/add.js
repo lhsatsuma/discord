@@ -28,7 +28,7 @@ module.exports = {
         }
 
         let bean = new BeanMemes();
-        bean.server = interaction.guild.id;
+        bean.server = interaction.guildId;
         bean.url = url_image;
 
         let exists = await bean.checkExists();

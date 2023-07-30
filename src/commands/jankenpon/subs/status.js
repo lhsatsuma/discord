@@ -1,5 +1,5 @@
 const { EmbedBuilder} = require('discord.js');
-const BeanJokenpo = getUtils().requireAgain(process.cwd()+'/src/models/Jokenpo.js');
+const BeanJankenpon = getUtils().requireAgain(process.cwd()+'/src/models/Jankenpon.js');
 
 module.exports = {
     data: (subcommand) =>
@@ -8,7 +8,7 @@ module.exports = {
             .setDescription('Your status!'),
     async execute(interaction) {
 
-        let bean = new BeanJokenpo();
+        let bean = new BeanJankenpon();
 
         bean.user_id = interaction.user.id;
 
@@ -92,7 +92,7 @@ module.exports = {
 
             let embedMsg = new EmbedBuilder()
                 .setColor(getUtils().getColor('ORANGE'))
-                .setTitle('Scores on Jokenpo of '+interaction.user.username)
+                .setTitle('Scores on Jankenpon of '+interaction.user.username)
                 .setDescription(description)
             await interaction.reply({
                 embeds: [embedMsg]

@@ -2,8 +2,8 @@ const { SlashCommandBuilder} = require('discord.js');
 
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('velha')
-        .setDescription('Plays a tic-tac-toe game')
+        .setName('hangman')
+        .setDescription('Plays a hangman game!')
 );
 module.exports = {
     data: returned.data,

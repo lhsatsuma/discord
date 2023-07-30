@@ -50,7 +50,7 @@ class BeanBase
 	
 	selectActive()
 	{
-		return this.select("user_id = '"+this.user_id+"' AND status <> 'done'");
+		return this.select(`server = '${this.server}' AND user_id = '${this.user_id}' AND status <> 'done'`);
 	}
 	
 	async save()

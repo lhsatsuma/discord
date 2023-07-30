@@ -1,4 +1,4 @@
-const BeanForca = getUtils().requireAgain(process.cwd()+'/src/models/Forca.js');
+const BeanHangman = getUtils().requireAgain(process.cwd()+'/src/models/Hangman.js');
 
 module.exports = {
     data: (subcommand) =>
@@ -6,7 +6,7 @@ module.exports = {
             .setName('stop')
             .setDescription('Stop a current match!'),
     async execute(interaction) {
-        let bean = new BeanForca();
+        let bean = new BeanHangman();
         bean.user_id = interaction.user.id;
         await bean.selectActive();
 

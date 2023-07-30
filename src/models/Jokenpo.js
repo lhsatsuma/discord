@@ -1,10 +1,10 @@
 const BeanBase = require('../utils/Bean.js');
-class BeanJokenpo extends BeanBase
+class BeanJankenpon extends BeanBase
 {
 	constructor()
 	{
 		super();
-		this.dbh.table = 'jokenpo';
+		this.dbh.table = 'jankenpon';
         this.fields = {
             id: {
                 type: 'id',
@@ -223,4 +223,4 @@ class BeanJokenpo extends BeanBase
 	}
 }
 
-module.exports = BeanJokenpo;
+module.exports = BeanJankenpon;

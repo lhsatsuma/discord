@@ -5,7 +5,7 @@ class BeanVelha extends BeanBase
 	{
 		super();
 
-		this.dbh.table = 'jdv';
+		this.dbh.table = 'tic_tac_toe';
         this.fields = {
             id: {
                 type: 'id',
@@ -16,6 +16,9 @@ class BeanVelha extends BeanBase
             date_modified: {
                 type: 'datetime',
             },
+            server: {
+                type: 'varchar',
+            },
             user_id: {
                 type: 'varchar',
             },
@@ -23,9 +26,6 @@ class BeanVelha extends BeanBase
                 type: 'varchar',
             },
             level: {
-                type: 'varchar',
-            },
-            last_msg_id: {
                 type: 'varchar',
             },
             status: {
