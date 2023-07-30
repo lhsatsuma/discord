@@ -1,4 +1,13 @@
-global.app_version = '1.1.0a';
+/**
+ * x.y.z.wt
+ * x - Global App Version
+ * y - Release Version
+ * z - Fix Version
+ * w - Hotfix Version
+ * t - Type Version (Alpha, Beta or Release)
+ * @type {string}
+ */
+global.app_version = '1.1.0.1a';
 
 /**
  *
