@@ -122,27 +122,5 @@ class ProcessRunning
 		let seconds = Math.floor(uptime % 60);
 		return (days ? days+' days ' : '')+(hours ? hours+ ' hours ' : '')+(minutes ? minutes+ ' minutes ' : '')+(seconds ? seconds+ ' seconds' : '');
 	}
-	async mount_str_check_run()
-	{
-		let BeanBase = require('./Bean.js');
-		let bean = new BeanBase();
-
-		let info = this.getSysInfo();
-		let uptime = await this.getUptime();
-
-		const date = bean.unformatField('datetime-locale', new Date());
-
-		return `**DATE: ${date}**
-		
-		**PID:** ${info.pid}
-		**OS:** ${info.platform}
-		**UPTIME:** ${uptime}
-		**HEARTBEAT:** ${info.heartbeat} seconds
-		
-		**NPM Version:** ${info.nodeversion}
-		**Discord.JS Version:** v${info.discordjs}
-		**App Version:** v${info.appversion}
-		`;
-	}
 }
 module.exports = ProcessRunning;

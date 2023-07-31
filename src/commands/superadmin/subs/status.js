@@ -1,7 +1,6 @@
 const { EmbedBuilder} = require('discord.js');
 const {pagination, ButtonTypes, ButtonStyles} = require("@devraelfreeze/discordjs-pagination");
 const BeanBase = require("../../../utils/Bean");
-const {get} = require("pidusage/lib/history");
 module.exports = {
     data: (subcommand) =>
         subcommand
@@ -15,8 +14,6 @@ module.exports = {
             });
             return false;
         }
-
-        const BeanBase = getUtils().requireAgain(process.cwd()+'/src/utils/Bean.js');
         const bean = new BeanBase();
         const date = bean.unformatField('datetime-locale', new Date());
         const ProcessRunning = require('../../../utils/ProcessRunning.js');
@@ -33,6 +30,7 @@ module.exports = {
             .setThumbnail(bot_cfg.BOT_ICON)
             .setDescription(`**${date}**\n\nUptime: ${appUptime}`)
             .addFields([
+                { name: 'OS', value: appInfo.platform, inline: true},
                 { name: 'PID', value: appInfo.pid, inline: true},
                 { name: 'Node Version', value: appInfo.nodeversion, inline: true},
                 { name: 'DiscordJS Version', value: appInfo.discordjs, inline: true},
@@ -49,6 +47,7 @@ module.exports = {
                 .setThumbnail(bot_cfg.BOT_ICON)
                 .setDescription(`**${date}**\n\nUptime: ${schedulerUptime}`)
                 .addFields([
+                    { name: 'OS', value: schedulerInfo.platform, inline: true},
                     { name: 'PID', value: schedulerInfo.pid, inline: true},
                     { name: 'Node Version', value: schedulerInfo.nodeversion, inline: true},
                     { name: 'DiscordJS Version', value: schedulerInfo.discordjs, inline: true},
