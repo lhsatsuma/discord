@@ -43,6 +43,9 @@ module.exports = {
             resultArr.push(description);
         }
 
+        await interaction.deferReply();
+        await interaction.deleteReply();
+
         for (const ipt of resultArr) {
             await interaction.channel.send({
                content: ipt,
