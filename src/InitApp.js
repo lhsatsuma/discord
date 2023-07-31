@@ -215,20 +215,12 @@ class discordAppClient extends Client
 			let command = null;
 			let absolutePath = null;
 
-			if (!fs.lstatSync(basePath + commandName).isDirectory()) {
-				commandPath = basePath;
-				if (this.commands.get(commandName)) {
-					log.Error('Command already loaded: ' + commandFile);
-					continue;
-				}
-				absolutePath = process.cwd() + '/src/commands/' + commandName;
-			} else {
 
-				if (fs.existsSync(commandFile)) {
-					absolutePath = process.cwd() + '/src/commands/' + commandName + '/' + commandName + '.js';
-				} else {
-					log.Error('CommandDir: ' + commandName + ' dont have JS');
-				}
+			if (fs.existsSync(commandFile)) {
+				absolutePath = process.cwd() + '/src/commands/' + commandName + '/' + commandName + '.js';
+			} else {
+				log.Error('CommandDir: ' + commandName + ' dont have JS');
+				continue;
 			}
 
 			if (this.commands.get(commandName)) {

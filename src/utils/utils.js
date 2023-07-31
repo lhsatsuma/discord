@@ -2,6 +2,7 @@ var globalClassUtils = null;
 
 const { getEmoji, getShortcode } = require("discord-emoji-converter");
 const {EmbedBuilder} = require("discord.js");
+var moment = require('moment');
 global.getUtils = () => {
 	if(globalClassUtils == null){
 		globalClassUtils = new Utils();
@@ -99,6 +100,13 @@ class Utils{
 		}
 		this.heartbeatInterval = setInterval(async () => {
 			if(bot_cfg.HEARTBEAT > 0 && client.super_admin_channel){
+
+				//Reset heartbeat to a new message.
+				if(this.msgHeartbeat){
+					if(moment().format('YYYYMMDD') !== this.msgHeartbeat.date){
+						this.msgHeartbeat = null;
+					}
+				}
 				let dateNow = new Date();
 				const { EmbedBuilder} = require("discord.js");
 				const exampleEmbed = new EmbedBuilder()
@@ -109,13 +117,15 @@ class Utils{
 					.setDescription("Last Update: "+dateNow.toLocaleString('pt-BR'));
 				if(this.msgHeartbeat){
 					try{
-						await this.msgHeartbeat.edit({ embeds: [exampleEmbed] });
+						await this.msgHeartbeat.message.edit({ embeds: [exampleEmbed] });
 						return true;
 					}catch(e){
 						log.Error('Error updating heartbeat: ' + e);
 					}
 				}
-				this.msgHeartbeat = await client.super_admin_channel.send({ embeds: [exampleEmbed] });
+				this.msgHeartbeat = {};
+				this.msgHeartbeat.date = moment().format('YYYYMMDD');
+				this.msgHeartbeat.message = await client.super_admin_channel.send({ embeds: [exampleEmbed] });
 			}
 		}, bot_cfg.HEARTBEAT * 1000);
 	}

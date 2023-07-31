@@ -3,11 +3,11 @@
  * x - Global App Version
  * y - Release Version
  * z - Fix Version
- * w - Hotfix Version
+ * w - Build Version
  * t - Type Version (Alpha, Beta or Release)
  * @type {string}
  */
-global.app_version = '1.1.0.1a';
+global.app_version = '1.1.0.2a';
 
 /**
  *
@@ -66,3 +66,16 @@ for (let config_name in bot_cfg) {
         bot_cfg[config_name] = value_to;
     }
 }
+
+let required_envs = [
+    'BOT_TOKEN',
+    'BOT_ID',
+];
+
+required_envs.forEach((ipt) => {
+
+    if(!bot_cfg[ipt]){
+        console.log(ipt+' is empty on .env');
+        process.exit();
+    }
+});

@@ -1,5 +1,7 @@
 const { EmbedBuilder} = require('discord.js');
 const {pagination, ButtonTypes, ButtonStyles} = require("@devraelfreeze/discordjs-pagination");
+const BeanBase = require("../../../utils/Bean");
+const {get} = require("pidusage/lib/history");
 module.exports = {
     data: (subcommand) =>
         subcommand
@@ -13,24 +15,45 @@ module.exports = {
             });
             return false;
         }
+
+        const BeanBase = getUtils().requireAgain(process.cwd()+'/src/utils/Bean.js');
+        const bean = new BeanBase();
+        const date = bean.unformatField('datetime-locale', new Date());
         const ProcessRunning = require('../../../utils/ProcessRunning.js');
+
+
         let running = new ProcessRunning();
         let runningScheduler = new ProcessRunning('scheduler', false);
-        let embedMsg;
+        let appInfo = await running.getSysInfo();
+        let appUptime = await running.getUptime();
 
         let arrayEmbeds = [];
-        embedMsg = new EmbedBuilder()
+        let embedMsg = new EmbedBuilder()
             .setTitle('Status app')
             .setThumbnail(bot_cfg.BOT_ICON)
-            .setDescription(await running.mount_str_check_run())
+            .setDescription(`**${date}**\n\nUptime: ${appUptime}`)
+            .addFields([
+                { name: 'PID', value: appInfo.pid, inline: true},
+                { name: 'Node Version', value: appInfo.nodeversion, inline: true},
+                { name: 'DiscordJS Version', value: appInfo.discordjs, inline: true},
+                { name: 'App Version', value: appInfo.appversion, inline: true},
+            ])
             .setColor(getUtils().getColor('GREEN'));
         arrayEmbeds.push(embedMsg);
 
         if(await runningScheduler.check_running()) {
+            let schedulerInfo = await runningScheduler.getSysInfo();
+            let schedulerUptime = await runningScheduler.getUptime();
             embedMsg = new EmbedBuilder()
                 .setTitle('Status scheduler')
                 .setThumbnail(bot_cfg.BOT_ICON)
-                .setDescription(await runningScheduler.mount_str_check_run())
+                .setDescription(`**${date}**\n\nUptime: ${schedulerUptime}`)
+                .addFields([
+                    { name: 'PID', value: schedulerInfo.pid, inline: true},
+                    { name: 'Node Version', value: schedulerInfo.nodeversion, inline: true},
+                    { name: 'DiscordJS Version', value: schedulerInfo.discordjs, inline: true},
+                    { name: 'App Version', value: schedulerInfo.appversion, inline: true},
+                ])
                 .setColor(getUtils().getColor('GREEN'));
             arrayEmbeds.push(embedMsg);
         }

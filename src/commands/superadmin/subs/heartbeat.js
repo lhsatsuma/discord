@@ -37,7 +37,9 @@ module.exports = {
             let env_override = getUtils().getEnvOverride();
             env_override.HEARTBEAT = new_heartbeat;
             getUtils().saveEnvOverride(env_override, reloadcfg === 'yes');
-            await getUtils().sendHeartbeat();
+            if(reloadcfg === 'yes') {
+                await getUtils().sendHeartbeat();
+            }
         }catch(e) {
             log.Error('Failed to set new heartbeat: ' + e);
         }
