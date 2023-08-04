@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('show')
-            .setDescription('Show an meme with ID')
+            .setDescription('Show an meme with ID/Name')
             .addStringOption(search =>
                 search.setName('search')
                     .setDescription('ID/Nome do meme')

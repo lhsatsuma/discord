@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('reset')
-            .setDescription('Reset your status!'),
+            .setDescription('Reset your status on jankenpon'),
     async execute(interaction) {
             let embedMsg = new EmbedBuilder()
                 .setColor(getUtils().getColor('GREEN'))

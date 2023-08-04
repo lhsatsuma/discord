@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
     subcommand
     .setName('play')
-    .setDescription('Play a match!')
+    .setDescription('Play a match of Jankenpon')
     .addStringOption(option =>
         option.setName('choose')
             .setDescription('Choose your play')

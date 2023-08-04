@@ -4,7 +4,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('heartbeat')
-            .setDescription('[SUPERADMIN] Change heartbeat seconds')
+            .setDescription('[SUPERADMIN] Change heartbeat interval')
             .addIntegerOption(option =>
                 option
                     .setName('seconds')

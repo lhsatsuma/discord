@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('status')
-            .setDescription('Your status!'),
+            .setDescription('Member Statistics'),
     async execute(interaction) {
 
         let bean = new BeanJankenpon();

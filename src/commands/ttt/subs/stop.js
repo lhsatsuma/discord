@@ -4,7 +4,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('stop')
-            .setDescription('Stop a current match!'),
+            .setDescription('Stop a current match of tic-tac-toe'),
     async execute(interaction) {
         let bean = new BeanVelha();
         bean.user_id = interaction.user.id;

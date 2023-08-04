@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('rand')
-            .setDescription('Meme random')
+            .setDescription('Random meme')
     ,
     async execute(interaction) {
 

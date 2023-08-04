@@ -4,7 +4,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('play')
-            .setDescription('Play a match!')
+            .setDescription('Play a match of tic-tac-toe')
             .addUserOption(option =>
                 option
                     .setName('against')

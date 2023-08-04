@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('play')
-            .setDescription('Play a match of tic-tac-toe!'),
+            .setDescription('Play a match of hangman'),
     async execute(interaction) {
         let bean = new BeanHangman();
         bean.server = interaction.guildId;
@@ -59,7 +59,6 @@ module.exports = {
         const collector = interaction.channel.createMessageCollector({ filter, time: 120*1000 });
 
         collector.on('collect', async m => {
-            let description = '';
 
             const letter = m.content;
             let status_game = '';
@@ -87,6 +86,8 @@ module.exports = {
             }else{
                 status_game = bean.tryGuess(letter);
             }
+
+            let description = '';
 
             if(status_game == 'win'){
                 description = `${bean.mountSpots(true)}\n\n

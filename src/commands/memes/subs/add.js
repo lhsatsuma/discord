@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('add')
-            .setDescription('Adicione uma nova imagem de meme')
+            .setDescription('Add a new image meme')
             .addStringOption(url =>
                 url.setName('url')
                     .setDescription('URL image')

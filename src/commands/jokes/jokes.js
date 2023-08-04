@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const returned = client.create(
     new SlashCommandBuilder()
         .setName('jokes')
-        .setDescription('Jokes!')
+        .setDescription('Send a joke')
 );
 
 module.exports = {

@@ -2,7 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
 const returned = client.create(
 	new SlashCommandBuilder()
 		.setName('pinguser')
-		.setDescription('[ADMIN] Ping user X times!')
+		.setDescription('[ADMIN] Ping user X times')
 		.addUserOption(option =>
 			option
 				.setName('target')
