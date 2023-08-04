@@ -2,37 +2,30 @@ const readLastLines = require('read-last-lines');
 
 class LogControl
 {
-	constructor(dirPath, fileName, options = {})
+	fileName;
+	basePath;
+	datePath;
+	absolutPath;
+	error;
+	max_log_files = 99;
+	max_file_size = 10485760; //10MB
+	level_types = {
+		'1': 'DEBUG',
+		'2': 'INFO',
+		'3': 'ERROR',
+		'4': 'WARN',
+		'5': 'FATAL',
+	};
+	level_register = [1,2,3,4,5];
+	default_options = {
+		'level': 1,
+		'die': 0,
+		'echo': 1
+	};
+	constructor(fileName, options = {})
 	{
-		this.path = '';
-		this.logFile = '';
-		this.absolutPath = '';
-		this.error = '';
-		this.max_log_files = 99;
-		// this.max_file_size = 10; //10Bytes
-		this.max_file_size = 10485760; //10MB
-		this.level_types = {
-			'1': 'DEBUG',
-			'2': 'INFO',
-			'3': 'ERROR',
-			'4': 'WARN',
-			'5': 'FATAL',
-		};
-		this.level_register = [1,2,3,4,5];
-		this.default_options = {
-			'level': 1,
-			'die': 0,
-			'echo': 1
-		};
-		
-		if(dirPath.substring(dirPath.length - 1, dirPath.length) !== '/'){
-			dirPath += '/';
-		}
-		let date = new Date();
-		let dateFormat = date.getFullYear()+(parseInt(date.getMonth())+1).toString().padStart(2, '0')+date.getDate().toString().padStart(2, '0');
-		this.path = process.cwd()+'/'+dirPath+dateFormat+'/';
-		this.logFile = fileName;
-		this.absolutPath = this.path+this.logFile;
+		this.fileName = fileName;
+
 		if(typeof options.default_op !== 'undefined'){
 			for (var prop in this.default_options) {
 				let new_val = this.default_options[prop];
@@ -46,6 +39,30 @@ class LogControl
 		if(typeof options.level_register !== 'undefined'){
 			this.level_register = options.level_register;
 		}
+		this.setBasePath();
+	}
+
+	setBasePath()
+	{
+		if(this.datePath === this.getDatePath()){
+			return this;
+		}
+
+		this.datePath = this.getDatePath();
+		let dirPath = bot_cfg.LOG_DIR;
+		if(dirPath.substring(dirPath.length - 1, dirPath.length) !== '/'){
+			dirPath += '/';
+		}
+		this.basePath = process.cwd()+'/'+dirPath+'/'+this.datePath+'/';
+		this.absolutPath = this.basePath+this.fileName;
+
+		return this;
+	}
+
+	getDatePath()
+	{
+		let date = new Date();
+		return date.getFullYear()+(parseInt(date.getMonth())+1).toString().padStart(2, '0')+date.getDate().toString().padStart(2, '0');
 	}
 
 	checkMaxSize()
@@ -82,8 +99,11 @@ class LogControl
 		for (var prop in options_set) {
 			options[prop] = options_set[prop];
 		}
-		if(!fs.existsSync(this.path)){
-			fs.mkdirSync(this.path,{ recursive: true });
+
+		this.setBasePath();
+
+		if(!fs.existsSync(this.basePath)){
+			fs.mkdirSync(this.basePath,{ recursive: true });
 		}
 		fs.appendFileSync(this.absolutPath, str+"\n");
 		
@@ -179,6 +199,7 @@ class LogControl
 
 	async getLines(lines = 1)
 	{
+		this.setBasePath();
 		return await readLastLines.read(this.absolutPath, lines);
 	}
 	

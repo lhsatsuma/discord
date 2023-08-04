@@ -2,12 +2,11 @@
  * x.y.z.wt
  * x - Global App Version
  * y - Release Version
- * z - Fix Version
- * w - Build Version
+ * z - Build Version
  * t - Type Version (Alpha, Beta or Release)
  * @type {string}
  */
-global.app_version = '1.2.0r';
+global.app_version = '1.2.1b';
 
 /**
  *

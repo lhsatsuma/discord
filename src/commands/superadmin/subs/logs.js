@@ -1,6 +1,4 @@
 const logControl = require("../../../utils/LogControl");
-const {pagination, ButtonTypes, ButtonStyles} = require("@devraelfreeze/discordjs-pagination");
-const {get} = require("pidusage/lib/history");
 module.exports = {
     data: (subcommand) =>
         subcommand
@@ -24,7 +22,7 @@ module.exports = {
         }
         const run = interaction.options.getString('run') ?? 'app';
 
-        let logCheck = new logControl(bot_cfg.LOG_DIR, run+'.log', {level_register: []});
+        let logCheck = new logControl(run+'.log', {level_register: []});
         let result = await logCheck.getLines(30);
         result = result.toString().split('\n');
 

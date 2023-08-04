@@ -21,11 +21,14 @@ const returned = client.create(
 module.exports = {
 	data: returned.data,
 	subcommands: returned.subcommands,
-	cooldown: 10,
+	cooldown: 30,
 	async execute(interaction) {
 		const target = interaction.options.getUser('target');
 		const times = interaction.options.getInteger('times');
-		interaction.reply('Pinging user...');
+		interaction.reply({
+			content: 'Pinging user...',
+			ephemeral: true,
+		});
 		let messageSended = null;
 		for(let i=0;i<times;i++){
 		 	messageSended = await interaction.channel.send('<@'+target.id+'> You were pinged!');
