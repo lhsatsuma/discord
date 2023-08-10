@@ -1,3 +1,4 @@
 {
-  "CMD_JOKES": "Piadas/Trocadilhos engraçados!"
+  "CMD_JOKES": "Piadas/Trocadilhos engraçados!",
+  "NO_RECORDS": "Piadas/Trocadilhos não encontrado para o idioma: {0}"
 }

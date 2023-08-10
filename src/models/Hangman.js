@@ -64,7 +64,11 @@ class BeanHangman extends BeanBase
 
     setNewWord()
     {
-        const words = getUtils().requireAgain(process.cwd() + '/uploads/hangman.json');
+        let path = process.cwd() + '/uploads/'+getLang().locale+'/hangman.json';
+        if(!fs.existsSync(path)){
+            return false;
+        }
+        const words = getUtils().requireAgain(path);
         const word = getUtils().array_rand(words);
         this.word_json = word;
         this.word = word.word;

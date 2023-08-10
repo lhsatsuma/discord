@@ -1,0 +1,91 @@
+[
+  {
+    "level": 1,
+    "word": "umbrella",
+    "chances": 5,
+    "hints": [
+      "I'm used when it's raining"
+    ]
+  },
+  {
+    "level": 1,
+    "word": "bottle",
+    "chances": 5,
+    "hints": [
+      "I keep liquids inside"
+    ]
+  },
+  {
+    "level": 1,
+    "word": "mouse",
+    "chances": 5,
+    "hints": [
+      "I'm used on the computer",
+      "I have a wheel",
+      "I am used if I want to open a file on the computer"
+    ]
+  },
+  {
+    "level": 1,
+    "word": "keyboard",
+    "chances": 5,
+    "hints": [
+      "I'm used on the computer",
+      "I'm used to typing"
+    ]
+  },
+  {
+    "level": 1,
+    "word": "celphone",
+    "chances": 2,
+    "hints": [
+      "I'm very common nowadays",
+      "I'm used to communicating with other people"
+    ]
+  },
+  {
+    "level": 2,
+    "word": "tire iron",
+    "chances": 4,
+    "hints": [
+      "I'm used in the car",
+      "I'm used in emergencies",
+      "My shape can be an X"
+    ]
+  },
+  {
+    "level": 1,
+    "word": "yellow",
+    "chances": 3,
+    "hints": [
+      "I'm a color"
+    ]
+  },
+  {
+    "level": 1,
+    "word": "knife",
+    "chances": 3,
+    "hints": [
+      "I'm used in the kitchen"
+    ]
+  },
+  {
+    "level": 1,
+    "word": "plate",
+    "chances": 3,
+    "hints": [
+      "Every house has one",
+      "I'm used in the kitchen",
+      "I'm used to eating"
+    ]
+  },
+  {
+    "level": 1,
+    "word": "shower",
+    "chances": 3,
+    "hints": [
+      "I can be cold or hot",
+      "every house has one"
+    ]
+  }
+]

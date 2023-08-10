@@ -6,7 +6,7 @@
  * t - Type Version (Alpha, Beta or Release)
  * @type {string}
  */
-global.app_version = '1.3.0r';
+global.app_version = '1.3.1a';
 
 
 /**

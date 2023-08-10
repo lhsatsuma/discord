@@ -14,6 +14,7 @@ global.translate = (module, label, ...params) => {
 class Lang{
     availableLocales = [
         'pt_BR',
+        'en_US',
     ];
     locale;
     translates = {};

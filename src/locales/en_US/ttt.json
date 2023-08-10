@@ -1,0 +1,17 @@
+{
+  "CMD_PLAY": "Play a game of Tic-Tac-Toe",
+  "CMD_PLAY_OPTION_AGAINST": "Opponent Member",
+  "CMD_PLAY_OPTION_DIFFICULTY": "BOT Difficulty",
+  "CMD_PLAY_OPTION_DIFFICULTY_EASY": "Easy",
+  "CMD_PLAY_OPTION_DIFFICULTY_MEDIUM": "Medium",
+  "CMD_PLAY_OPTION_DIFFICULTY_HARD": "Hard",
+  "CMD_PLAY_SUCCESS": "<@{0}> is the :negative_squared_cross_mark:\n<@{1}> is the :brown_circle:\n\nWait to play...",
+  "CMD_PLAY_SUCCESS_INFO": "<@{0}> is the :negative_squared_cross_mark:\n<@{1}> is the :brown_circle:\n\n<@{2}> start! React to the numbers to play",
+  "CMD_PLAY_SUCCESS_INFO_2": "<@{0}> is the :negative_squared_cross_mark:\n<@{1}> is the :brown_circle:\n\nIt's <@{2}>'s turn to play.",
+  "CMD_PLAY_DRAW": "**Game Over**\n\nIt's a draw!",
+  "CMD_PLAY_WIN": "**Game Ended**\n\n<@{0}> has won!",
+
+  "CMD_STOP": "Stop a game of Tic-Tac-Toe in progress",
+  "CMD_STOP_NO_GAME": "here is no match in progress",
+  "CMD_STOP_SUCCESS": "Game in progress finished"
+}
