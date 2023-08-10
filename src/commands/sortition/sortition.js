@@ -2,44 +2,48 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const returned = client.create(
     new SlashCommandBuilder()
         .setName('sortition')
-        .setDescription('Sorteio de um número')
+        .setDescription(translate('sortition', 'CMD_SORTITION'))
         .addIntegerOption(option =>
             option
-                .setName('numero_min')
-                .setDescription('Número mínimo para o sorteio')
+                .setName('min')
+                .setDescription(translate('sortition', 'CMD_SORTITION_OPTION_MIN'))
                 .setRequired(true)
                 .setMinValue(1)
-                .setMaxValue(9999999))
+                .setMaxValue(9999999)
+        )
         .addIntegerOption(option =>
             option
-                .setName('numero_max')
-                .setDescription('Número máximo para o sorteio')
+                .setName('max')
+                .setDescription(translate('sortition', 'CMD_SORTITION_OPTION_MAX'))
                 .setRequired(true)
                 .setMinValue(1)
-                .setMaxValue(9999999))
+                .setMaxValue(9999999)
+        )
 );
 module.exports = {
     data: returned.data,
     subcommands: returned.subcommands,
     cooldown: 2,
     async execute(interaction) {
-        let min = interaction.options.getInteger('numero_min');
-        let max = interaction.options.getInteger('numero_max');
+        let min = interaction.options.getInteger('min');
+        let max = interaction.options.getInteger('max');
         if (max < min) {
             await interaction.reply({
-                content: 'O número máximo não pode ser menor que o número mínimo!',
+                content: translate('sortition', 'CMD_SORTITION_INVALID_MAX'),
                 ephemeral: true
             });
-            return false;
+            return true;
         }
 
         let rand = getUtils().randomInt(min, max);
         let embedMsg = new EmbedBuilder()
-        .setTitle(interaction.user.username+' fez um sorteio de '+min+' até '+max+'!')
-        .setDescription('*O número sorteado foi*: **'+rand+'**')
+        .setTitle(translate('sortition', 'CMD_SORTITION_TITLE', interaction.user.username, min, max))
+        .setDescription(translate('sortition', 'CMD_SORTITION_SUCCESS', rand))
         .setColor(getUtils().getColor('GREEN'));
         await interaction.reply({
             embeds: [embedMsg]
         });
+
+        return true;
     }
 }

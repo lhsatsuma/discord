@@ -6,32 +6,34 @@
  * t - Type Version (Alpha, Beta or Release)
  * @type {string}
  */
-global.app_version = '1.2.2b';
+global.app_version = '1.2.3b';
+
 
 /**
  *
- * @type {{DB_USER: string, BOT_SEND_COMMANDS_API: boolean, DB_NAME: string, LOG_REGISTER: number[], DB_HOST: string, HEARTBEAT: number, BOT_TOKEN: string, LOG_DIR: string, ADMIN_CHANNEL_ID: *[], BOT_DESCRIPTION: string, BOT_NAME: string, BOT_ID: string, BOT_ICON: string, DB_PASSWORD: string, LOG_QUERY: boolean, DB_PORT: number}}
+ * @type {{DB_PORT: number, DB_USER: string, BOT_SEND_COMMANDS_API: boolean, DB_NAME: string, LOG_REGISTER: number[], LOG_QUERY: boolean, DB_HOST: string, HEARTBEAT: number, BOT_TOKEN: string, LOG_DIR: string, ADMIN_CHANNEL_ID: string, BOT_DESCRIPTION: string, BOT_NAME: string, BOT_ID: string, BOT_LOCALE: string, BOT_ICON: string, DB_PASSWORD: string}}
  */
 global.bot_cfg = {
-    'ADMIN_CHANNEL_ID': '',
-    'BOT_NAME': '',
-    'BOT_ID': '',
-    'BOT_TOKEN': '',
-    'BOT_ICON': '',
-    'BOT_DESCRIPTION': '',
-    'BOT_SEND_COMMANDS_API': true,
+    ADMIN_CHANNEL_ID: '',
+    BOT_NAME: '',
+    BOT_ID: '',
+    BOT_TOKEN: '',
+    BOT_ICON: '',
+    BOT_DESCRIPTION: '',
+    BOT_SEND_COMMANDS_API: true,
+    BOT_LOCALE: 'pt_BR',
 
-    'DB_HOST': 'localhost',
-    'DB_USER': 'root',
-    'DB_PASSWORD': '',
-    'DB_NAME': 'discord',
-    'DB_PORT': 3306,
+    DB_HOST: 'localhost',
+    DB_USER: 'root',
+    DB_PASSWORD: '',
+    DB_NAME: 'discord',
+    DB_PORT: 3306,
 
-    'LOG_DIR': './logs/',
-    'LOG_REGISTER': [1, 2, 3, 4, 5],
-    'LOG_QUERY': true,
+    LOG_DIR: 'logs/',
+    LOG_REGISTER: [1, 2, 3, 4, 5],
+    LOG_QUERY: true,
 
-    'HEARTBEAT': 300,
+    HEARTBEAT: 300,
 };
 
 
@@ -69,6 +71,7 @@ for (let config_name in bot_cfg) {
 let required_envs = [
     'BOT_TOKEN',
     'BOT_ID',
+    'BOT_LOCALE',
 ];
 
 required_envs.forEach((ipt) => {

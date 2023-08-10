@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('list')
-            .setDescription('List all memes')
+            .setDescription(translate('memes', 'CMD_LIST'))
     ,
     async execute(interaction) {
 
@@ -14,7 +14,7 @@ module.exports = {
         let results = await bean.getList();
         if(!results.length){
             interaction.reply({
-                content: 'Memes not found!',
+                content: translate('memes', 'CMD_LIST_NO_MEMES'),
                 ephemeral: true
             })
             return true;
@@ -26,7 +26,7 @@ module.exports = {
         });
 
         await pagination({
-            embeds: getUtils().mountEmbedArrays(resultsArr, 'Memes list', 20), /** Array of embeds objects */
+            embeds: getUtils().mountEmbedArrays(resultsArr, translate('memes', 'CMD_LIST'), 20), /** Array of embeds objects */
             author: interaction.member.user,
             interaction: interaction,
             ephemeral: true,
@@ -37,12 +37,12 @@ module.exports = {
             buttons: [
                 {
                     type: ButtonTypes.previous,
-                    label: 'Anterior',
+                    label: translate('global', 'PREVIOUS'),
                     style: ButtonStyles.Primary
                 },
                 {
                     type: ButtonTypes.next,
-                    label: 'Próximo',
+                    label: translate('global', 'NEXT'),
                     style: ButtonStyles.Success
                 }
             ]

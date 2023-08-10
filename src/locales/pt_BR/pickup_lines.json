@@ -1,0 +1,5 @@
+{
+  "CMD_PICKUP_LINES": "Cantadas Engraçadas",
+  "CMD_PICKUP_LINES_OPTION_USER": "Membro para enviar a cantada",
+  "CMD_PICKUP_SUCCESS_USER": "**{0}** sended a pick-up line to **<@{1}>**"
+}

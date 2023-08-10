@@ -1,0 +1,29 @@
+{
+  "CMD_CLEARLOGS": "[SUPERADMIN] Limpar Logs",
+  "CMD_CLEARLOGS_SUCCESS": "{0} logs limpos com sucesso",
+  "CMD_CLEARLOGS_ERROR": "Erro ao limpar os logs",
+
+
+  "CMD_HEARTBEAT": "[SUPERADMIN] Alterar intervalo do heartbeat",
+  "CMD_HEARTBEAT_OPTION_SECONDS": "Intervalo em segundos",
+  "CMD_HEARTBEAT_OPTION_SAVECFG": "Salvar e recarregar configurações",
+  "CMD_HEARTBEAT_SUCCESS": "Intervalo do heartbeat alterado para {0} segundos",
+
+  "CMD_LOGS": "[SUPERADMIN] Últimos Logs",
+  "CMD_LOGS_OPTION_RUN": "Log do App ou Scheduler",
+  "CMD_LOGS_OPTION_RUN_VALUE_APP": "App",
+  "CMD_LOGS_OPTION_RUN_VALUE_SCHEDULER": "Scheduler",
+
+  "CMD_RELOADCFG": "[SUPERADMIN] Recarregar configurações",
+  "CMD_RELOADCFG_SUCCESS": "Configurações recarregadas com sucesso",
+  "CMD_RELOADCFG_ERROR": "Erro ao recarregar as configurações",
+
+  "CMD_SETCHANNEL": "[SUPERADMIN] Setar este canal como superadmin",
+  "CMD_SETCHANNEL_ALREADY_SET": "Canal de superadmin já está setado",
+  "CMD_SETCHANNEL_SUCCESS": "Canal <#{0}> agora está configurado para superadmin",
+
+
+  "CMD_STATUS": "[SUPERADMIN] Status do BOT",
+  "CMD_STATUS_APP": "Status do App",
+  "CMD_STATUS_SCHEDULER": "Status do Scheduler"
+}

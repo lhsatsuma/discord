@@ -4,7 +4,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('list_channels')
-            .setDescription('List channels to notify birthdays'),
+            .setDescription(translate('birthday', 'CMD_LIST_CHANNELS')),
     async execute(interaction) {
         let bean = new BeanServers();
         bean.server = interaction.guildId;
@@ -13,7 +13,7 @@ module.exports = {
 
         if(!bean.channels_birthday){
             await interaction.reply({
-                content: 'There\'s no birthday notifications to this server',
+                content: translate('birthday', 'CMD_LIST_CHANNELS_NO_CHANNELS'),
                 ephemeral: true
             });
             return false;
@@ -21,7 +21,7 @@ module.exports = {
         let channels_list = '<#'+bean.channels_birthday.join('> ,<#')+'>';
 
 
-        let msg = `Current list of channels to notify birthdays: ${channels_list}`;
+        let msg = translate('birthday', 'CMD_LIST_CHANNELS_SUCCESS', channels_list);
         await interaction.reply({
             content: msg,
             ephemeral: true

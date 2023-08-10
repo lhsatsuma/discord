@@ -4,24 +4,25 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('play')
-            .setDescription('Play a match of tic-tac-toe')
+            .setDescription(translate('ttt', 'CMD_PLAY'))
             .addUserOption(option =>
                 option
                     .setName('against')
-                    .setDescription('Member to play against')
+                    .setDescription(translate('ttt', 'CMD_PLAY_OPTION_AGAINST'))
             )
             .addStringOption(option =>
-                option.setName('dificulty')
-                    .setDescription('Dificulty if played against bot')
+                option.setName('difficulty')
+                    .setDescription(translate('ttt', 'CMD_PLAY_OPTION_DIFFICULTY'))
                     .addChoices(
-                        { name: 'Easy', value: 'easy' },
-                        { name: 'Medium', value: 'medium' },
-                        { name: 'Hard', value: 'hard' },
+                        { name: translate('ttt', 'CMD_PLAY_OPTION_DIFFICULTY_EASY'), value: 'easy' },
+                        { name: translate('ttt', 'CMD_PLAY_OPTION_DIFFICULTY_MEDIUM'), value: 'medium' },
+                        { name: translate('ttt', 'CMD_PLAY_OPTION_DIFFICULTY_HARD'), value: 'hard' },
                     )
             ),
     async execute(interaction) {
-        const against = interaction.options.getUser('against') ?? bot_cfg.BOT_ID;
-        const dificulty = interaction.options.getString('dificulty') ?? 'easy';
+        let description = '';
+        const against = interaction.options.getUser('against').id ?? bot_cfg.BOT_ID;
+        const dificulty = interaction.options.getString('difficulty') ?? 'easy';
 
         const BeanVelha = getUtils().requireAgain(process.cwd()+'/src/models/Ttt.js');
         let bean = new BeanVelha();
@@ -41,18 +42,13 @@ module.exports = {
         bean.level = dificulty;
         await bean.save();
 
-        let description = '';
-        description += `<@!${interaction.user.id}> it's the :negative_squared_cross_mark:
-		<@!${against}> it's the :brown_circle:
-		
-		Wait for play....`;
-
         let embed = new EmbedBuilder()
             .setColor(getUtils().getColor('BLUE'))
             .setTitle('Tic Tac Toe')
-            .setDescription(description);
+            .setDescription(translate('ttt', 'CMD_PLAY_SUCCESS', interaction.user.id, against));
 
-        await interaction.reply('Starting a new game!');
+        await interaction.deferReply();
+        await interaction.deleteReply();
 
         const reactionsValid = [
             getUtils().strToEmoji(':zero:'),
@@ -69,13 +65,8 @@ module.exports = {
         const message = await interaction.channel.send({embeds: [embed]});
         await getUtils().reacts(message, reactionsValid);
 
-        description = `<@!${interaction.user.id}> é o :negative_squared_cross_mark:
-        
-		<@!${against}> é o :brown_circle:
-		
-		<@!${interaction.user.id}> starts!
-        React on numbers to mark a spot:\n`;
-        description += "\n"+bean.mountSpots();
+        description = translate('ttt', 'CMD_PLAY_SUCCESS_INFO', interaction.user.id, against, interaction.user.id)
+        description += "\n\n"+bean.mountSpots();
 
         embed.setDescription(description);
 
@@ -111,21 +102,21 @@ module.exports = {
             let win = bean.checkWin();
 
             if(win == 'draw'){
-                description = `**Game Ended!**\n\nIt's a draw! Try again`;
+                description = translate('ttt', 'CMD_PLAY_DRAW');
                 bean.status = 'done';
                 bean.win = '3';
                 await bean.save();
                 await message.reactions.removeAll();
                 collector.stop();
             }else if(win == user.id){
-                description = `**Game Ended!**\n\n<@!${user.id}> win!`;
+                description = translate('ttt', 'CMD_PLAY_WIN', user.id);
                 bean.status = 'done';
                 bean.win = user.id;
                 await bean.save();
                 await message.reactions.removeAll();
                 collector.stop();
             }else if(win == bean.against){
-                description = `**Game Ended!**\n\n<@!${against}> win!`;
+                description = translate('ttt', 'CMD_PLAY_WIN', against);
                 bean.status = 'done';
                 bean.win = bean.against;
                 await bean.save();
@@ -141,17 +132,14 @@ module.exports = {
                     velha.status = 'done';
                     velha.win = 3;
                 }else if(win == bean.against){
-                    description = `**Game Ended!**\n\n<@!${against}> win!`;
+                    description = translate('ttt', 'CMD_PLAY_WIN', against);
                     bean.status = 'done';
                     bean.win = bean.against;
                     await bean.save();
                     await message.reactions.removeAll();
                     collector.stop();
                 }else{
-                    description = `<@!${interaction.user.id}> it's the :negative_squared_cross_mark:\n\n`+
-                    `<@!${against}> it's the :brown_circle:\n\n`+
-                    `It's <@!${turn}> turn!\n\n`+
-                    `React on numbers to mark a spot:\n`;
+                    description = translate('ttt', 'CMD_PLAY_SUCCESS_INFO_2', interaction.user.id, against, turn);
                     description += "\n" + bean.mountSpots();
                 }
             }

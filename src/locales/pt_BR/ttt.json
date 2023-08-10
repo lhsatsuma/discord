@@ -1,0 +1,17 @@
+{
+  "CMD_PLAY": "Jogue uma partida de Jogo da Velha",
+  "CMD_PLAY_OPTION_AGAINST": "Membro Adversário",
+  "CMD_PLAY_OPTION_DIFFICULTY": "Dificuldade do BOT",
+  "CMD_PLAY_OPTION_DIFFICULTY_EASY": "Fácil",
+  "CMD_PLAY_OPTION_DIFFICULTY_MEDIUM": "Médio",
+  "CMD_PLAY_OPTION_DIFFICULTY_HARD": "Difícil",
+  "CMD_PLAY_SUCCESS": "<@{0}> é o :negative_squared_cross_mark:\n<@{1}> é o :brown_circle:\n\nAguarde para jogar...",
+  "CMD_PLAY_SUCCESS_INFO": "<@{0}> é o :negative_squared_cross_mark:\n<@{1}> é o :brown_circle:\n\n<@{2}> começa! Reaja aos números para jogar",
+  "CMD_PLAY_SUCCESS_INFO_2": "<@{0}> é o :negative_squared_cross_mark:\n<@{1}> é o :brown_circle:\n\nÉ a vez de <@{2}> jogar",
+  "CMD_PLAY_DRAW": "**Jogo Finalizado**\n\nÉ um empate!",
+  "CMD_PLAY_WIN": "**Jogo Finalizado**\n\n<@{0}> ganhou!",
+
+  "CMD_STOP": "Parar uma partida de Jogo da Velha em andamento",
+  "CMD_STOP_NO_GAME": "Não existe uma partida em andamento",
+  "CMD_STOP_SUCCESS": "Partida em andamento finalizada"
+}

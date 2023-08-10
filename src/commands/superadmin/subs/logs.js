@@ -3,19 +3,19 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('logs')
-            .setDescription('[SUPERADMIN] Check logs')
+            .setDescription(translate('superadmin', 'CMD_LOGS'))
             .addStringOption(option =>
                 option.setName('run')
-                    .setDescription('Log of app or scheduler')
+                    .setDescription(translate('superadmin', 'CMD_LOGS_OPTION_RUN'))
                     .addChoices(
-                        { name: 'app', value: 'app' },
-                        { name: 'scheduler', value: 'scheduler' },
+                        { name: translate('superadmin', 'CMD_LOGS_OPTION_RUN_VALUE_APP'), value: 'app' },
+                        { name: translate('superadmin', 'CMD_LOGS_OPTION_RUN_VALUE_SCHEDULER'), value: 'scheduler' },
                     ),
             ),
     async execute(interaction) {
         if(!getUtils().channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({
-                content: 'Not allowed to execute this command here.',
+                content: translate('globals', 'CHANNEL_NOT_ALLOWED'),
                 ephemeral: true,
             });
             return false;

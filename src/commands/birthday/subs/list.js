@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('list')
-            .setDescription('List of birthdays')
+            .setDescription(translate('birthday', 'CMD_LIST'))
     ,
     async execute(interaction) {
 
@@ -16,7 +16,7 @@ module.exports = {
 
         if(!results){
             await interaction.reply({
-                content: 'No birthday registered to members!',
+                content: translate('birthday', 'CMD_LIST_NO_MEMBERS'),
                 ephemeral: true
             });
             return true;
@@ -33,7 +33,7 @@ module.exports = {
         });
 
         await pagination({
-            embeds: getUtils().mountEmbedArrays(resultsArr, 'Members Birthday list'), /** Array of embeds objects */
+            embeds: getUtils().mountEmbedArrays(resultsArr, translate('birthday', 'CMD_LIST')), /** Array of embeds objects */
             author: interaction.member.user,
             interaction: interaction,
             ephemeral: true,

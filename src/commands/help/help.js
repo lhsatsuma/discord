@@ -4,7 +4,7 @@ const {pagination, ButtonTypes, ButtonStyles} = require("@devraelfreeze/discordj
 const returned = client.create(
     new SlashCommandBuilder()
         .setName('help')
-        .setDescription('Get a command list')
+        .setDescription(translate('help', 'CMD_HELP'))
 );
 
 module.exports = {
@@ -26,7 +26,7 @@ module.exports = {
             }
         });
         await pagination({
-            embeds: getUtils().mountEmbedArrays(resultsArr, 'Commands List', 10, 2), /** Array of embeds objects */
+            embeds: getUtils().mountEmbedArrays(resultsArr, translate('help', 'CMD_HELP'), 10, 2), /** Array of embeds objects */
             author: interaction.member.user,
             interaction: interaction,
             ephemeral: true,
@@ -37,12 +37,12 @@ module.exports = {
             buttons: [
                 {
                     type: ButtonTypes.previous,
-                    label: 'Anterior',
+                    label: translate('globals', 'PREVIOUS'),
                     style: ButtonStyles.Primary
                 },
                 {
                     type: ButtonTypes.next,
-                    label: 'Próximo',
+                    label: translate('globals', 'NEXT'),
                     style: ButtonStyles.Success
                 }
             ]

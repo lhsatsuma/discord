@@ -4,7 +4,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('remove_channel')
-            .setDescription('Remove this channel to notify birthdays'),
+            .setDescription(translate('birthday', 'CMD_REMOVE_CHANNEL')),
     async execute(interaction) {
         let bean = new BeanServers();
         bean.server = interaction.guildId;
@@ -12,13 +12,13 @@ module.exports = {
 
         if(!bean.channels_birthday){
             await interaction.reply({
-                content: 'There\'s no birthday notifications to this server',
+                content: translate('birthday', 'CMD_REMOVE_CHANNEL_EMPTY_CHANNELS'),
                 ephemeral: true
             });
             return true;
         }else if(bean.channels_birthday.indexOf(interaction.channelId) == -1){
             await interaction.reply({
-                content: 'This channel is not enabled to receive birthday notifications',
+                content: translate('birthday', 'CMD_REMOVE_CHANNEL_NO_CHANNEL'),
                 ephemeral: true
             });
             return true;
@@ -28,7 +28,7 @@ module.exports = {
 
         let added = await bean.save();
 
-        let msg = added ? `Removed <#${interaction.channelId}> of notify birthdays` : 'Error on remove channel';
+        let msg = added ? translate('birthday', 'CMD_REMOVE_CHANNEL_SUCCESS', interaction.channelId) : translate('birthday', 'CMD_REMOVE_CHANNEL_ERROR');
         await interaction.reply({
             content: msg,
             ephemeral: true

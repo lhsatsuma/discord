@@ -4,7 +4,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('stop')
-            .setDescription('Stop a current match of hangman'),
+            .setDescription(translate('hangman', 'CMD_STOP')),
     async execute(interaction) {
         let bean = new BeanHangman();
         bean.user_id = interaction.user.id;
@@ -12,7 +12,7 @@ module.exports = {
 
         if(!bean.id){
             await interaction.reply({
-                content: 'You don\'t have a current game to stop!',
+                content: translate('hangman', 'CMD_STOP_NO_GAME'),
                 ephemeral: true
             });
             return false;
@@ -22,7 +22,7 @@ module.exports = {
         await bean.save();
 
         await interaction.reply({
-            content: 'Game stopped!',
+            content: translate('hangman', 'CMD_STOP_SUCCESS'),
             ephemeral: true
         });
         return true;

@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('rand')
-            .setDescription('Random meme')
+            .setDescription(translate('memes', 'CMD_RAND'))
     ,
     async execute(interaction) {
 
@@ -20,7 +20,7 @@ module.exports = {
         //Protection against random not found
         if(!bean.id){
             await interaction.reply({
-                content: `Meme not found!`,
+                content: translate('memes', 'NOT_FOUND'),
                 ephemeral: true
             });
             return true;

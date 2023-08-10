@@ -5,7 +5,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('play')
-            .setDescription('Play a match of hangman'),
+            .setDescription(translate('hangman', 'CMD_PLAY')),
     async execute(interaction) {
         let bean = new BeanHangman();
         bean.server = interaction.guildId;
@@ -14,7 +14,7 @@ module.exports = {
 
         if(bean.id){
             await interaction.reply({
-                content: 'You already started a game!',
+                content: translate('hangman', 'CMD_PLAY'),
                 ephemeral: true
             });
             return false;
@@ -24,28 +24,27 @@ module.exports = {
         bean.setNewWord();
 
         let description = '';
-        description += `<@!${interaction.user.id}> started a match of Hangman!
-		Wait for play....`;
+        description += translate('hangman', 'CMD_PLAY_SUCCESS_WAIT', interaction.user.id);
 
         let embed = new EmbedBuilder()
             .setColor(getUtils().getColor('BLUE'))
-            .setTitle('Hangman')
+            .setTitle(translate('hangman', 'HANGMAN'))
             .setDescription(description)
             .setThumbnail(bean.options.thumb);
 
-        await interaction.reply('Starting a new game!');
+        await interaction.deferReply();
+        await interaction.deleteReply();
 
         const message = await interaction.channel.send({embeds: [embed]});
         await bean.save();
 
-        description = `Type in chat the letters or guess the word
-        Type **hint** in chat to receive a hint of the word\n\n
+        description = `${translate('hangman', 'CMD_PLAY_SUCCESS')}\n\n
         ${bean.mountSpots()}\n\n
-        Try left: **${bean.chances_left}**\n\n
-        Letters Total: **${bean.word.length}**
-        Letters: ${bean.letters.join(', ')}
-        Guessed: ${bean.guessed.join(', ')}\n\n
-        Hints used: ${bean.hints.length}/${bean.word_json.hints.length}\n
+        ${translate('hangman', 'TRYS_LEFT')}: **${bean.chances_left}**\n\n
+        ${translate('hangman', 'LETTERS_TOTAL')}: **${bean.word.length}**
+        ${translate('hangman', 'LETTERS')}: ${bean.letters.join(', ')}
+        ${translate('hangman', 'WORDS_GUESSEDS')}: ${bean.guessed.join(', ')}\n\n
+        ${translate('hangman', 'HINTS_USED')}: ${bean.hints.length}/${bean.word_json.hints.length}\n
         ${bean.mountHints()}`;
 
         embed.setDescription(description);
@@ -65,7 +64,7 @@ module.exports = {
             if(letter == 'hint') {
                 if(!bean.giveHint()){
                     interaction.channel.send({
-                        content: 'No more hints available!',
+                        content: translate('hangman', 'CMD_PLAY_NO_MORE_HINTS'),
                         ephemeral: true,
                     }).then(sended => {
                         setTimeout(() => sended.delete(), 3000);
@@ -77,7 +76,7 @@ module.exports = {
                     status_game = bean.tryLetter(letter);
                 }else{
                     interaction.channel.send({
-                        content: 'Only A-Z letters allowed!',
+                        content: translate('hangman', 'CMD_PLAY_INVALID_CHAR'),
                         ephemeral: true,
                     }).then(sended => {
                         setTimeout(() => sended.delete(), 3000);
@@ -91,33 +90,30 @@ module.exports = {
 
             if(status_game == 'win'){
                 description = `${bean.mountSpots(true)}\n\n
-                    :tada: ** You Win! Congratulations!** :tada:\n\n
-                    **Stats:**
-                    Letters Total: **${bean.word.length}**
-                    Letters: ${bean.letters.join(', ')}
-                    Guessed: ${bean.guessed.join(', ')}\n\n
-                    Hints used: ${bean.hints.length}/${bean.word_json.hints.length}\n`;
+                    :tada: **${translate('hangman', 'CMD_PLAY_WINNED')}** :tada:\n\n
+                    ${translate('hangman', 'LETTERS_TOTAL')}: **${bean.word.length}**
+                    ${translate('hangman', 'LETTERS')}: ${bean.letters.join(', ')}
+                    ${translate('hangman', 'WORDS_GUESSEDS')}: ${bean.guessed.join(', ')}\n\n
+                    ${translate('hangman', 'HINTS_USED')}: ${bean.hints.length}/${bean.word_json.hints.length}`;
                 collector.stop();
                 await bean.save();
             }else if(status_game == 'lose'){
                 description = `${bean.mountSpots(true)}\n\n
-                    **You Lose! Try again!**\n\n
-                    **Stats:**
-                    Letters Total: **${bean.word.length}**
-                    Letters: ${bean.letters.join(', ')}
-                    Guessed: ${bean.guessed.join(', ')}\n\n
-                    Hints used: ${bean.hints.length}/${bean.word_json.hints.length}\n`;
+                    **${translate('hangman', 'CMD_PLAY_LOSE')}**\n\n
+                    ${translate('hangman', 'LETTERS_TOTAL')}: **${bean.word.length}**
+                    ${translate('hangman', 'LETTERS')}: ${bean.letters.join(', ')}
+                    ${translate('hangman', 'WORDS_GUESSEDS')}: ${bean.guessed.join(', ')}\n\n
+                    ${translate('hangman', 'HINTS_USED')}: ${bean.hints.length}/${bean.word_json.hints.length}`;
                 collector.stop();
                 await bean.save();
             }else{
-                description = `Type in chat the letters or guess the word\n\n
-                Type **hint** in chat to receive a hint of the word\n\n
+                description = `${translate('hangman', 'CMD_PLAY_SUCCESS')}\n\n
                 ${bean.mountSpots()}\n\n
-                Try left: **${bean.chances_left}**\n\n
-                Letters Total: **${bean.word.length}**
-                Letters: ${bean.letters.join(', ')}
-                Guessed: ${bean.guessed.join(', ')}\n\n
-                Hints used: ${bean.hints.length}/${bean.word_json.hints.length}\n
+                ${translate('hangman', 'TRYS_LEFT')}: **${bean.chances_left}**\n\n
+                ${translate('hangman', 'LETTERS_TOTAL')}: **${bean.word.length}**
+                ${translate('hangman', 'LETTERS')}: ${bean.letters.join(', ')}
+                ${translate('hangman', 'WORDS_GUESSEDS')}: ${bean.guessed.join(', ')}\n\n
+                ${translate('hangman', 'HINTS_USED')}: ${bean.hints.length}/${bean.word_json.hints.length}\n
                 ${bean.mountHints()}`;
             }
             m.delete();

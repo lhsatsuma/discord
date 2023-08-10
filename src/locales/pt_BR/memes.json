@@ -1,0 +1,18 @@
+{
+  "CMD_ADD": "Adicionar uma nova imagem de meme",
+  "CMD_ADD_OPTION_URL": "URL da Imagem",
+  "CMD_ADD_OPTION_NAME": "Descrição",
+  "CMD_ADD_INVALID_URL": "URL Inválida",
+  "CMD_ADD_ALREADY_EXISTS": "Meme já existente! ID: {0}",
+  "CMD_ADD_ERROR": "Erro ao salvar o meme",
+
+
+  "CMD_LIST": "Lista de Memes",
+
+
+  "CMD_LIST_NO_MEMES": "Não existem memes cadastrados",
+  "CMD_RAND": "Meme Aleatório",
+  "NOT_FOUND": "Meme não encontrado",
+  "CMD_SHOW": "Mostra um meme pelo ID/Nome",
+  "CMD_SHOW_OPTION_SEARCH": "ID/Nome do Meme"
+}

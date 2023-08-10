@@ -4,44 +4,45 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('add')
-            .setDescription('Add a new user birthday')
+            .setDescription(translate('birthday', 'CMD_ADD'))
             .addUserOption(option =>
                 option
-                    .setName('usuario')
-                    .setDescription('User member')
+                    .setName('user')
+                    .setDescription(translate('birthday', 'CMD_ADD_OPTION_USER'))
                     .setRequired(true)
             )
             .addStringOption(option =>
-                option.setName('birthdate')
-                    .setDescription('Data de nascimento (dd/mm/YYYY) (Ano Opcional)')
+                option.setName('day')
+                    .setDescription(translate('birthday', 'CMD_ADD_OPTION_DAY'))
                     .setRequired(true)
+                    .setMinLength(2)
+            )
+            .addStringOption(option =>
+                option.setName('month')
+                    .setDescription(translate('birthday', 'CMD_ADD_OPTION_MONTH'))
+                    .setRequired(true)
+                    .setMinLength(2)
+            )
+            .addStringOption(option =>
+                option.setName('year')
+                    .setDescription(translate('birthday', 'CMD_ADD_OPTION_YEAR'))
+                    .setMinLength(4)
             ),
     async execute(interaction) {
 
-        let user = interaction.options.getUser('usuario');
-        let birthdateOrg = interaction.options.getString('birthdate');
-        let birthdate = birthdateOrg;
-        birthdate = birthdate.split('/');
-
-        //Validate date
-        if(birthdate.length !== 3 && birthdate.length !== 2){
-            await interaction.reply({
-                content: 'Birthdate invalid!',
-                ephemeral: true
-            });
-            return false;
-        }
-
-        if(birthdate.length == 3){
-            birthdate = birthdate[2]+'-'+birthdate[1]+'-'+birthdate[0];
-        }else{
-            //If there's no year, assume the year of birth 1500
-            birthdate = '1500-'+birthdate[1]+'-'+birthdate[0];
+        let user = interaction.options.getUser('user');
+        let day = interaction.options.getString('day');
+        let month = interaction.options.getString('month');
+        let year = interaction.options.getString('year') ?? 1500;
+        let birthdate = year+'-'+month+'-'+day;
+        let birthdateOrg = day+'/'+month;
+        if(year != 1500){
+            birthdateOrg += '/'+year;
         }
 
         if(!birthdate || !getUtils().validateDate(birthdate)){
             await interaction.reply({
-                content: 'Birthdate invalid!',
+                content: translate('birthday', 'CMD_ADD_INVALID_BIRTHDATE'),
                 ephemeral: true
             });
             return false;
@@ -58,7 +59,7 @@ module.exports = {
 
         let added = await bean.save();
         await interaction.reply({
-            content: added ? 'Added birthdate ``'+birthdateOrg+'`` to user <@'+bean.user_id+'>' : 'Error on add birthdate',
+            content: added ? translate('birthday', 'CMD_ADD_SUCCESS', birthdateOrg, bean.user_id) : translate('birthday', 'CMD_ADD_ERROR'),
             ephemeral: true
         });
         return added;
