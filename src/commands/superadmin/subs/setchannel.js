@@ -2,16 +2,15 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('setchannel')
-            .setDescription('[SUPERADMIN] Set this channel with superadmin'),
+            .setDescription(translate('superadmin', 'CMD_SETCHANNEL')),
     async execute(interaction) {
         if(!!client.super_admin_channel){
             interaction.reply({
-                content: 'Superadmin channel is already set',
+                content: translate('superadmin', 'CMD_SETCHANNEL_ALREADY_SET'),
                 ephemeral: true,
             })
             return true;
         }
-
 
         //Saving to .env.override
         let env_override = getUtils().getEnvOverride();
@@ -22,7 +21,7 @@ module.exports = {
         getUtils().saveEnvOverride(env_override, true);
 
         interaction.reply({
-            content: 'Channel <#'+interaction.channelId+'> is now superadmin!',
+            content: translate('superadmin', 'CMD_SETCHANNEL_SUCCESS', interaction.channelId),
             ephemeral: true,
         })
         return true;

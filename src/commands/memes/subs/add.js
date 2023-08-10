@@ -5,15 +5,15 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('add')
-            .setDescription('Adicione uma nova imagem de meme')
+            .setDescription(translate('memes', 'CMD_ADD'))
             .addStringOption(url =>
                 url.setName('url')
-                    .setDescription('URL image')
+                    .setDescription(translate('memes', 'CMD_ADD_OPTION_URL'))
                     .setRequired(true)
             )
             .addStringOption(name =>
                 name.setName('name')
-                    .setDescription('Description')
+                    .setDescription(translate('memes', 'CMD_ADD_OPTION_NAME'))
                     .setRequired(true)
             ),
     async execute(interaction) {
@@ -21,7 +21,7 @@ module.exports = {
         const name = interaction.options.getString('name').toString();
         if(url_image.substring(0, 7) !== 'http://' && url_image.substring(0, 8) !== 'https://'){
             await interaction.reply({
-                content: 'URL invalid!',
+                content: translate('memes', 'CMD_ADD_INVALID_URL'),
                 ephemeral: true
             });
             return false;
@@ -35,7 +35,7 @@ module.exports = {
         exists = exists[0];
         if(!!exists){
             await interaction.reply({
-                content: `Meme already exists! ID: ${exists.order_id}`,
+                content: translate('memes', 'CMD_ADD_ALREADY_EXISTS', exists.order_id),
                 ephemeral: true
             });
             return true;
@@ -47,7 +47,7 @@ module.exports = {
 
         if(!saved){
             await interaction.reply({
-                content: 'Error on saving new meme',
+                content: translate('memes', 'CMD_ADD_ERROR'),
                 ephemeral: true
             });
             return false;
@@ -61,7 +61,6 @@ module.exports = {
         await interaction.deleteReply();
         await interaction.channel.send({
             content: `[${bean.order_id}] ${bean.name}`,
-            ephemeral: true,
             embeds: [embedMsg]
         });
         return true;

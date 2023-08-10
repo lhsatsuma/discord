@@ -1,0 +1,26 @@
+{
+  "CMD_PLAY": "Jogue uma partida de Jokenpô",
+  "CMD_PLAY_OPTION_CHOOSE": "Escolha sua jogada",
+  "PAPER": "Papel",
+  "SCISSORS": "Tesoura",
+  "ROCK": "Pedra",
+  "WINNED": "Ganhou",
+  "LOSE": "Perdeu",
+  "DRAW": "Empate",
+  "TOTAL": "Total",
+  "CMD_PLAY_SUCCESS": "{0} jogou uma partida de jokenpô",
+  "CMD_PLAY_PLAYED": "Você jogou",
+  "CMD_PLAY_BOT_PLAYED": "BOT jogou",
+  "CMD_PLAY_DRAW": "Foi um empate!",
+  "CMD_PLAY_WIN": "Você ganhou!",
+  "CMD_PLAY_LOSE": "Você perdeu!",
+
+  "CMD_RESET": "Resetar status do jokenpô",
+  "CMD_RESET_SUCCESS": "Status resetado com sucesso!",
+
+  "CMD_STATUS": "Status Jokenpô",
+  "CMD_STATUS_MEMBER": "Status Jokenpô de {0}",
+  "CMD_STATUS_AMOUNT": "Status por Quantidade",
+  "CMD_STATUS_PERCS": "Status por Porcentagem",
+  "CMD_STATUS_NO_GAME": "Você precisa jogar uma vez pelo menos para obter seu status"
+}

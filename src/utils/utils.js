@@ -182,15 +182,16 @@ class Utils{
 		return bot_cfg.ADMIN_CHANNEL_ID === compare;
 	}
 
-	mountEmbedArrays = (data, title, perPage = 10) => {
+	mountEmbedArrays = (data, title, perPage = 10, qtyNewLine = 1) => {
 		let embedDescription = '';
 		let page = 1;
 		let arrayEmbeds = [];
 		let arrayCount = 0;
+		const newLine = '\n'.repeat(qtyNewLine);
 
 		data.forEach((ipt) => {
 			arrayCount++;
-			embedDescription += `${ipt}\n`;
+			embedDescription += `${ipt}${newLine}`;
 			if(arrayCount >= perPage){
 				let embedMsg = new EmbedBuilder()
 					.setTitle(title)

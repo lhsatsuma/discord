@@ -4,7 +4,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('stop')
-            .setDescription('Stop a current match!'),
+            .setDescription(translate('ttt', 'CMD_STOP')),
     async execute(interaction) {
         let bean = new BeanVelha();
         bean.user_id = interaction.user.id;
@@ -13,7 +13,7 @@ module.exports = {
 
         if(!bean.id){
             await interaction.reply({
-                content: 'No running game found!',
+                content: translate('ttt', 'CMD_STOP_NO_GAME'),
                 ephemeral: true
             });
             return false;
@@ -21,6 +21,6 @@ module.exports = {
         bean.status = 'done';
         await bean.save();
 
-        await interaction.reply('Stopped running game!');
+        await interaction.reply(translate('ttt', 'CMD_STOP_SUCCESS'));
     },
 }

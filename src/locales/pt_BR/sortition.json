@@ -1,0 +1,8 @@
+{
+  "CMD_SORTITION": "Sorteio de um número",
+  "CMD_SORTITION_OPTION_MIN": "Número mínimo para o sorteio",
+  "CMD_SORTITION_OPTION_MAX": "Número máximo para o sorteio",
+  "CMD_SORTITION_INVALID_MAX": "O número máximo não pode ser menor que o número mínimo!",
+  "CMD_SORTITION_TITLE": "{0} fez um sorteio de {1} até {2}",
+  "CMD_SORTITION_SUCCESS": "O número sorteado foi: **{0}**"
+}

@@ -3,7 +3,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const returned = client.create(
     new SlashCommandBuilder()
         .setName('jokes')
-        .setDescription('Jokes!')
+        .setDescription(translate('jokes', 'CMD_JOKES'))
 );
 
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
     subcommands: returned.subcommands,
     cooldown: 2,
     async execute(interaction) {
-        let jokes = require(process.cwd() + '/uploads/jokes.json');
+        let jokes = require(process.cwd() + '/uploads/'+getLang().locale+'/jokes.json');
         let random_key = Math.floor(Math.random() * jokes.length);
         let joke = jokes[random_key];
         let reply = '**'+joke['question']+'**';

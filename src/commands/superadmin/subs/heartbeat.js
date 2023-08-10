@@ -4,26 +4,26 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('heartbeat')
-            .setDescription('[SUPERADMIN] Change heartbeat seconds')
+            .setDescription(translate('superadmin', 'CMD_HEARTBEAT'))
             .addIntegerOption(option =>
                 option
                     .setName('seconds')
-                    .setDescription('Seconds to send the heartbeat')
+                    .setDescription(translate('superadmin', 'CMD_HEARTBEAT_OPTION_SECONDS'))
                     .setRequired(true)
                     .setMinValue(5)
                     .setMaxValue(9999))
             .addStringOption(option =>
                     option.setName('savecfg')
-                        .setDescription('Save and reload CFG')
+                        .setDescription(translate('superadmin', 'CMD_HEARTBEAT_OPTION_SAVECFG'))
                         .addChoices(
-                            { name: 'Yes', value: 'yes' },
-                            { name: 'No', value: 'no' },
+                            { name: translate('globals', 'YES'), value: 'yes' },
+                            { name: translate('globals', 'NO'), value: 'no' },
                         ),
             ),
     async execute(interaction) {
         if(!getUtils().channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({
-                content: 'Not allowed to execute this command here.',
+                content: translate('globals', 'CHANNEL_NOT_ALLOWED'),
                 ephemeral: true,
             });
             return false;
@@ -31,7 +31,7 @@ module.exports = {
 
         const new_heartbeat = interaction.options.getInteger('seconds');
         const reloadcfg = interaction.options.getString('savecfg');
-        let description = 'Successfully changed heartbeat to '+new_heartbeat+'!';
+        let description = translate('superadmin', 'CMD_HEARTBEAT_SUCCESS', new_heartbeat);
 
         try {
             let env_override = getUtils().getEnvOverride();
@@ -46,7 +46,7 @@ module.exports = {
 
         let embedMsg = new EmbedBuilder()
             .setColor(getUtils().getColor('GREEN'))
-            .setTitle('[SUPERADMIN] Change heartbeat seconds')
+            .setTitle(translate('superadmin', 'CMD_HEARTBEAT'))
             .setAuthor(client.author)
             .setDescription(description)
             .setThumbnail(bot_cfg.BOT_ICON);

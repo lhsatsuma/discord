@@ -5,11 +5,11 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('status')
-            .setDescription('[SUPERADMIN] Status of System BOT'),
+            .setDescription(translate('superadmin', 'CMD_STATUS')),
     async execute(interaction) {
         if(!getUtils().channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({
-                content: 'Not allowed to execute this command here.',
+                content: translate('globals', 'CHANNEL_NOT_ALLOWED'),
                 ephemeral: true,
             });
             return false;
@@ -18,7 +18,6 @@ module.exports = {
         const date = bean.unformatField('datetime-locale', new Date());
         const ProcessRunning = require('../../../utils/ProcessRunning.js');
 
-
         let running = new ProcessRunning();
         let runningScheduler = new ProcessRunning('scheduler', false);
         let appInfo = await running.getSysInfo();
@@ -26,7 +25,7 @@ module.exports = {
 
         let arrayEmbeds = [];
         let embedMsg = new EmbedBuilder()
-            .setTitle('Status app')
+            .setTitle(translate('superadmin', 'CMD_STATUS_APP'))
             .setThumbnail(bot_cfg.BOT_ICON)
             .setDescription(`**${date}**\n\nUptime: ${appUptime}`)
             .addFields([
@@ -43,7 +42,7 @@ module.exports = {
             let schedulerInfo = await runningScheduler.getSysInfo();
             let schedulerUptime = await runningScheduler.getUptime();
             embedMsg = new EmbedBuilder()
-                .setTitle('Status scheduler')
+                .setTitle(translate('superadmin', 'CMD_STATUS_SCHEDULER'))
                 .setThumbnail(bot_cfg.BOT_ICON)
                 .setDescription(`**${date}**\n\nUptime: ${schedulerUptime}`)
                 .addFields([
@@ -64,19 +63,19 @@ module.exports = {
             author: interaction.member.user,
             interaction: interaction,
             ephemeral: true,
-            time: 200*100, /** 40 seconds */
+            time: 40*1000, /** 40 seconds */
             disableButtons: false, /** Remove buttons after timeout */
             fastSkip: false,
             pageTravel: false,
             buttons: [
                 {
                     type: ButtonTypes.previous,
-                    label: 'Anterior',
+                    label: translate('globals', 'PREVIOUS'),
                     style: ButtonStyles.Primary
                 },
                 {
                     type: ButtonTypes.next,
-                    label: 'Próximo',
+                    label: translate('globals', 'NEXT'),
                     style: ButtonStyles.Success
                 }
             ]

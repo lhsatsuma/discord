@@ -57,7 +57,7 @@ CREATE TABLE `tic_tac_toe` (
    CONSTRAINT fk_tic_tac_toe_server_members FOREIGN KEY (server, user_id) REFERENCES server_members (server, user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE `jokenpo` (
+CREATE TABLE `jankenpon` (
    `id` varchar(36) NOT NULL PRIMARY KEY ,
    `date_entered` datetime DEFAULT NULL,
    `date_modified` datetime DEFAULT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE `jokenpo` (
    `draw_rock` int(11) DEFAULT NULL,
    `draw_scissors` int(11) DEFAULT NULL,
    `draw_paper` int(11) DEFAULT NULL,
-   CONSTRAINT fk_jdv_server FOREIGN KEY (server) REFERENCES servers (server)
+   CONSTRAINT fk_jankenpon_server FOREIGN KEY (server) REFERENCES servers (server)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

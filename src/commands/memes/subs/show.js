@@ -5,10 +5,10 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('show')
-            .setDescription('Show an meme with ID')
+            .setDescription(translate('memes', 'CMD_SHOW'))
             .addStringOption(search =>
                 search.setName('search')
-                    .setDescription('ID/Nome do meme')
+                    .setDescription(translate('memes', 'CMD_SHOW_OPTION_SEARCH'))
                     .setRequired(true)
             ),
     async execute(interaction) {
@@ -21,7 +21,7 @@ module.exports = {
 
         if(!bean.id){
             await interaction.reply({
-                content: `Meme not found!`,
+                content: translate('memes', 'NOT_FOUND'),
                 ephemeral: true
             });
             return true;

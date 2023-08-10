@@ -1,10 +1,11 @@
 if(typeof entryPoint == 'undefined') { console.log('Access Denied!'); process.exit(); }
 
-const { REST, Routes, Client, GatewayIntentBits , Collection, Events,Partials} = require("discord.js");
+const { REST, Routes, Client, GatewayIntentBits , Collection, Partials} = require("discord.js");
 const mySqlDb = require("./database/MysqlDataBase");
 const ProcessRunning = require("./utils/ProcessRunning");
 const coolDownCls = require("./utils/coolDown");
 require('./utils/utils');
+require('./utils/lang');
 
 global.Discord = require("discord.js");
 
@@ -64,11 +65,9 @@ class discordAppClient extends Client
 	{
 		this.logInit();
 
-
 		this.commands = new Collection();
 
 		await this.checkRunningStartVars();
-
 
 		log.Debug('Initializing database class');
 
@@ -126,66 +125,21 @@ class discordAppClient extends Client
 
 		log.Debug('Database successfully loaded!');
 
+		log.Debug('Loading locales for: '+bot_cfg.BOT_LOCALE);
+
+		await getLang().importLocales();
+
+		log.Debug('Loaded locales');
+
 		log.Info('Loading commands files');
 		await this.loadCommands();
 		log.Info('Loading commands files COMPLETED!');
-		//After loaded all Commands files, let's do on event
-		client.on(Events.InteractionCreate, async interaction => {
-			if (!interaction.isChatInputCommand()) return;
-			let command = interaction.client.commands.get(interaction.commandName);
-			let commandCD = interaction.commandName;
-			let commandName = commandCD;
-			let coolDown = command.cooldown;
-			let optionsStr = '';
-			if(interaction.options._subcommand){
-				commandCD += interaction.options._subcommand;
-				commandName += ':'+interaction.options._subcommand;
-				command = command.subcommands[interaction.options._subcommand];
-			}
 
-			if (!command) {
-				log.Error(`No command matching ${commandName} was found.`);
-				return;
-			}
 
-			if(interaction.options._hoistedOptions.length){
-				interaction.options._hoistedOptions.forEach((ipt) => {
-					optionsStr += ` [${ipt.name}::${ipt.value}]`;
-				});
-			}
-
-			let interactionKey = `[${interaction.guild.name}#${interaction.channel.name}@${interaction.user.username}]`;
-			log.Debug(`${interactionKey}[CMD] ${commandName}${optionsStr}`);
-
-			let cooldownLeft = 0;
-			if(!!coolDown){
-				cooldownLeft = this.cooldown.checkUserCd(interaction.user.id, commandCD);
-			}
-			if(!cooldownLeft){
-				try {
-					await command.execute(interaction);
-					if(!!coolDown){
-						this.cooldown.insertUserCd(interaction.user.id, commandCD, coolDown);
-					}
-				} catch (error) {
-					console.log(error);
-					log.Fatal('Error executing command: '+error.message+ ' on line '+error.line);
-					if(!interaction.replied) {
-						await interaction.reply({
-							content: 'There was an error while executing this command!',
-							ephemeral: true
-						});
-					}
-				}
-			}else{
-				await interaction.reply({
-					content: 'Aguarde '+cooldownLeft+' segundos para executar novamente o comando...',
-					ephemeral: true
-				});
-			}
-		});
-
+		log.Info('Loading events files');
 		await this.loadEvents();
+		log.Info('Loading events files COMPLETED!');
+
 		return status_conn.status;
 	}
 	async loadEvents()

@@ -18,6 +18,9 @@ class BeanJankenpon extends BeanBase
                 type: 'datetime',
                 default: null,
             },
+            server: {
+                type: 'varchar',
+            },
             user_id: {
                 type: 'varchar',
                 default: null,
@@ -114,6 +117,11 @@ class BeanJankenpon extends BeanBase
         };
 	}
 
+    async selectActive()
+    {
+        return this.select(`server = '${this.server}' AND user_id = '${this.user_id}'`);
+    }
+
     calc_total_played()
 	{
 		this.total_played = 0;
@@ -149,7 +157,7 @@ class BeanJankenpon extends BeanBase
 	{
 		this.calc_total_played();
 
-        for(var type in this.stats_play){
+        for(let type in this.stats_play){
 			this.stats_play[type]['perc']['total'] = 0;
 			this.stats_play[type]['perc']['win'] = 0;
 			this.stats_play[type]['perc']['lose'] = 0;
@@ -176,7 +184,7 @@ class BeanJankenpon extends BeanBase
 	}
     async resetScore()
 	{
-		await this.select();
+		await this.selectActive();
 		this.played_rock = 0;
 		this.played_paper = 0;
 		this.played_scissors = 0;
@@ -189,37 +197,37 @@ class BeanJankenpon extends BeanBase
 		this.draw_rock = 0;
 		this.draw_paper = 0;
 		this.draw_scissors = 0;
-		this.save();
+        return await this.save();
 	}
 
     async plusWin(card)
 	{
-		await this.select();
+		await this.selectActive();
 		let played_card = 'played_'+card;
 		let win_card = 'win_'+card;
 		this[played_card]++;
 		this[win_card]++;
-		this.save();
+		return await this.save();
 	}
 	
 	async plusLose(card)
 	{
-		await this.select();
+		await this.selectActive();
 		let played_card = 'played_'+card;
 		let lose_card = 'lose_'+card;
 		this[played_card]++;
 		this[lose_card]++;
-		this.save();
+        return await this.save();
 	}
 	
 	async plusDraw(card)
 	{
-		await this.select();
+		await this.selectActive();
 		let played_card = 'played_'+card;
 		let draw_card = 'draw_'+card;
 		this[played_card]++;
 		this[draw_card]++;
-		this.save();
+        return await this.save();
 	}
 }
 

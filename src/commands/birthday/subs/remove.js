@@ -4,24 +4,23 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('remove')
-            .setDescription('Remove user birthday')
+            .setDescription(translate('birthday', 'CMD_REMOVE'))
             .addUserOption(option =>
                 option
-                    .setName('usuario')
-                    .setDescription('User member')
-                    .setRequired(true)
+                    .setName('user')
+                    .setDescription(translate('birthday', 'CMD_REMOVE_OPTION_USER'))
             ),
     async execute(interaction) {
 
         let bean = new BeanServerMembers();
         bean.server = interaction.guildId;
-        bean.user_id = interaction.user.id;
+        bean.user_id = interaction.options.getString('user') ?? interaction.user.id;
         await bean.selectActive();
 
 
         if(!bean.id){
             await interaction.reply({
-                content: 'This user does not have a registered birthday',
+                content: translate('birthday', 'CMD_REMOVE_NO_USER'),
                 ephemeral: true
             });
             return false;
@@ -31,7 +30,7 @@ module.exports = {
 
         let removed = await bean.save();
         await interaction.reply({
-            content: removed ? 'Removed birthdate of user <@'+bean.user_id+'>' : 'Error on removing birthdate',
+            content: removed ? translate('birthday', 'CMD_REMOVE_SUCCESS', bean.user_id) : translate('birthday', 'CMD_REMOVE_ERROR'),
             ephemeral: true
         });
         return removed;

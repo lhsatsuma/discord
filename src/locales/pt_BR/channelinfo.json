@@ -1,0 +1,4 @@
+{
+  "CMD_CHANNELINFO": "[ADMIN] Informações deste canal",
+  "CMD_CHANNELINFO_SUCCESS": "Informações do canal <#{0}>"
+}

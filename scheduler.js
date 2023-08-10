@@ -6,7 +6,7 @@ global.fs = require('fs');
 require('./src/utils/config');
 
 const logControl = require("./src/utils/LogControl");
-global.log = new logControl(bot_cfg.LOG_DIR, 'scheduler.log', {level_register: bot_cfg.LOG_REGISTER});
+global.log = new logControl('scheduler.log', {level_register: bot_cfg.LOG_REGISTER});
 
 const scheduler = require('./src/scheduler');
 

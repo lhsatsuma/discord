@@ -4,7 +4,7 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('add_channel')
-            .setDescription('Add this channel to notify birthdays'),
+            .setDescription(translate('birthday', 'CMD_ADD_CHANNEL')),
     async execute(interaction) {
         let bean = new BeanServers();
         bean.server = interaction.guildId;
@@ -16,7 +16,7 @@ module.exports = {
 
         if(bean.channels_birthday.indexOf(interaction.channelId) != -1){
             await interaction.reply({
-                content: 'Channel is already set to notify birthdays',
+                content: translate('birthday', 'CMD_ADD_CHANNEL_ALREADY_REGISTERED'),
                 ephemeral: true
             });
             return false;
@@ -26,7 +26,7 @@ module.exports = {
 
         let added = await bean.save();
 
-        let msg = added ? `Added <#${interaction.channelId}> to notify birthdays` : 'Error on add channel to notify birthdays';
+        let msg = added ? translate('birthday', 'CMD_ADD_CHANNEL_SUCCESS', interaction.channelId) : translate('birthday', 'CMD_ADD_CHANNEL_ERROR');
         await interaction.reply({
             content: msg,
             ephemeral: true
