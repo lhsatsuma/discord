@@ -9,9 +9,5 @@ const returned = client.create(
 );
 module.exports = {
     data: returned.data,
-    subcommands: returned.subcommands,
-    cooldown: 5,
-    async execute(interaction) {
-        await interaction.reply('Choose a subcommand to execute.');
-    },
+    subcommands: returned.subcommands
 };

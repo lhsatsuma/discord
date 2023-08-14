@@ -1,12 +1,12 @@
 /**
- * x.y.z.wt
+ * x.y.zt
  * x - Global App Version
  * y - Release Version
  * z - Build Version
- * t - Type Version (Alpha, Beta or Release)
+ * t - Type Version
  * @type {string}
  */
-global.app_version = '1.3.1a';
+global.app_version = '1.3.0b-0001';
 
 
 /**

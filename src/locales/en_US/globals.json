@@ -3,5 +3,7 @@
   "PREVIOUS": "Previous",
   "CHANNEL_NOT_ALLOWED": "You are forbidden from running commands in this channel",
   "YES": "Yes",
-  "NO": "No"
+  "NO": "No",
+  "CMD_ERROR": "There was an error while executing this command!",
+  "CMD_COOLDOWN": "Wait {0} seconds to run the command again..."
 }

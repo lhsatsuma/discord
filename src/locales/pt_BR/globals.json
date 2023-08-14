@@ -3,5 +3,7 @@
   "PREVIOUS": "Anterior",
   "CHANNEL_NOT_ALLOWED": "Você não pode executar este comando neste canal",
   "YES": "Sim",
-  "NO": "Não"
+  "NO": "Não",
+  "CMD_ERROR": "Ocorreu um erro ao executar este comando!",
+  "CMD_COOLDOWN": "Aguarde {0} segundos para executar novamente o comando..."
 }

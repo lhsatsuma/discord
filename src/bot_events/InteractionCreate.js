@@ -49,14 +49,14 @@ client.on(Events.InteractionCreate, async interaction => {
             log.Fatal('Error executing command: '+error.message+ ' on line '+error.line);
             if(!interaction.replied) {
                 await interaction.reply({
-                    content: 'There was an error while executing this command!',
+                    content: translate('globals', 'CMD_ERROR'),
                     ephemeral: true
                 });
             }
         }
     }else{
         await interaction.reply({
-            content: 'Aguarde '+cooldownLeft+' segundos para executar novamente o comando...',
+            content: translate('globals', 'CMD_COOLDOWN', cooldownLeft),
             ephemeral: true
         });
     }
