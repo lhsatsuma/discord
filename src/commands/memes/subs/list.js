@@ -37,12 +37,12 @@ module.exports = {
             buttons: [
                 {
                     type: ButtonTypes.previous,
-                    label: translate('global', 'PREVIOUS'),
+                    label: translate('globals', 'PREVIOUS'),
                     style: ButtonStyles.Primary
                 },
                 {
                     type: ButtonTypes.next,
-                    label: translate('global', 'NEXT'),
+                    label: translate('globals', 'NEXT'),
                     style: ButtonStyles.Success
                 }
             ]
