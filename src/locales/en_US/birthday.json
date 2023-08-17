@@ -35,5 +35,7 @@
   "CMD_REMOVE_CHANNEL_EMPTY_CHANNELS": "There are no birthday notifications channels registered",
   "CMD_REMOVE_CHANNEL_NO_CHANNEL": "This channel is not enabled to receive birthday notifications",
   "CMD_REMOVE_CHANNEL_SUCCESS": "Removed <#{0}> from birthday notifications list",
-  "CMD_REMOVE_CHANNEL_ERROR": "Error removing channel from birthday notifications list"
+  "CMD_REMOVE_CHANNEL_ERROR": "Error removing channel from birthday notifications list",
+  "SCHEDULE_HAPPY_BIRTHDAY": "Happy Birthday!!",
+  "SCHEDULE_BIRTHDAY_MESSAGE": "Happy Birthday <@{0}>"
 }

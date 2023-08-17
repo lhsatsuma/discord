@@ -82,10 +82,20 @@ class ServerMembers extends BeanBase
                 }else{
                     birthDate = birthDate.substring(0, 5);
                 }
-
-                let description = `<@${result.user_id}> Happy birthday! (${birthDate})`;
+                let fields = [
+                    {
+                        name: 'Data',
+                        value: birthDate,
+                        inline: true
+                    }
+                ];
+                let description = translate('birthday', 'SCHEDULE_BIRTHDAY_MESSAGE', result.user_id);
                 if(age > 0){
-                    description = `<@${result.user_id}> Happy birthday for your **${age}** years old! (${birthDate})`;
+                    fields.push({
+                       name: 'Idade',
+                       value: age.toString(),
+                        inline: true
+                    });
                 }
 
                 let guild = await client.guilds.fetch(result.server);
@@ -98,10 +108,11 @@ class ServerMembers extends BeanBase
 
                     let embed = new EmbedBuilder()
                         .setColor('#0099ff')
-                        .setTitle("Happy birthday!!")
+                        .setTitle(translate('birthday', 'SCHEDULE_HAPPY_BIRTHDAY'))
                         .setAuthor({name: member.user.username, iconURL: member.user.avatarURL()})
                         .setThumbnail(this.options.thumb_birthday)
-                        .setDescription(description);
+                        .setDescription(description)
+                        .setFields(fields);
 
                     //Send to every channel of server
                     for(let k=0;k<channels.length;k++){
