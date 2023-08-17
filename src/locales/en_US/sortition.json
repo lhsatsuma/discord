@@ -1,0 +1,8 @@
+{
+  "CMD_SORTITION": "Drawing of a number",
+  "CMD_SORTITION_OPTION_MIN": "Minimum number for the draw",
+  "CMD_SORTITION_OPTION_MAX": "Maximum number for the draw",
+  "CMD_SORTITION_INVALID_MAX": "The maximum number cannot be less than the minimum number!",
+  "CMD_SORTITION_TITLE": "{0} made a draw from {1} to {2}",
+  "CMD_SORTITION_SUCCESS": "The number drawn was: **{0}**"
+}

@@ -4,7 +4,7 @@
 Project tested and running with: 
 
 [![NPM Version](https://img.shields.io/badge/npm-9.8.1-green)](https://www.npmjs.com/)
-[![Node Version](https://img.shields.io/badge/nodejs-20.4.0-green)](https://nodejs.org/)
+[![Node Version](https://img.shields.io/badge/nodejs-20.5.1-green)](https://nodejs.org/)
 
 ## NPM Dependecies
 [![DiscordJS](https://img.shields.io/npm/v/discord.js?color=success&label=DiscordJS)](https://www.npmjs.com/package/discord.js)
@@ -30,9 +30,9 @@ This bot uses the Discord.JS package.
 
 ## Install
 
-Install BOT with git clone
+Install BOT with the latest release:
 ```bash
-  git clone https://github.com/lhsatsuma/discord.git
+  https://github.com/lhsatsuma/discord/releases/latest
 ```
 
 Install Node components

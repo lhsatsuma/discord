@@ -14,14 +14,21 @@ module.exports = {
 
         if(bean.id){
             await interaction.reply({
-                content: translate('hangman', 'CMD_PLAY'),
+                content: translate('hangman', 'CMD_ALREADY_STARTED'),
                 ephemeral: true
             });
             return false;
         }
 
         bean.status = 'running';
-        bean.setNewWord();
+        let new_word = bean.setNewWord();
+        if(new_word === false){
+            await interaction.reply({
+                content: translate('hangman', 'NO_RECORDS', getLang().locale),
+                ephemeral: true
+            });
+            return false;
+        }
 
         let description = '';
         description += translate('hangman', 'CMD_PLAY_SUCCESS_WAIT', interaction.user.id);

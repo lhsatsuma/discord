@@ -11,7 +11,15 @@ module.exports = {
     subcommands: returned.subcommands,
     cooldown: 2,
     async execute(interaction) {
-        let jokes = require(process.cwd() + '/uploads/'+getLang().locale+'/jokes.json');
+        let path = process.cwd() + '/uploads/'+getLang().locale+'/jokes.json';
+        if(!fs.existsSync(path)){
+            await interaction.reply({
+                content: translate('jokes', 'NO_RECORDS', getLang().locale),
+                ephemeral: true,
+            });
+            return false;
+        }
+        let jokes = require(path);
         let random_key = Math.floor(Math.random() * jokes.length);
         let joke = jokes[random_key];
         let reply = '**'+joke['question']+'**';

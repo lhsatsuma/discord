@@ -1,0 +1,41 @@
+{
+  "CMD_ADD": "Add a birthday date for a member",
+  "CMD_ADD_OPTION_USER": "User",
+  "CMD_ADD_OPTION_DAY": "Day (DD)",
+  "CMD_ADD_OPTION_MONTH": "Month (MM)",
+  "CMD_ADD_OPTION_YEAR": "Year (YYYY)",
+  "CMD_ADD_INVALID_BIRTHDATE": "Invalid Birthday Date!",
+  "CMD_ADD_SUCCESS": "Added birthday date {0} for member <@{1}>",
+  "CMD_ADD_ERROR": "Error adding birthday date",
+
+  "CMD_ADD_CHANNEL": "Add this channel to notify birthdays",
+  "CMD_ADD_CHANNEL_ALREADY_REGISTERED": "This channel is already configured for birthday notifications",
+  "CMD_ADD_CHANNEL_SUCCESS": "Added <#{0}> to notify birthdays",
+  "CMD_ADD_CHANNEL_ERROR": "Error adding the channel for birthday notifications",
+
+
+
+  "CMD_LIST": "Birthday List",
+  "CMD_LIST_NO_MEMBERS": "There are no members with a registered birthday!",
+
+
+  "CMD_LIST_CHANNELS": "List of Channels for Birthday Notifications",
+  "CMD_LIST_CHANNELS_NO_CHANNELS": "There are no channels for birthday notifications registered",
+  "CMD_LIST_CHANNELS_SUCCESS": "List of channels configured for birthday notifications:\n{0}",
+
+
+
+  "CMD_REMOVE": "Removes a member's birthday",
+  "CMD_REMOVE_OPTION_USER": "Member",
+  "CMD_REMOVE_NO_USER": "Member has no birthday date registered",
+  "CMD_REMOVE_SUCCESS": "Removed birthday date from member <@{0}>",
+  "CMD_REMOVE_ERROR": " Error removing birthday date",
+
+  "CMD_REMOVE_CHANNEL": "Removes this channel from birthday notifications list",
+  "CMD_REMOVE_CHANNEL_EMPTY_CHANNELS": "There are no birthday notifications channels registered",
+  "CMD_REMOVE_CHANNEL_NO_CHANNEL": "This channel is not enabled to receive birthday notifications",
+  "CMD_REMOVE_CHANNEL_SUCCESS": "Removed <#{0}> from birthday notifications list",
+  "CMD_REMOVE_CHANNEL_ERROR": "Error removing channel from birthday notifications list",
+  "SCHEDULE_HAPPY_BIRTHDAY": "Happy Birthday!!",
+  "SCHEDULE_BIRTHDAY_MESSAGE": "Happy Birthday <@{0}>"
+}

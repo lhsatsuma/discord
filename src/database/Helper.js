@@ -63,6 +63,9 @@ class HelperDataBase
 					let val = insert_tables[table][field];
 					columns += c_fields+field;
 					if(val !== null){
+						if(typeof val == 'string'){
+							val = val.replaceAll("'", "''");
+						}
 						val = "'"+val+"'";
 					}
 					values += c_fields+""+val;
@@ -102,6 +105,9 @@ class HelperDataBase
 				for(var field in args['fields']){
 					let val = args['fields'][field];
 					if(val !== null){
+						if(typeof val == 'string'){
+							val = val.replaceAll("'", "''");
+						}
 						val = "'"+val+"'";
 					}
 					columns += c_fields+field+" = "+val+"";

@@ -1,0 +1,6 @@
+{
+  "CMD_PICKUP_LINES": "Funny Pickup Lines",
+  "CMD_PICKUP_LINES_OPTION_USER": "Member to send the pickup line",
+  "CMD_PICKUP_SUCCESS_USER": "**{0}** sent a pickup line to **<@{1}>**",
+  "NO_RECORDS": "Pickup lines not found for language: {0}"
+}

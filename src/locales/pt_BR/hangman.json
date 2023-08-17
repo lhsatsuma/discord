@@ -16,5 +16,7 @@
   "CMD_PLAY_LOSE": "Você perdeu! Tente de novo!",
   "CMD_STOP": "Para uma partida de Forca",
   "CMD_STOP_NO_GAME": "Você não possui um jogo em andamento",
-  "CMD_STOP_SUCCESS": "Jogo finalizado!"
+  "CMD_STOP_SUCCESS": "Jogo finalizado!",
+  "NO_RECORDS": "Não existem palavras cadastradas para jogar no idioma: {0}",
+  "CMD_ALREADY_STARTED": "Já existe um jogo em andamento"
 }

@@ -35,5 +35,7 @@
   "CMD_REMOVE_CHANNEL_EMPTY_CHANNELS": "Não existem canais de notificações de aniversário cadastrados",
   "CMD_REMOVE_CHANNEL_NO_CHANNEL": "Este canal não está habilitado para receber notificações de aniversário",
   "CMD_REMOVE_CHANNEL_SUCCESS": "Removido <#{0}> da lista de notificações de aniversário",
-  "CMD_REMOVE_CHANNEL_ERROR": "Erro ao remover o canal da lista de notificações de aniversário"
+  "CMD_REMOVE_CHANNEL_ERROR": "Erro ao remover o canal da lista de notificações de aniversário",
+  "SCHEDULE_HAPPY_BIRTHDAY": "Feliz aniversário!!",
+  "SCHEDULE_BIRTHDAY_MESSAGE": "Feliz aniversário <@{0}>"
 }

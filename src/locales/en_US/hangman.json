@@ -1,0 +1,22 @@
+{
+  "CMD_PLAY": "Play a game of hangman",
+  "CMD_PLAY_ALREADY_STARTED": "You already have a game in progress!",
+  "CMD_PLAY_SUCCESS_WAIT": "<@{0}> started a game of Hangman!\nWait your turn to play....",
+  "HANGMAN": "Hangman game",
+  "TRYS_LEFT": "Attempts remaining",
+  "LETTERS_TOTAL": "Total Letters",
+  "LETTERS": "Letters",
+  "TRYS": "Letter Attempts",
+  "WORDS_GUESSEDS": "Word Attempts",
+  "HINTS_USED": "Hints used",
+  "CMD_PLAY_SUCCESS": "Type any letter or word in chat\nType **hint** in chat to receive a hint of the word",
+  "CMD_PLAY_NO_MORE_HINTS": "There are no more hints left",
+  "CMD_PLAY_INVALID_CHAR": "Only letters from A-Z are allowed",
+  "CMD_PLAY_WINNED": "You have won! Congratulations!",
+  "CMD_PLAY_LOSE": "You lost! Try again!",
+  "CMD_STOP": "Stop a game of Hangman",
+  "CMD_STOP_NO_GAME": "You do not have a game in progress",
+  "CMD_STOP_SUCCESS": "Game finished!",
+  "NO_RECORDS": "There are no words registered to play in the language: {0}",
+  "CMD_ALREADY_STARTED": "Already started a game"
+}

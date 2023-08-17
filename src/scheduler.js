@@ -30,6 +30,11 @@ class scheduler{
 
         //Try to login to Discord API
         try{
+            log.Debug('Loading locales for: '+bot_cfg.BOT_LOCALE);
+
+            await getLang().importLocales();
+
+            log.Debug('Loaded locales');
 
             log.Debug('Loading schedules files');
             await this.loadSchedules();
@@ -81,7 +86,7 @@ class scheduler{
                 log.Debug('Schedule '+scheduleName+' is inactive. Skipping...');
                 continue;
             }
-            log.Debug('Scheduling '+scheduleName+' | '+cronstrue.toString(scheduleClass.interval, { use24HourTimeFormat: true, locale: "pt_BR" }));
+            log.Debug('Scheduling '+scheduleName+' | '+cronstrue.toString(scheduleClass.interval, { use24HourTimeFormat: true, locale: getLang().locale }));
             scheduleClass.schedule();
 
 

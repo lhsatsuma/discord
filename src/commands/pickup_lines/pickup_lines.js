@@ -14,12 +14,21 @@ module.exports = {
     subcommands: returned.subcommands,
     cooldown: 3,
     async execute(interaction) {
+        let path = process.cwd() + '/uploads/'+getLang().locale+'/jokes.json';
+        if(!fs.existsSync(path)){
+            await interaction.reply({
+                content: translate('pickup_lines', 'NO_RECORDS', getLang().locale),
+                ephemeral: true,
+            });
+            return false;
+        }
+
         let user = interaction.options.getUser('user');
         let embedMsg = new EmbedBuilder()
         .setColor(getUtils().getColor('BLUE'));
         let textRet = '';
 
-        let pickup_lines_prontas = require(process.cwd() + '/uploads/pickup_lines.json');
+        let pickup_lines_prontas = require(path);
         let random_key = Math.floor(Math.random() * pickup_lines_prontas.length);
         let pickup_lines = pickup_lines_prontas[random_key];
 

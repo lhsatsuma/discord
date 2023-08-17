@@ -14,6 +14,7 @@ global.translate = (module, label, ...params) => {
 class Lang{
     availableLocales = [
         'pt_BR',
+        'en_US',
     ];
     locale;
     translates = {};
@@ -33,6 +34,10 @@ class Lang{
     translate(module, label, params)
     {
         //Check if label exists
+        if(!this.translates[module]){
+            log.Error(`Translate for module ${module} not found!`);
+            return label;
+        }
         if(typeof this.translates[module][label] == "undefined"){
             log.Error(`Translate ${label} in ${module} not found!`);
             return label;
