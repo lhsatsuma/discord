@@ -156,10 +156,9 @@ class discordAppClient extends Client
 
 		log.Info('Loading events files COMPLETED!');
 	}
-	async loadCommands() {
+	async loadCommands(force_send = false) {
 		const basePath = './src/commands/';
 		const commandPaths = fs.readdirSync(basePath);
-		const rest = new REST().setToken(bot_cfg.BOT_TOKEN);
 		let commandsTmp = [];
 		this.commands = new Collection();
 
@@ -194,9 +193,10 @@ class discordAppClient extends Client
 		}
 
 		// The put method is used to fully refresh all commands in the guild with the current set
-		if (bot_cfg.BOT_SEND_COMMANDS_API) {
+		if (bot_cfg.BOT_SEND_COMMANDS_API || force_send) {
 			log.Debug(`Sending ${commandsTmp.length} commands to Discord API`);
 			try {
+				const rest = new REST().setToken(bot_cfg.BOT_TOKEN);
 				const data = await rest.put(
 					Routes.applicationCommands(bot_cfg.BOT_ID),
 					{body: commandsTmp},
