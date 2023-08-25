@@ -45,6 +45,7 @@ class ServerMembers extends BeanBase
     {
         this.dbh.resetOptions();
         this.dbh.where = `server = '${this.server}' AND birthdate IS NOT NULL`;
+        this.dbh.order_by = "date_format(birthdate, '%c'), date_format(birthdate, '%e')";
         return await this.dbh.Select();
     }
 
