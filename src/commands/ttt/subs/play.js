@@ -21,7 +21,7 @@ module.exports = {
             ),
     async execute(interaction) {
         let description = '';
-        const against = interaction.options.getUser('against').id ?? bot_cfg.BOT_ID;
+        const against = (interaction.options.getUser('against').id ?? bot_cfg.BOT_ID).toString().replaceAll(/\D/g,'');;
         const dificulty = interaction.options.getString('difficulty') ?? 'easy';
 
         const BeanVelha = getUtils().requireAgain(process.cwd()+'/src/models/Ttt.js');

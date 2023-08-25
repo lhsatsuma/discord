@@ -23,7 +23,7 @@ module.exports = {
             return false;
         }
 
-        let user = interaction.options.getUser('user');
+        let user = (interaction.options.getUser('user')).toString().replaceAll(/\D/g,'');;
         let embedMsg = new EmbedBuilder()
         .setColor(getUtils().getColor('BLUE'));
         let textRet = '';

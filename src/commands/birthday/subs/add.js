@@ -30,7 +30,7 @@ module.exports = {
             ),
     async execute(interaction) {
 
-        let user = interaction.options.getUser('user');
+        let user = (interaction.options.getUser('user')).toString().replaceAll(/\D/g,'');
         let day = interaction.options.getString('day');
         let month = interaction.options.getString('month');
         let year = interaction.options.getString('year') ?? 1500;
