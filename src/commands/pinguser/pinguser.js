@@ -23,7 +23,7 @@ module.exports = {
 	subcommands: returned.subcommands,
 	cooldown: 30,
 	async execute(interaction) {
-		const target = (interaction.options.getUser('target')).toString().replaceAll(/\D/g,'');;
+		const target = interaction.options.getUser('target');
 		const times = interaction.options.getInteger('times');
 		interaction.reply({
 			content: translate('pinguser', 'CMD_PINGUSER_SUCCESS'),

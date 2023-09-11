@@ -11,6 +11,11 @@ class MysqliDataBase extends database
 	Connect()
 	{
 		return new Promise((resolve) => {
+			if(this.connection){
+				resolve({status: true, 'conn': this.connection});
+
+				return true;
+			}
 			let conn = new MySQL.createConnection({
 				host: this.host,
 				user: this.host_user,
@@ -50,6 +55,7 @@ class MysqliDataBase extends database
 	{
 		if(this.connection){
 			await this.connection.end();
+			this.connection = null;
 		}
 		return true;
 	}
