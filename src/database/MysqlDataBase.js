@@ -71,16 +71,16 @@ class MysqliDataBase extends database
 			log.Debug(sql);
 		}
 		return new Promise((resolve) => {
-			this.Connect().then(() => {
+			this.Connect().then(async () => {
 				if(this.connection){
 					if(show_sql){
 						console.log(sql);
 					}
-					this.connection.query(sql, (err, result) => {
+					this.connection.query(sql, async (err, result) => {
 						try{
 							if(err){
-								console.log(err, result);
 								this.ErrorQuery(sql, err.sqlMessage);
+								await this.CloseConn();
 								resolve(false);
 							}else{
 								resolve(result);

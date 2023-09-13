@@ -12,6 +12,14 @@ module.exports = {
         let bean = new BeanMemes();
         bean.server = interaction.guildId;
         let results = await bean.getList();
+        if(results === false){
+            interaction.reply({
+                content: translate('globals', 'DB_ERROR'),
+                ephemeral: true
+            });
+            return false;
+        }
+
         if(!results.length){
             interaction.reply({
                 content: translate('memes', 'CMD_LIST_NO_MEMES'),

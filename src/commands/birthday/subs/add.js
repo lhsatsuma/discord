@@ -52,7 +52,15 @@ module.exports = {
         bean.server = interaction.guildId;
         bean.user_id = user.id;
 
-        await bean.selectActive();
+        let results = await bean.selectActive();
+
+        if(results === false){
+            interaction.reply({
+                content: translate('globals', 'DB_ERROR'),
+                ephemeral: true
+            });
+            return false;
+        }
 
         bean.username = user.username;
         bean.birthdate = birthdate;

@@ -10,7 +10,15 @@ module.exports = {
         let bean = new BeanHangman();
         bean.server = interaction.guildId;
         bean.user_id = interaction.user.id;
-        await bean.selectActive();
+        let results = await bean.selectActive();
+
+        if(results === false){
+            interaction.reply({
+                content: translate('globals', 'DB_ERROR'),
+                ephemeral: true
+            });
+            return false;
+        }
 
         if(bean.id){
             await interaction.reply({
