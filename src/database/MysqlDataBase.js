@@ -10,12 +10,23 @@ class MysqliDataBase extends database
 	
 	Connect()
 	{
-		return new Promise((resolve) => {
+		return new Promise(async (resolve) => {
 			if(this.connection){
-				resolve({status: true, 'conn': this.connection});
 
-				return true;
+				console.log(this.connection.state);
 			}
+			if(this.connection){
+				const disconnected = await new Promise(resolve => {
+					connection.ping(err => {
+						resolve(err);
+					});
+				});
+				if(!disconnected){
+					resolve({status: true, 'conn': this.connection});
+					return true;
+				}
+			}
+			this.connection = null;
 			let conn = new MySQL.createConnection({
 				host: this.host,
 				user: this.host_user,
@@ -25,14 +36,13 @@ class MysqliDataBase extends database
 			});
 			
 			try{
-				conn.connect((err) => {
+				conn.connect(async (err) => {
 					if(err){
 						this.last_error = 'Connection Error '+this.origem+' DB: '+err.message;
 						resolve({status: false, 'err': this.last_error});
 					}else{
 						this.connection = conn;
 						resolve({status: true, 'conn': this.connection});
-						
 					}
 				});
 				conn.on('error', async (err) => {
@@ -54,7 +64,7 @@ class MysqliDataBase extends database
 	async CloseConn()
 	{
 		if(this.connection){
-			await this.connection.end();
+			await this.connection.destroy();
 			this.connection = null;
 		}
 		return true;
