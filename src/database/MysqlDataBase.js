@@ -17,7 +17,7 @@ class MysqliDataBase extends database
 			}
 			if(this.connection){
 				const disconnected = await new Promise(resolve => {
-					connection.ping(err => {
+					this.connection.ping(err => {
 						resolve(err);
 					});
 				});
