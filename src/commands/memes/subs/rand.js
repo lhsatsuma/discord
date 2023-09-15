@@ -14,7 +14,15 @@ module.exports = {
 
         let bean = new BeanMemes();
         bean.server = interaction.guildId;
-        await bean.selectRandom();
+        let results = await bean.selectRandom();
+
+        if(results === false){
+            interaction.reply({
+                content: translate('globals', 'DB_ERROR'),
+                ephemeral: true
+            });
+            return false;
+        }
 
 
         //Protection against random not found

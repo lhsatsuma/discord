@@ -1,6 +1,6 @@
 var globalClassLang = null;
-global.getLang = () => {
-    if(globalClassLang == null){
+global.getLang = (reset = false) => {
+    if(globalClassLang == null || reset){
         globalClassLang = new Lang();
     }
 
@@ -13,8 +13,14 @@ global.translate = (module, label, ...params) => {
 
 class Lang{
     availableLocales = [
-        'pt_BR',
-        'en_US',
+        {
+            name: 'Português Brasileiro',
+            value: 'pt_BR'
+        },
+        {
+            name: 'English',
+            value: 'en_US',
+        }
     ];
     locale;
     translates = {};
@@ -22,13 +28,12 @@ class Lang{
         if(!bot_cfg.BOT_LOCALE || !this.validateLocale(bot_cfg.BOT_LOCALE)){
             log.Fatal('BOT_LOCALE not available: '+bot_cfg.BOT_LOCALE, 1, 1);
         }
-
         this.locale = bot_cfg.BOT_LOCALE;
     }
 
     validateLocale(locale)
     {
-        return this.availableLocales.indexOf(locale) !== -1;
+        return this.availableLocales.filter((available) => available.value === locale).length;
     }
 
     translate(module, label, params)
@@ -62,6 +67,10 @@ class Lang{
     async importLocales()
     {
         const basePath = process.cwd()+'/src/locales/'+this.locale+'/';
+        if(!fs.existsSync(basePath)){
+            log.Fatal(`Locale ${this.locale} not found on folder /src/locales/`, 1 ,1);
+            return false;
+        }
         const localesPath = fs.readdirSync(basePath);
         let absolutPath, module;
 

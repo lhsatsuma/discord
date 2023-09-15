@@ -25,5 +25,10 @@
 
   "CMD_STATUS": "[SUPERADMIN] Status do BOT",
   "CMD_STATUS_APP": "Status do App",
-  "CMD_STATUS_SCHEDULER": "Status do Scheduler"
+  "CMD_STATUS_SCHEDULER": "Status do Scheduler",
+
+  "CMD_LOCALE": "[SUPERADMIN] Mudar idioma do BOT",
+  "CMD_LOCALE_OPTION_NAME": "Idioma",
+  "CMD_LOCALE_SUCCESS": "Idioma alterado para {0} ({1})",
+  "CMD_LOCALE_ERROR": "Erro ao alterar o idioma para {0} ({1})"
 }
