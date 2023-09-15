@@ -12,10 +12,6 @@ class MysqliDataBase extends database
 	{
 		return new Promise(async (resolve) => {
 			if(this.connection){
-
-				console.log(this.connection.state);
-			}
-			if(this.connection){
 				const disconnected = await new Promise(resolve => {
 					this.connection.ping(err => {
 						resolve(err);
@@ -24,6 +20,8 @@ class MysqliDataBase extends database
 				if(!disconnected){
 					resolve({status: true, 'conn': this.connection});
 					return true;
+				}else{
+					log.Info('Lost connection to database... Reconnecting...');
 				}
 			}
 			this.connection = null;
