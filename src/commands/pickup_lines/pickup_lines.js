@@ -14,7 +14,7 @@ module.exports = {
     subcommands: returned.subcommands,
     cooldown: 3,
     async execute(interaction) {
-        let path = process.cwd() + '/uploads/'+getLang().locale+'/jokes.json';
+        let path = process.cwd() + '/uploads/'+getLang().locale+'/pickup_lines.json';
         if(!fs.existsSync(path)){
             await interaction.reply({
                 content: translate('pickup_lines', 'NO_RECORDS', getLang().locale),
@@ -31,6 +31,8 @@ module.exports = {
         let pickup_lines_prontas = require(path);
         let random_key = Math.floor(Math.random() * pickup_lines_prontas.length);
         let pickup_lines = pickup_lines_prontas[random_key];
+
+        console.log(pickup_lines);
 
         if(!!user){
             textRet += translate('pickup_lines', 'CMD_PICKUP_SUCCESS_USER', interaction.user.username, user.id);
