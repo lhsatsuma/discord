@@ -28,9 +28,6 @@ class BeanMemes extends BeanBase
             url: {
                 type: 'varchar',
             },
-            counter: {
-                type: 'int',
-            },
         };
 	}
     selectRandom()
@@ -85,15 +82,6 @@ class BeanMemes extends BeanBase
             }
         }
         return await super.save();
-    }
-
-    async plusCounter()
-    {
-        if(!this.id){
-            return false;
-        }
-        this.counter += getUtils().randomInt(1, 10);
-        return await this.save();
     }
 }
 

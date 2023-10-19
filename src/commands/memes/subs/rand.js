@@ -38,9 +38,6 @@ module.exports = {
             embedMsg.setImage(bean.url);
         }
 
-        //Update counter of random showed
-        await bean.plusCounter();
-
         await interaction.deferReply();
         await interaction.deleteReply();
         await interaction.channel.send({
