@@ -4,8 +4,8 @@ const BeanJankenpon = getUtils().requireAgain(process.cwd()+'/src/models/Jankenp
 module.exports = {
     data: (subcommand) =>
     subcommand
-    .setName('play')
-    .setDescription(translate('jankenpon', 'CMD_PLAY'))
+    .setName(translate('jankenpon', 'CMD_PLAY'))
+    .setDescription(translate('jankenpon', 'CMD_PLAY_DESCRIPTION'))
     .addStringOption(option =>
         option.setName('choose')
             .setDescription(translate('jankenpon', 'CMD_PLAY_OPTION_CHOOSE'))

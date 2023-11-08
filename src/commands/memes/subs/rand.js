@@ -4,8 +4,8 @@ const BeanMemes = getUtils().requireAgain(process.cwd()+'/src/models/Memes.js');
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('rand')
-            .setDescription(translate('memes', 'CMD_RAND'))
+            .setName(translate('memes', 'CMD_RAND'))
+            .setDescription(translate('memes', 'CMD_RAND_DESCRIPTION'))
     ,
     async execute(interaction) {
 

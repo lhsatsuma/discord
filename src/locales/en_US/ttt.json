@@ -1,5 +1,9 @@
 {
-  "CMD_PLAY": "Play a game of Tic-Tac-Toe",
+  "CMD_TTT": "ttt",
+  "CMD_TTT_DESCRIPTION": "Play a game of Tic-Tac-Toe",
+
+  "CMD_PLAY": "play",
+  "CMD_PLAY_DESCRIPTION": "Play a game of Tic-Tac-Toe",
   "CMD_PLAY_OPTION_AGAINST": "Opponent Member",
   "CMD_PLAY_OPTION_DIFFICULTY": "BOT Difficulty",
   "CMD_PLAY_OPTION_DIFFICULTY_EASY": "Easy",
@@ -11,7 +15,8 @@
   "CMD_PLAY_DRAW": "**Game Over**\n\nIt's a draw!",
   "CMD_PLAY_WIN": "**Game Ended**\n\n<@{0}> has won!",
 
-  "CMD_STOP": "Stop a game of Tic-Tac-Toe in progress",
+  "CMD_STOP": "stop",
+  "CMD_STOP_DESCRIPTION": "Stop a game of Tic-Tac-Toe in progress",
   "CMD_STOP_NO_GAME": "here is no match in progress",
   "CMD_STOP_SUCCESS": "Game in progress finished"
 }

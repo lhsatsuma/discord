@@ -1,33 +1,44 @@
 {
-  "CMD_CLEARLOGS": "[SUPERADMIN] Limpar Logs",
+  "CMD_SUPERADMIN": "superadmin",
+  "CMD_SUPERADMIN_DESCRIPTION": "[SUPERADMIN] Commands for SuperAdmin",
+
+
+  "CMD_CLEARLOGS": "limpar_logs",
+  "CMD_CLEARLOGS_DESCRIPTION": "[SUPERADMIN] Limpar Logs",
   "CMD_CLEARLOGS_SUCCESS": "{0} logs limpos com sucesso",
   "CMD_CLEARLOGS_ERROR": "Erro ao limpar os logs",
 
 
-  "CMD_HEARTBEAT": "[SUPERADMIN] Alterar intervalo do heartbeat",
+  "CMD_HEARTBEAT": "heartbeat",
+  "CMD_HEARTBEAT_DESCRIPTION": "[SUPERADMIN] Alterar intervalo do heartbeat",
   "CMD_HEARTBEAT_OPTION_SECONDS": "Intervalo em segundos",
   "CMD_HEARTBEAT_OPTION_SAVECFG": "Salvar e recarregar configurações",
   "CMD_HEARTBEAT_SUCCESS": "Intervalo do heartbeat alterado para {0} segundos",
 
-  "CMD_LOGS": "[SUPERADMIN] Últimos Logs",
+  "CMD_LOGS": "logs",
+  "CMD_LOGS_DESCRIPTION": "[SUPERADMIN] Últimos Logs",
   "CMD_LOGS_OPTION_RUN": "Log do App ou Scheduler",
   "CMD_LOGS_OPTION_RUN_VALUE_APP": "App",
   "CMD_LOGS_OPTION_RUN_VALUE_SCHEDULER": "Scheduler",
 
-  "CMD_RELOADCFG": "[SUPERADMIN] Recarregar configurações",
+  "CMD_RELOADCFG": "recarregar",
+  "CMD_RELOADCFG_DESCRIPTION": "[SUPERADMIN] Recarregar configurações",
   "CMD_RELOADCFG_SUCCESS": "Configurações recarregadas com sucesso",
   "CMD_RELOADCFG_ERROR": "Erro ao recarregar as configurações",
 
-  "CMD_SETCHANNEL": "[SUPERADMIN] Setar este canal como superadmin",
+  "CMD_SETCHANNEL": "setar_canal",
+  "CMD_SETCHANNEL_DESCRIPTION": "[SUPERADMIN] Setar este canal como superadmin",
   "CMD_SETCHANNEL_ALREADY_SET": "Canal de superadmin já está setado",
   "CMD_SETCHANNEL_SUCCESS": "Canal <#{0}> agora está configurado para superadmin",
 
 
-  "CMD_STATUS": "[SUPERADMIN] Status do BOT",
+  "CMD_STATUS": "status",
+  "CMD_STATUS_DESCRIPTION": "[SUPERADMIN] Status do BOT",
   "CMD_STATUS_APP": "Status do App",
   "CMD_STATUS_SCHEDULER": "Status do Scheduler",
 
-  "CMD_LOCALE": "[SUPERADMIN] Mudar idioma do BOT",
+  "CMD_LOCALE": "idioma",
+  "CMD_LOCALE_DESCRIPTION": "[SUPERADMIN] Mudar idioma do BOT",
   "CMD_LOCALE_OPTION_NAME": "Idioma",
   "CMD_LOCALE_SUCCESS": "Idioma alterado para {0} ({1})",
   "CMD_LOCALE_ERROR": "Erro ao alterar o idioma para {0} ({1})"

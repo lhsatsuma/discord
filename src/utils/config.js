@@ -6,12 +6,11 @@
  * t - Type Version
  * @type {string}
  */
-global.app_version = '1.3.2b-002';
-
+global.app_version = '1.3.2b-003';
 
 /**
  *
- * @type {{DB_PORT: number, DB_USER: string, BOT_SEND_COMMANDS_API: boolean, DB_NAME: string, LOG_REGISTER: number[], LOG_QUERY: boolean, DB_HOST: string, HEARTBEAT: number, BOT_TOKEN: string, LOG_DIR: string, ADMIN_CHANNEL_ID: string, BOT_DESCRIPTION: string, BOT_NAME: string, BOT_ID: string, BOT_LOCALE: string, BOT_ICON: string, DB_PASSWORD: string}}
+ * @type {{DB_PORT: number, DB_USER: string, IMGUR_CLIENT_ID: string, BOT_SEND_COMMANDS_API: boolean, DB_NAME: string, LOG_REGISTER: number[], LOG_QUERY: boolean, DB_HOST: string, HEARTBEAT: number, BOT_TOKEN: string, LOG_DIR: string, ADMIN_CHANNEL_ID: string, BOT_DESCRIPTION: string, BOT_NAME: string, BOT_ID: string, IMGUR_CLIENT_SECRET: string, BOT_LOCALE: string, BOT_ICON: string, DB_PASSWORD: string}}
  */
 global.bot_cfg = {
     ADMIN_CHANNEL_ID: '',
@@ -34,6 +33,9 @@ global.bot_cfg = {
     LOG_QUERY: true,
 
     HEARTBEAT: 300,
+
+    IMGUR_CLIENT_ID: '',
+    IMGUR_CLIENT_SECRET: '',
 };
 
 

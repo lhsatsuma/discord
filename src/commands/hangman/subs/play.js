@@ -4,8 +4,8 @@ const BeanHangman = getUtils().requireAgain(process.cwd()+'/src/models/Hangman.j
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('play')
-            .setDescription(translate('hangman', 'CMD_PLAY')),
+            .setName(translate('hangman', 'CMD_PLAY'))
+            .setDescription(translate('hangman', 'CMD_PLAY_DESCRIPTION')),
     async execute(interaction) {
         let bean = new BeanHangman();
         bean.server = interaction.guildId;

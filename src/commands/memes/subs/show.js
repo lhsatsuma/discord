@@ -5,10 +5,10 @@ module.exports = {
     data: (subcommand) =>
         subcommand
             .setName('show')
-            .setDescription(translate('memes', 'CMD_SHOW'))
+            .setDescription(translate('memes', 'CMD_GET'))
             .addStringOption(search =>
                 search.setName('search')
-                    .setDescription(translate('memes', 'CMD_SHOW_OPTION_SEARCH'))
+                    .setDescription(translate('memes', 'CMD_GET_OPTION_SEARCH'))
                     .setRequired(true)
             ),
     async execute(interaction) {

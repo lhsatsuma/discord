@@ -4,8 +4,8 @@ const BeanJankenpon = getUtils().requireAgain(process.cwd()+'/src/models/Jankenp
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('status')
-            .setDescription(translate('jankenpon', 'CMD_STATUS')),
+            .setName(translate('jankenpon', 'CMD_STATUS'))
+            .setDescription(translate('jankenpon', 'CMD_STATUS_DESCRIPTION')),
     async execute(interaction) {
         let embeds = [];
 

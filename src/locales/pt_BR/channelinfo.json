@@ -1,4 +1,5 @@
 {
-  "CMD_CHANNELINFO": "[ADMIN] Informações deste canal",
+  "CMD_CHANNELINFO": "channelinfo",
+  "CMD_CHANNELINFO_DESCRIPTION": "[ADMIN] Informações deste canal",
   "CMD_CHANNELINFO_SUCCESS": "Informações do canal <#{0}>"
 }

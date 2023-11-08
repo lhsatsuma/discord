@@ -1,3 +1,4 @@
 {
-  "CMD_HELP": "Command List"
+  "CMD_HELP": "help",
+  "CMD_HELP_DESCRIPTION": "Command List"
 }

@@ -3,8 +3,8 @@ const { EmbedBuilder} = require('discord.js');
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('reloadcfg')
-            .setDescription(translate('superadmin', 'CMD_RELOADCFG')),
+            .setName(translate('superadmin', 'CMD_RELOADCFG'))
+            .setDescription(translate('superadmin', 'CMD_RELOADCFG_DESCRIPTION')),
     async execute(interaction) {
         if(!getUtils().channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({

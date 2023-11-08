@@ -164,6 +164,7 @@ class discordAppClient extends Client
 
 		for (const commandName of commandPaths) {
 			let commandPath = basePath + commandName + '/';
+			let commandLocaleName = translate(commandName, 'CMD_'+commandName.toUpperCase());
 			let commandFile = commandPath + commandName + '.js';
 			let command = null;
 			let absolutePath = null;
@@ -172,24 +173,24 @@ class discordAppClient extends Client
 			if (fs.existsSync(commandFile)) {
 				absolutePath = process.cwd() + '/src/commands/' + commandName + '/' + commandName + '.js';
 			} else {
-				log.Error('CommandDir: ' + commandName + ' dont have JS');
+				log.Error('CommandDir: ' + commandLocaleName + ' dont have JS');
 				continue;
 			}
 
-			if (this.commands.get(commandName)) {
+			if (this.commands.get(commandLocaleName)) {
 				log.Error('Command already loaded: ' + commandFile);
 				continue;
 			}
 
-			log.Debug('Loading command: ' + commandName);
+			log.Debug('Loading command: ' + commandLocaleName);
 			command = getUtils().requireAgain(absolutePath);
 			if (!!command.inactive) {
-				log.Info('Command: ' + commandName + ' is inactive!');
+				log.Info('Command: ' + commandLocaleName + ' is inactive!');
 				continue;
 			}
 			this.commands.set(command.data.name, command);
 			commandsTmp.push(command.data.toJSON());
-			log.Debug('Loaded command: ' + commandName);
+			log.Debug('Loaded command: ' + commandLocaleName);
 		}
 
 		// The put method is used to fully refresh all commands in the guild with the current set
@@ -207,13 +208,15 @@ class discordAppClient extends Client
 			}
 		}
 	}
-	create(commandData)
+	create(commandData, command = '')
 	{
 		let dataReturn = {
 			data: commandData,
 			subcommands: {},
 		};
-		const command = commandData.name;
+		if(!command) {
+			let command = commandData.name;
+		}
 		let subReturn = {};
 		const subPath = process.cwd()+'/src/commands/'+command+'/subs/';
 		try {
@@ -221,15 +224,16 @@ class discordAppClient extends Client
 				const subs = fs.readdirSync(subPath);
 				for (const subFileName of subs) {
 					let subName = subFileName.replace('.js', '');
+					let subLocaleName = translate(command, 'CMD_'+subName.toUpperCase());
 					let subFile = subPath + subFileName;
-					let subFullname = command + ':' + subName;
+					let subFullname = command + ':' + subLocaleName;
 					log.Debug('Loading subcommand: ' + subFullname);
 					const subcommand = getUtils().requireAgain(subFile);
 					if (!!subcommand.inactive) {
 						log.Debug('Subcommand: ' + subFullname + ' is inactive');
 						continue;
 					}
-					subReturn[subName] = subcommand;
+					subReturn[subLocaleName] = subcommand;
 					log.Debug('Loaded subcommand: ' + subFullname);
 				}
 			}

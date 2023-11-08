@@ -2,8 +2,8 @@ const { SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('pickup_lines')
-        .setDescription(translate('pickup_lines', 'CMD_PICKUP_LINES'))
+        .setName(translate('pickup_lines', 'CMD_PICKUP_LINES'))
+        .setDescription(translate('pickup_lines', 'CMD_PICKUP_LINES_DESCRIPTION'))
         .addUserOption(option =>
             option
                 .setName('user')
@@ -31,8 +31,6 @@ module.exports = {
         let pickup_lines_prontas = require(path);
         let random_key = Math.floor(Math.random() * pickup_lines_prontas.length);
         let pickup_lines = pickup_lines_prontas[random_key];
-
-        console.log(pickup_lines);
 
         if(!!user){
             textRet += translate('pickup_lines', 'CMD_PICKUP_SUCCESS_USER', interaction.user.username, user.id);

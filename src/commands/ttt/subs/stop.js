@@ -3,8 +3,8 @@ const BeanVelha = getUtils().requireAgain(process.cwd()+'/src/models/Ttt.js');
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('stop')
-            .setDescription(translate('ttt', 'CMD_STOP')),
+            .setName(translate('ttt', 'CMD_STOP'))
+            .setDescription(translate('ttt', 'CMD_STOP_DESCRIPTION')),
     async execute(interaction) {
         let bean = new BeanVelha();
         bean.user_id = interaction.user.id;

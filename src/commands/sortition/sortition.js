@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('sortition')
-        .setDescription(translate('sortition', 'CMD_SORTITION'))
+        .setName(translate('sortition', 'CMD_SORTITION'))
+        .setDescription(translate('sortition', 'CMD_SORTITION_DESCRIPTION'))
         .addIntegerOption(option =>
             option
                 .setName('min')

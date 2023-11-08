@@ -1,33 +1,44 @@
 {
-  "CMD_CLEARLOGS": "[SUPERADMIN] Clear Logs",
+  "CMD_SUPERADMIN": "superadmin",
+  "CMD_SUPERADMIN_DESCRIPTION": "[SUPERADMIN] Commands for SuperAdmin",
+
+
+  "CMD_CLEARLOGS": "clearlogs",
+  "CMD_CLEARLOGS_DESCRIPTION": "[SUPERADMIN] Clear Logs",
   "CMD_CLEARLOGS_SUCCESS": "{0} logs cleared successfully",
   "CMD_CLEARLOGS_ERROR": "Error clearing logs",
 
 
-  "CMD_HEARTBEAT": "[SUPERADMIN] Change heartbeat interval",
+  "CMD_HEARTBEAT": "heartbeat",
+  "CMD_HEARTBEAT_DESCRIPTION": "[SUPERADMIN] Change heartbeat interval",
   "CMD_HEARTBEAT_OPTION_SECONDS": "Interval in seconds",
   "CMD_HEARTBEAT_OPTION_SAVECFG": "Save and reload settings",
   "CMD_HEARTBEAT_SUCCESS": "Heartbeat interval changed to {0} seconds",
 
-  "CMD_LOGS": "[SUPERADMIN] Latest Logs",
+  "CMD_LOGS": "logs",
+  "CMD_LOGS_DESCRIPTION": "[SUPERADMIN] Latest Logs",
   "CMD_LOGS_OPTION_RUN": "App or Scheduler log",
   "CMD_LOGS_OPTION_RUN_VALUE_APP": "App",
   "CMD_LOGS_OPTION_RUN_VALUE_SCHEDULER": "Scheduler",
 
-  "CMD_RELOADCFG": "[SUPERADMIN] Reload settings",
+  "CMD_RELOADCFG": "reload",
+  "CMD_RELOADCFG_DESCRIPTION": "[SUPERADMIN] Reload settings",
   "CMD_RELOADCFG_SUCCESS": "Settings reloaded successfully",
   "CMD_RELOADCFG_ERROR": "Error when reloading settings",
 
-  "CMD_SETCHANNEL": "[SUPERADMIN] Set this channel as superadmin",
+  "CMD_SETCHANNEL": "setchannel",
+  "CMD_SETCHANNEL_DESCRIPTION": "[SUPERADMIN] Set this channel as superadmin",
   "CMD_SETCHANNEL_ALREADY_SET": "Superadmin channel is already set",
   "CMD_SETCHANNEL_SUCCESS": "Channel <#{0}> is now set to superadmin",
 
 
-  "CMD_STATUS": "[SUPERADMIN] BOT status",
+  "CMD_STATUS": "status",
+  "CMD_STATUS_DESCRIPTION": "[SUPERADMIN] BOT status",
   "CMD_STATUS_APP": "App status",
   "CMD_STATUS_SCHEDULER": "Scheduler status",
 
-  "CMD_LOCALE": "[SUPERADMIN] Change language of BOT",
+  "CMD_LOCALE": "locale",
+  "CMD_LOCALE_DESCRIPTION": "[SUPERADMIN] Change language of BOT",
   "CMD_LOCALE_OPTION_NAME": "Language",
   "CMD_LOCALE_SUCCESS": "Language changed to {0} ({1})",
   "CMD_LOCALE_ERROR": "Error on change language"

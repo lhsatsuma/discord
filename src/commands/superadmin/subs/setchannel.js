@@ -1,8 +1,8 @@
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('setchannel')
-            .setDescription(translate('superadmin', 'CMD_SETCHANNEL')),
+            .setName(translate('superadmin', 'CMD_SETCHANNEL'))
+            .setDescription(translate('superadmin', 'CMD_SETCHANNEL_DESCRIPTION')),
     async execute(interaction) {
         if(!!client.super_admin_channel){
             interaction.reply({

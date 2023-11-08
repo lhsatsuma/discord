@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
 const returned = client.create(
 	new SlashCommandBuilder()
-		.setName('pinguser')
-		.setDescription(translate('pinguser', 'CMD_PINGUSER'))
+		.setName(translate('pinguser', 'CMD_PINGUSER'))
+		.setDescription(translate('pinguser', 'CMD_PINGUSER_DESCRIPTION'))
 		.addUserOption(option =>
 			option
 				.setName('target')

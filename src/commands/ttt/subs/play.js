@@ -3,8 +3,8 @@ const { EmbedBuilder} = require('discord.js');
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('play')
-            .setDescription(translate('ttt', 'CMD_PLAY'))
+            .setName(translate('ttt', 'CMD_PLAY'))
+            .setDescription(translate('ttt', 'CMD_PLAY_DESCRIPTION'))
             .addUserOption(option =>
                 option
                     .setName('against')

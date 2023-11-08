@@ -1,5 +1,6 @@
 {
-  "CMD_SORTITION": "Sorteio de um número",
+  "CMD_SORTITION": "sorteio",
+  "CMD_SORTITION_DESCRIPTION": "Sorteio de um número",
   "CMD_SORTITION_OPTION_MIN": "Número mínimo para o sorteio",
   "CMD_SORTITION_OPTION_MAX": "Número máximo para o sorteio",
   "CMD_SORTITION_INVALID_MAX": "O número máximo não pode ser menor que o número mínimo!",

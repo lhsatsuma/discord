@@ -3,8 +3,8 @@ const BeanServers = getUtils().requireAgain(process.cwd()+'/src/models/Servers.j
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('list_channels')
-            .setDescription(translate('birthday', 'CMD_LIST_CHANNELS')),
+            .setName(translate('birthday', 'CMD_LIST_CHANNELS'))
+            .setDescription(translate('birthday', 'CMD_LIST_CHANNELS_DESCRIPTION')),
     async execute(interaction) {
         let bean = new BeanServers();
         bean.server = interaction.guildId;

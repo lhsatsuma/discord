@@ -4,8 +4,8 @@ const BeanServerMembers = getUtils().requireAgain(process.cwd()+'/src/models/Ser
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('list')
-            .setDescription(translate('birthday', 'CMD_LIST'))
+            .setName(translate('birthday', 'CMD_LIST'))
+            .setDescription(translate('birthday', 'CMD_LIST_DESCRIPTION'))
     ,
     async execute(interaction) {
 
