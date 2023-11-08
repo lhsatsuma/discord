@@ -6,7 +6,7 @@
  * t - Type Version
  * @type {string}
  */
-global.app_version = '1.3.2b-003';
+global.app_version = '1.3.2b-004';
 
 /**
  *

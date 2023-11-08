@@ -4,8 +4,8 @@ const BeanMemes = getUtils().requireAgain(process.cwd()+'/src/models/Memes.js');
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('show')
-            .setDescription(translate('memes', 'CMD_GET'))
+            .setName(translate('memes', 'CMD_GET'))
+            .setDescription(translate('memes', 'CMD_GET_DESCRIPTION'))
             .addStringOption(search =>
                 search.setName('search')
                     .setDescription(translate('memes', 'CMD_GET_OPTION_SEARCH'))
