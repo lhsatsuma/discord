@@ -32,7 +32,7 @@ module.exports = {
 		let messageSended = null;
 		for(let i=0;i<times;i++){
 		 	messageSended = await interaction.channel.send(translate('pinguser', 'CMD_PINGUSER_SUCCESS_USER', target.id));
-			await getUtils().sleep(2000);
+			await getUtils().sleep(1500);
 			if(i<times-1) {
 				await messageSended.delete();
 			}
