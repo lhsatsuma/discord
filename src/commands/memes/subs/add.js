@@ -40,9 +40,10 @@ module.exports = {
             title: name,
             description: 'Meme uploaded via API DBIKE BOT',
         });
-        if(!!response.data.link){
+        if(response.success && !!response.data.link){
             bean.url = response.data.link;
         }else{
+            log.Error('Error uploading meme: '+response.data);
             await interaction.reply({
                 content: translate('memes', 'CMD_ADD_ERROR_UPLOAD'),
                 ephemeral: true
