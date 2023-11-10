@@ -3,8 +3,8 @@ const BeanHangman = getUtils().requireAgain(process.cwd()+'/src/models/Hangman.j
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('stop')
-            .setDescription(translate('hangman', 'CMD_STOP')),
+            .setName(translate('hangman', 'CMD_STOP'))
+            .setDescription(translate('hangman', 'CMD_STOP_DESCRIPTION')),
     async execute(interaction) {
         let bean = new BeanHangman();
         bean.server = interaction.guildId;

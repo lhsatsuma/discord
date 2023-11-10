@@ -1,5 +1,10 @@
 {
-  "CMD_PLAY": "Jogue uma partida de forca",
+  "CMD_HANGMAN": "forca",
+  "CMD_HANGMAN_DESCRIPTION": "Jogue uma partida de forca",
+
+  "CMD_PLAY": "jogar",
+  "CMD_PLAY_DESCRIPTION": "Jogue uma partida de forca",
+
   "CMD_PLAY_ALREADY_STARTED": "Você já possui um jogo em andamento!",
   "CMD_PLAY_SUCCESS_WAIT": "<@{0}> iniciou uma partida de Forca!\nAguarde para jogar....",
   "HANGMAN": "Jogo da Forca",
@@ -9,14 +14,18 @@
   "TRYS": "Tentativas de Letras",
   "WORDS_GUESSEDS": "Tentativas de Palavras",
   "HINTS_USED": "Dicas utilizadas",
+
   "CMD_PLAY_SUCCESS": "Digite qualquer letra ou palavra no chat\nDigite **hint** no chat para receber uma dica da palavra",
   "CMD_PLAY_NO_MORE_HINTS": "Não existem mais dicas restantes",
   "CMD_PLAY_INVALID_CHAR": "Apenas letras de A-Z é permitido",
   "CMD_PLAY_WINNED": "Você ganhou! Parabéns!",
   "CMD_PLAY_LOSE": "Você perdeu! Tente de novo!",
-  "CMD_STOP": "Para uma partida de Forca",
+
+  "CMD_STOP": "parar",
+  "CMD_STOP_DESCRIPTION": "Para uma partida de Forca",
   "CMD_STOP_NO_GAME": "Você não possui um jogo em andamento",
   "CMD_STOP_SUCCESS": "Jogo finalizado!",
+
   "NO_RECORDS": "Não existem palavras cadastradas para jogar no idioma: {0}",
   "CMD_ALREADY_STARTED": "Já existe um jogo em andamento"
 }

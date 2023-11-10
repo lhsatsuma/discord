@@ -1,5 +1,9 @@
 {
-  "CMD_ADD": "Adicionar data de aniversário de um membro",
+  "CMD_BIRTHDAY": "aniversarios",
+  "CMD_BIRTHDAY_DESCRIPTION": "Aniversários de Membros",
+
+  "CMD_ADD": "adicionar",
+  "CMD_ADD_DESCRIPTION": "Adicionar data de aniversário de um membro",
   "CMD_ADD_OPTION_USER": "Usuário",
   "CMD_ADD_OPTION_DAY": "Dia (DD)",
   "CMD_ADD_OPTION_MONTH": "Mês (MM)",
@@ -8,30 +12,35 @@
   "CMD_ADD_SUCCESS": "Adicionado data de aniversário {0} para o membro <@{1}>",
   "CMD_ADD_ERROR": "Erro ao adicionar a data de aniversário",
 
-  "CMD_ADD_CHANNEL": "Adiciona este canal para notificar aniversários",
+  "CMD_ADD_CHANNEL": "adicionar_canal",
+  "CMD_ADD_CHANNEL_DESCRIPTION": "Adiciona este canal para notificar aniversários",
   "CMD_ADD_CHANNEL_ALREADY_REGISTERED": "Este canal já está configurado para notificações de aniversários",
   "CMD_ADD_CHANNEL_SUCCESS": "Adicionado <#{0}> para notificar aniversários",
   "CMD_ADD_CHANNEL_ERROR": "Erro ao adicionar o canal para notificações de aniversário",
 
 
 
-  "CMD_LIST": "Lista de Aniversários",
+  "CMD_LIST": "lista",
+  "CMD_LIST_DESCRIPTION": "Lista de Aniversários",
   "CMD_LIST_NO_MEMBERS": "Não existem membros com data de aniversário cadastrado!",
 
 
-  "CMD_LIST_CHANNELS": "Lista de Canais para Notificações de Aniversário",
+  "CMD_LIST_CHANNELS": "lista_canais",
+  "CMD_LIST_CHANNELS_DESCRIPTION": "Lista de Canais para Notificações de Aniversário",
   "CMD_LIST_CHANNELS_NO_CHANNELS": "Não existem canais de notificações de aniversário cadastrados",
   "CMD_LIST_CHANNELS_SUCCESS": "Lista dos canais configurados para notificações de aniversário:\n{0}",
 
 
 
-  "CMD_REMOVE": "Remove aniversário de um membro",
+  "CMD_REMOVE": "remover",
+  "CMD_REMOVE_DESCRIPTION": "Remove aniversário de um membro",
   "CMD_REMOVE_OPTION_USER": "Membro",
   "CMD_REMOVE_NO_USER": "Membro não possui data de aniversário registrado",
   "CMD_REMOVE_SUCCESS": "Removido data de aniversário do membro <@{0}>",
   "CMD_REMOVE_ERROR": "Erro ao remover a data de aniversário",
 
-  "CMD_REMOVE_CHANNEL": "Remove este canal da lista de notificações de aniversário",
+  "CMD_REMOVE_CHANNEL": "remover_canal",
+  "CMD_REMOVE_CHANNEL_DESCRIPTION": "Remove este canal da lista de notificações de aniversário",
   "CMD_REMOVE_CHANNEL_EMPTY_CHANNELS": "Não existem canais de notificações de aniversário cadastrados",
   "CMD_REMOVE_CHANNEL_NO_CHANNEL": "Este canal não está habilitado para receber notificações de aniversário",
   "CMD_REMOVE_CHANNEL_SUCCESS": "Removido <#{0}> da lista de notificações de aniversário",

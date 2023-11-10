@@ -1,8 +1,8 @@
 const { SlashCommandBuilder, PermissionFlagsBits} = require('discord.js');
 const returned = client.create(
 	new SlashCommandBuilder()
-		.setName('pinguser')
-		.setDescription(translate('pinguser', 'CMD_PINGUSER'))
+		.setName(translate('pinguser', 'CMD_PINGUSER'))
+		.setDescription(translate('pinguser', 'CMD_PINGUSER_DESCRIPTION'))
 		.addUserOption(option =>
 			option
 				.setName('target')
@@ -32,7 +32,7 @@ module.exports = {
 		let messageSended = null;
 		for(let i=0;i<times;i++){
 		 	messageSended = await interaction.channel.send(translate('pinguser', 'CMD_PINGUSER_SUCCESS_USER', target.id));
-			await getUtils().sleep(2000);
+			await getUtils().sleep(1500);
 			if(i<times-1) {
 				await messageSended.delete();
 			}

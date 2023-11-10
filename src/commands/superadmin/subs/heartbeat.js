@@ -3,8 +3,8 @@ const { EmbedBuilder} = require('discord.js');
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('heartbeat')
-            .setDescription(translate('superadmin', 'CMD_HEARTBEAT'))
+            .setName(translate('superadmin', 'CMD_HEARTBEAT'))
+            .setDescription(translate('superadmin', 'CMD_HEARTBEAT_DESCRIPTION'))
             .addIntegerOption(option =>
                 option
                     .setName('seconds')

@@ -2,8 +2,8 @@ const logControl = require("../../../utils/LogControl");
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('logs')
-            .setDescription(translate('superadmin', 'CMD_LOGS'))
+            .setName(translate('superadmin', 'CMD_LOGS'))
+            .setDescription(translate('superadmin', 'CMD_LOGS_DESCRIPTION'))
             .addStringOption(option =>
                 option.setName('run')
                     .setDescription(translate('superadmin', 'CMD_LOGS_OPTION_RUN'))

@@ -3,8 +3,8 @@ const BeanServerMembers = getUtils().requireAgain(process.cwd()+'/src/models/Ser
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('remove')
-            .setDescription(translate('birthday', 'CMD_REMOVE'))
+            .setName(translate('birthday', 'CMD_REMOVE'))
+            .setDescription(translate('birthday', 'CMD_REMOVE_DESCRIPTION'))
             .addUserOption(option =>
                 option
                     .setName('user')

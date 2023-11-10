@@ -2,8 +2,8 @@ const { SlashCommandBuilder } = require('discord.js');
 
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('jokes')
-        .setDescription(translate('jokes', 'CMD_JOKES'))
+        .setName(translate('jokes', 'CMD_JOKES'))
+        .setDescription(translate('jokes', 'CMD_JOKES_DESCRIPTION'))
 );
 
 module.exports = {

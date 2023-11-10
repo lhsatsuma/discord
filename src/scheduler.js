@@ -45,6 +45,7 @@ class scheduler{
             if(!logged_in) {
                 return false;
             }
+            client.user.setStatus('invisible');
             log.Debug('Connection estabilished!');
 
             log.Info("----------------------------");

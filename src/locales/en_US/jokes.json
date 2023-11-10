@@ -1,4 +1,5 @@
 {
-  "CMD_JOKES": "Funny Jokes/Puns",
+  "CMD_JOKES": "jokes",
+  "CMD_JOKES_DESCRIPTION": "Funny Jokes/Puns",
   "NO_RECORDS": "Jokes/Puns not found for language: {0}"
 }

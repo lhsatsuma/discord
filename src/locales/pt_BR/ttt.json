@@ -1,5 +1,9 @@
 {
-  "CMD_PLAY": "Jogue uma partida de Jogo da Velha",
+  "CMD_TTT": "velha",
+  "CMD_TTT_DESCRIPTION": "Jogo da Velha",
+
+  "CMD_PLAY": "jogar",
+  "CMD_PLAY_DESCRIPTION": "Jogue uma partida de Jogo da Velha",
   "CMD_PLAY_OPTION_AGAINST": "Membro Adversário",
   "CMD_PLAY_OPTION_DIFFICULTY": "Dificuldade do BOT",
   "CMD_PLAY_OPTION_DIFFICULTY_EASY": "Fácil",
@@ -11,7 +15,8 @@
   "CMD_PLAY_DRAW": "**Jogo Finalizado**\n\nÉ um empate!",
   "CMD_PLAY_WIN": "**Jogo Finalizado**\n\n<@{0}> ganhou!",
 
-  "CMD_STOP": "Parar uma partida de Jogo da Velha em andamento",
+  "CMD_STOP": "parar",
+  "CMD_STOP_DESCRIPTION": "Parar uma partida de Jogo da Velha em andamento",
   "CMD_STOP_NO_GAME": "Não existe uma partida em andamento",
   "CMD_STOP_SUCCESS": "Partida em andamento finalizada"
 }

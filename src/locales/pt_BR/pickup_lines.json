@@ -1,5 +1,6 @@
 {
-  "CMD_PICKUP_LINES": "Cantadas Engraçadas",
+  "CMD_PICKUP_LINES": "cantada",
+  "CMD_PICKUP_LINES_DESCRIPTION": "Cantadas Engraçadas",
   "CMD_PICKUP_LINES_OPTION_USER": "Membro para enviar a cantada",
   "CMD_PICKUP_SUCCESS_USER": "**{0}** envou uma cantada para **<@{1}>**",
   "NO_RECORDS": "Cantadas não encontrada para o idioma: {0}"

@@ -3,8 +3,9 @@ const { SlashCommandBuilder} = require('discord.js');
 
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('memes')
-        .setDescription('Memes of members!')
+        .setName(translate('memes', 'CMD_MEMES'))
+        .setDescription(translate('memes', 'CMD_MEMES_DESCRIPTION')),
+    'memes'
 );
 module.exports = {
     data: returned.data,

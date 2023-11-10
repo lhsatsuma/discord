@@ -1,11 +1,12 @@
 const { EmbedBuilder} = require('discord.js');
+const { ImgurClient } = require('imgur');
 const BeanMemes = getUtils().requireAgain(process.cwd()+'/src/models/Memes.js');
 
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('add')
-            .setDescription(translate('memes', 'CMD_ADD'))
+            .setName(translate('memes', 'CMD_ADD'))
+            .setDescription(translate('memes', 'CMD_ADD_DESCRIPTION'))
             .addStringOption(url =>
                 url.setName('url')
                     .setDescription(translate('memes', 'CMD_ADD_OPTION_URL'))
@@ -30,18 +31,34 @@ module.exports = {
         let bean = new BeanMemes();
         bean.server = interaction.guildId;
         bean.url = url_image;
+        bean.name = name;
 
-        let exists = await bean.checkExists();
-        exists = exists[0];
-        if(!!exists){
+        const client = new ImgurClient({ clientId: bot_cfg.IMGUR_CLIENT_ID });
+
+        const response = await client.upload({
+            image: bean.url,
+            title: name,
+            description: 'Meme uploaded via API DBIKE BOT',
+        });
+        if(!!response.data.link){
+            bean.url = response.data.link;
+        }else{
             await interaction.reply({
-                content: translate('memes', 'CMD_ADD_ALREADY_EXISTS', exists.order_id),
+                content: translate('memes', 'CMD_ADD_ERROR_UPLOAD'),
                 ephemeral: true
             });
-            return true;
+            return false;
         }
 
-        bean.name = name;
+        // let exists = await bean.checkExists();
+        // exists = exists[0];
+        // if(!!exists){
+        //     await interaction.reply({
+        //         content: translate('memes', 'CMD_ADD_ALREADY_EXISTS', exists.order_id),
+        //         ephemeral: true
+        //     });
+        //     return true;
+        // }
 
         let saved = await bean.save();
 
@@ -55,7 +72,7 @@ module.exports = {
 
         let embedMsg = new EmbedBuilder()
             .setColor(getUtils().getColor('BLUE'))
-            .setImage(url_image);
+            .setImage(bean.url);
 
         await interaction.deferReply();
         await interaction.deleteReply();

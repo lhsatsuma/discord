@@ -1,8 +1,8 @@
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('language')
-            .setDescription(translate('superadmin', 'CMD_LOCALE'))
+            .setName(translate('superadmin', 'CMD_LOCALE'))
+            .setDescription(translate('superadmin', 'CMD_LOCALE_DESCRIPTION'))
             .addStringOption(option => {
                     option.setName('locale')
                         .setDescription(translate('superadmin', 'CMD_LOCALE_OPTION_NAME'))

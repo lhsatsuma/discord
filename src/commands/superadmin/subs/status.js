@@ -4,8 +4,8 @@ const BeanBase = require("../../../utils/Bean");
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('status')
-            .setDescription(translate('superadmin', 'CMD_STATUS')),
+            .setName(translate('superadmin', 'CMD_STATUS'))
+            .setDescription(translate('superadmin', 'CMD_STATUS_DESCRIPTION')),
     async execute(interaction) {
         if(!getUtils().channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({

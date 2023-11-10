@@ -3,8 +3,8 @@ const { EmbedBuilder} = require('discord.js');
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('clearlogs')
-            .setDescription(translate('superadmin', 'CMD_CLEARLOGS')),
+            .setName(translate('superadmin', 'CMD_CLEARLOGS'))
+            .setDescription(translate('superadmin', 'CMD_CLEARLOGS_DESCRIPTION')),
     async execute(interaction) {
         if(!getUtils().channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({

@@ -4,8 +4,8 @@ const {pagination, ButtonTypes, ButtonStyles} = require('@devraelfreeze/discordj
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('list')
-            .setDescription(translate('memes', 'CMD_LIST'))
+            .setName(translate('memes', 'CMD_LIST'))
+            .setDescription(translate('memes', 'CMD_LIST_DESCRIPTION'))
     ,
     async execute(interaction) {
 

@@ -3,8 +3,8 @@ const {pagination, ButtonTypes, ButtonStyles} = require("@devraelfreeze/discordj
 
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('help')
-        .setDescription(translate('help', 'CMD_HELP'))
+        .setName(translate('help', 'CMD_HELP'))
+        .setDescription(translate('help', 'CMD_HELP_DESCRIPTION'))
 );
 
 module.exports = {

@@ -1,5 +1,6 @@
 {
-  "CMD_SORTITION": "Drawing of a number",
+  "CMD_SORTITION": "sortition",
+  "CMD_SORTITION_DESCRIPTION": "Drawing of a number",
   "CMD_SORTITION_OPTION_MIN": "Minimum number for the draw",
   "CMD_SORTITION_OPTION_MAX": "Maximum number for the draw",
   "CMD_SORTITION_INVALID_MAX": "The maximum number cannot be less than the minimum number!",

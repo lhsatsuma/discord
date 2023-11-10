@@ -3,8 +3,8 @@ const BeanJankenpon = getUtils().requireAgain(process.cwd()+'/src/models/Jankenp
 module.exports = {
     data: (subcommand) =>
         subcommand
-            .setName('reset')
-            .setDescription(translate('jankenpon', 'CMD_RESET')),
+            .setName(translate('jankenpon', 'CMD_RESET'))
+            .setDescription(translate('jankenpon', 'CMD_RESET_DESCRIPTION')),
     async execute(interaction) {
             let bean = new BeanJankenpon();
 

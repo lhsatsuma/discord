@@ -2,8 +2,8 @@ const { SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('pickup_lines')
-        .setDescription(translate('pickup_lines', 'CMD_PICKUP_LINES'))
+        .setName(translate('pickup_lines', 'CMD_PICKUP_LINES'))
+        .setDescription(translate('pickup_lines', 'CMD_PICKUP_LINES_DESCRIPTION'))
         .addUserOption(option =>
             option
                 .setName('user')
@@ -14,7 +14,7 @@ module.exports = {
     subcommands: returned.subcommands,
     cooldown: 3,
     async execute(interaction) {
-        let path = process.cwd() + '/uploads/'+getLang().locale+'/jokes.json';
+        let path = process.cwd() + '/uploads/'+getLang().locale+'/pickup_lines.json';
         if(!fs.existsSync(path)){
             await interaction.reply({
                 content: translate('pickup_lines', 'NO_RECORDS', getLang().locale),

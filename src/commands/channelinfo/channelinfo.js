@@ -2,8 +2,8 @@ const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder} = require('disco
 
 const returned = client.create(
     new SlashCommandBuilder()
-        .setName('channelinfo')
-        .setDescription(translate('channelinfo', 'CMD_CHANNELINFO'))
+        .setName(translate('channelinfo', 'CMD_CHANNELINFO'))
+        .setDescription(translate('channelinfo', 'CMD_CHANNELINFO_DESCRIPTION'))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 );
 
