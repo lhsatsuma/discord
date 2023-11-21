@@ -38,9 +38,7 @@ module.exports = {
             embedMsg.setImage(bean.url);
         }
 
-        await interaction.deferReply();
-        await interaction.deleteReply();
-        await interaction.channel.send({
+        await interaction.reply({
             content: `[${bean.order_id}] ${bean.name}`,
             embeds: [embedMsg]
         });
