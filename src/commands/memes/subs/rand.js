@@ -7,6 +7,7 @@ module.exports = {
             .setName(translate('memes', 'CMD_RAND'))
             .setDescription(translate('memes', 'CMD_RAND_DESCRIPTION'))
     ,
+    cooldown: 5,
     async execute(interaction) {
 
         let embedMsg = new EmbedBuilder()
