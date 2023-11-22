@@ -76,7 +76,7 @@ class MysqliDataBase extends database
 	Query(sql, show_sql = false)
 	{
 		if(bot_cfg.LOG_QUERY){
-			log.Debug(sql);
+			log.Debug('[QUERY]'+sql);
 		}
 		return new Promise((resolve) => {
 			this.Connect().then(async () => {
