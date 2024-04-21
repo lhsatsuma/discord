@@ -18,7 +18,7 @@ module.exports = {
                     .setRequired(true)
             ),
     async execute(interaction) {
-        const url_image = interaction.options.getString('url').toString();
+        let url_image = interaction.options.getString('url').toString();
         const name = interaction.options.getString('name').toString();
         if(url_image.substring(0, 7) !== 'http://' && url_image.substring(0, 8) !== 'https://'){
             await interaction.reply({
@@ -27,6 +27,8 @@ module.exports = {
             });
             return false;
         }
+
+        url_image = url_image.replace('format=webp', 'format=png');
 
         let bean = new BeanMemes();
         bean.server = interaction.guildId;
