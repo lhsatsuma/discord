@@ -9,10 +9,6 @@ module.exports = {
     ,
     cooldown: 5,
     async execute(interaction) {
-
-        let embedMsg = new EmbedBuilder()
-            .setColor(getUtils().getColor('BLUE'));
-
         let bean = new BeanMemes();
         bean.server = interaction.guildId;
         let results = await bean.selectRandom();
@@ -35,12 +31,13 @@ module.exports = {
             return true;
         }
 
-        if(bean.url){
-            embedMsg.setImage(bean.url);
-        }
+        let embedMsg = new EmbedBuilder()
+            .setColor(getUtils().getColor('BLUE'))
+            .setImage(bean.url)
+            .setFooter({text: '#'+bean.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+bean.unformatField('datetime-locale', bean.date_entered)});
 
         await interaction.reply({
-            content: `[${bean.order_id}] ${bean.name}`,
+            content: bean.name,
             embeds: [embedMsg]
         });
     },
