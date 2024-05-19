@@ -33,7 +33,7 @@ module.exports = {
         let pickup_lines = pickup_lines_prontas[random_key];
 
         if(!!user){
-            textRet += translate('pickup_lines', 'CMD_PICKUP_SUCCESS_USER', interaction.user.username, user.id);
+            textRet += translate('pickup_lines', 'CMD_PICKUP_SUCCESS_USER', interaction.user.id, user.id);
         }
 
         if(pickup_lines.search('https://') !== -1 || pickup_lines.search('http://') !== -1){

@@ -18,7 +18,7 @@ module.exports = {
                     .setRequired(true)
             ),
     async execute(interaction) {
-        const url_image = interaction.options.getString('url').toString();
+        let url_image = interaction.options.getString('url').toString();
         const name = interaction.options.getString('name').toString();
         if(url_image.substring(0, 7) !== 'http://' && url_image.substring(0, 8) !== 'https://'){
             await interaction.reply({
@@ -27,6 +27,8 @@ module.exports = {
             });
             return false;
         }
+
+        url_image = url_image.replace('format=webp', 'format=png');
 
         let bean = new BeanMemes();
         bean.server = interaction.guildId;
@@ -40,9 +42,10 @@ module.exports = {
             title: name,
             description: 'Meme uploaded via API DBIKE BOT',
         });
-        if(!!response.data.link){
+        if(response.success && !!response.data.link){
             bean.url = response.data.link;
         }else{
+            log.Error('Error uploading meme: '+response.data);
             await interaction.reply({
                 content: translate('memes', 'CMD_ADD_ERROR_UPLOAD'),
                 ephemeral: true
@@ -74,9 +77,7 @@ module.exports = {
             .setColor(getUtils().getColor('BLUE'))
             .setImage(bean.url);
 
-        await interaction.deferReply();
-        await interaction.deleteReply();
-        await interaction.channel.send({
+        await interaction.reply({
             content: `[${bean.order_id}] ${bean.name}`,
             embeds: [embedMsg]
         });

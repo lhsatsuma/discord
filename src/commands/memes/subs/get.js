@@ -26,16 +26,13 @@ module.exports = {
             });
             return true;
         }
-
         let embedMsg = new EmbedBuilder()
             .setColor(getUtils().getColor('BLUE'))
-            .setImage(bean.url);
+            .setImage(bean.url)
+            .setFooter({text: '#'+bean.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+bean.unformatField('datetime-locale', bean.date_entered)});
 
-        await interaction.deferReply();
-        await interaction.deleteReply();
-
-        await interaction.channel.send({
-            content: `[${bean.order_id}] ${bean.name}`,
+        await interaction.reply({
+            content: bean.name,
             embeds: [embedMsg]
         });
         return true;

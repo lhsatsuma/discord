@@ -14,10 +14,13 @@ client.on(Events.InteractionCreate, async interaction => {
     let commandName = commandCD;
     let coolDown = command.cooldown;
     let optionsStr = '';
+
+    //If is subcommand, lets check all vars
     if(interaction.options._subcommand){
-        commandCD += interaction.options._subcommand;
+        commandCD += ':'+interaction.options._subcommand;
         commandName += ':'+interaction.options._subcommand;
         command = command.subcommands[interaction.options._subcommand];
+        coolDown = command.cooldown;
     }
 
     if (!command) {
@@ -38,6 +41,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if(!!coolDown){
         cooldownLeft = client.cooldown.checkUserCd(interaction.user.id, commandCD);
     }
+
     if(!cooldownLeft){
         try {
             await command.execute(interaction);

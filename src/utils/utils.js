@@ -118,6 +118,9 @@ class Utils{
 				if(this.msgHeartbeat){
 					try{
 						await this.msgHeartbeat.message.edit({ embeds: [exampleEmbed] });
+						client.user.setActivity({
+							name: bot_cfg.BOT_DESCRIPTION,
+						});
 						return true;
 					}catch(e){
 						log.Error('Error updating heartbeat: ' + e);
