@@ -1,4 +1,3 @@
-const { EmbedBuilder} = require('discord.js');
 const BeanMemes = getUtils().requireAgain(process.cwd()+'/src/models/Memes.js');
 
 module.exports = {
@@ -31,13 +30,9 @@ module.exports = {
             return true;
         }
 
-        let embedMsg = new EmbedBuilder()
-            .setColor(getUtils().getColor('BLUE'))
-            .setImage(bean.url)
-            .setFooter({text: '#'+bean.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+bean.unformatField('datetime-locale', bean.date_entered)});
+        let embedMsg = bean.mountEmbed();
 
         await interaction.reply({
-            content: bean.name,
             embeds: [embedMsg]
         });
     },

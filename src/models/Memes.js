@@ -1,4 +1,5 @@
 const BeanBase = require('../utils/Bean.js');
+const {EmbedBuilder} = require("discord.js");
 class BeanMemes extends BeanBase
 {
 	constructor()
@@ -82,6 +83,15 @@ class BeanMemes extends BeanBase
             }
         }
         return await super.save();
+    }
+
+    mountEmbed()
+    {
+        return new EmbedBuilder()
+            .setTitle(this.name)
+            .setColor(getUtils().getColor('BLUE'))
+            .setImage(this.url)
+            .setFooter({text: '#'+this.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+this.unformatField('datetime-locale', this.date_entered)});
     }
 }
 

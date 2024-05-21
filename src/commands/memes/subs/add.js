@@ -1,4 +1,3 @@
-const { EmbedBuilder} = require('discord.js');
 const { ImgurClient } = require('imgur');
 const BeanMemes = getUtils().requireAgain(process.cwd()+'/src/models/Memes.js');
 
@@ -73,12 +72,9 @@ module.exports = {
             return false;
         }
 
-        let embedMsg = new EmbedBuilder()
-            .setColor(getUtils().getColor('BLUE'))
-            .setImage(bean.url);
+        let embedMsg = bean.mountEmbed();
 
         await interaction.reply({
-            content: `[${bean.order_id}] ${bean.name}`,
             embeds: [embedMsg]
         });
         return true;
