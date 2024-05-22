@@ -181,7 +181,7 @@ class Utils{
 		return date_regex.test(date);
 	}
 
-	channelSuperAdmin = (compare) => {
+	channelSuperAdmin = async (compare) => {
 		return bot_cfg.ADMIN_CHANNEL_ID === compare;
 	}
 
