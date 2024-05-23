@@ -4,9 +4,8 @@
 
   "CMD_ADD": "add",
   "CMD_ADD_DESCRIPTION": "Add a new meme image",
-  "CMD_ADD_OPTION_URL": "Image URL",
+  "CMD_ADD_OPTION_IMAGE": "Image",
   "CMD_ADD_OPTION_NAME": "Description",
-  "CMD_ADD_INVALID_URL": "Invalid URL",
   "CMD_ADD_ALREADY_EXISTS": "Meme already exists! ID: {0}",
   "CMD_ADD_ERROR": "Error saving the meme",
   "CMD_ADD_ERROR_UPLOAD": "Error on uploading the meme",
