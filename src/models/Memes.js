@@ -30,6 +30,8 @@ class BeanMemes extends BeanBase
                 type: 'varchar',
             },
         };
+
+        this.accept_files = ['png', 'jpg', 'jpeg'];
 	}
     selectRandom()
     {
@@ -93,6 +95,16 @@ class BeanMemes extends BeanBase
             .setImage(this.url)
             .setFooter({text: '#'+this.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+this.unformatField('datetime-locale', this.date_entered)});
     }
+
+    getAcceptFiles(join = false)
+    {
+        return join ? this.accept_files.join(', ').toString() : this.accept_files;
+    }
+    validateExtension(extension)
+    {
+        return this.getAcceptFiles().includes(extension);
+    }
+
 }
 
 module.exports = BeanMemes;

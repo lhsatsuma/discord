@@ -19,11 +19,19 @@ module.exports = {
     async execute(interaction) {
         let image = interaction.options.getAttachment('image');
         const name = interaction.options.getString('name').toString();
-
         let bean = new BeanMemes();
         bean.server = interaction.guildId;
         bean.url = image.url;
         bean.name = name;
+
+        //Accept only this formats of attachments
+        if(!bean.validateExtension(image.url.split('.').pop())){
+            await interaction.reply({
+                content: translate('memes', 'CMD_ADD_INVALID_FORMAT', bean.getAcceptFiles(true)),
+                ephemeral: true
+            });
+            return false;
+        }
 
         const client = new ImgurClient({ clientId: bot_cfg.IMGUR_CLIENT_ID });
 

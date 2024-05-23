@@ -9,6 +9,7 @@
   "CMD_ADD_ALREADY_EXISTS": "Meme already exists! ID: {0}",
   "CMD_ADD_ERROR": "Error saving the meme",
   "CMD_ADD_ERROR_UPLOAD": "Error on uploading the meme",
+  "CMD_ADD_INVALID_FORMAT": "Extension image not supported! Accepted extension: {0}",
 
 
   "CMD_LIST": "list",
