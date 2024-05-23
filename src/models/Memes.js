@@ -89,11 +89,15 @@ class BeanMemes extends BeanBase
 
     mountEmbed()
     {
-        return new EmbedBuilder()
-            .setTitle(this.name)
-            .setColor(getUtils().getColor('BLUE'))
-            .setImage(this.url)
-            .setFooter({text: '#'+this.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+this.unformatField('datetime-locale', this.date_entered)});
+        return {
+            embeds: [
+                new EmbedBuilder()
+                    .setColor(getUtils().getColor('BLUE'))
+                    .setImage(this.url)
+                    .setTitle(this.name)
+                    .setFooter({text: '#'+this.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+this.unformatField('datetime-locale', this.date_entered)})
+            ],
+        };
     }
 
     getAcceptFiles(join = false)

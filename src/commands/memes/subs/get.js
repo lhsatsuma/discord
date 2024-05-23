@@ -27,9 +27,7 @@ module.exports = {
         }
         let embedMsg = bean.mountEmbed();
 
-        await interaction.reply({
-            embeds: [embedMsg]
-        });
+        await interaction.reply(embedMsg);
         return true;
     },
 }

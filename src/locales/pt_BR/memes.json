@@ -4,7 +4,7 @@
 
   "CMD_ADD": "novo",
   "CMD_ADD_DESCRIPTION": "Adicionar uma nova imagem de meme",
-  "CMD_ADD_OPTION_IMAGE": "Imagem",
+  "CMD_ADD_OPTION_MEME": "Meme! Extensão aceitas: {0}",
   "CMD_ADD_OPTION_NAME": "Descrição",
   "CMD_ADD_ALREADY_EXISTS": "Meme já existente! ID: {0}",
   "CMD_ADD_ERROR": "Erro ao salvar o meme",
