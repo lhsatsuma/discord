@@ -94,8 +94,8 @@ class BeanMemes extends BeanBase
                 new EmbedBuilder()
                     .setColor(getUtils().getColor('BLUE'))
                     .setImage(this.url)
-                    .setTitle(this.name)
-                    .setFooter({text: '#'+this.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+this.unformatField('datetime-locale', this.date_entered)})
+                    .setFooter({text: '#'+this.order_id.toString()+' | '+this.name})
+                    .setTimestamp(this.date_entered)
             ],
         };
     }

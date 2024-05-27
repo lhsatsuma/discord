@@ -114,7 +114,8 @@ class Utils{
 					.setTitle('Sent a heartbeat!')
 					.setAuthor(client.author)
 					.setThumbnail(client.super_admin_channel.guild.iconURL())
-					.setDescription("Last Update: "+dateNow.toLocaleString('pt-BR'));
+					.setDescription("Last Update: "+dateNow.toLocaleString('pt-BR'))
+					.setTimestamp();
 				if(this.msgHeartbeat){
 					try{
 						await this.msgHeartbeat.message.edit({ embeds: [exampleEmbed] });
