@@ -9,6 +9,5 @@
   "CMD_POLL_ERROR_OPTIONS_OPTION_INVALID": "As opções enviadas são inválidas! Verifique a quantidade de opções enviadas",
   "CMD_POLL_SUCCESS_TITLE": "Enquete {0}",
   "CMD_POLL_SUCCESS_TITLE_DESCRIPTION": "Enquete realizada por: <@{0}>\nTermina em: {1} minutos\n\n",
-  "CMD_POLL_SUCCESS_WAIT": "Aguarde enquanto preparamos todas as reações! :D",
   "CMD_POLL_SUCCESS_DONE": "Enquete realizada por: <@{0}>\nEncerrado em: {1}\n\nResultados:\n{2}\n\nOpção mais votada:\n{3}"
 }
