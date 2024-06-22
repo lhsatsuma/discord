@@ -163,6 +163,10 @@ class Utils{
 		return strs[str];
 	}
 
+	numberToEmoji = (number) => {
+		return this.strToEmoji(':'+this.numberToStr(number)+':');
+	}
+
 	reacts = async (message, reacts) => {
 		return new Promise((resolve) => {
 			reacts.forEach((emoji, idx) => {

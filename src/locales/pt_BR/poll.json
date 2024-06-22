@@ -1,0 +1,14 @@
+{
+  "CMD_POLL": "enquetes",
+  "CMD_POLL_DESCRIPTION": "Criar uma nova enquete!",
+  "CMD_POLL_OPTION_TITLE": "Título da enquete",
+  "CMD_POLL_OPTION_OPTIONS": "Opções (Separe as opções por ';' (Máx 9 opções) | Ex: Opção 1;Opção 2",
+  "CMD_POLL_OPTION_EXPIRE": "Expira em (Minutos) (Máx 60 minutos)",
+  "CMD_POLL_ERROR": "Erro ao criar a enquete: {0}",
+  "CMD_POLL_ERROR_OPTIONS_EMPTY": "Algum dos parâmetros não foram enviados ou são inválidos!",
+  "CMD_POLL_ERROR_OPTIONS_OPTION_INVALID": "As opções enviadas são inválidas! Verifique a quantidade de opções enviadas",
+  "CMD_POLL_SUCCESS_TITLE": "Enquete {0}",
+  "CMD_POLL_SUCCESS_TITLE_DESCRIPTION": "Enquete realizada por: <@{0}>\nTermina em: {1} minutos\n\n",
+  "CMD_POLL_SUCCESS_WAIT": "Aguarde enquanto preparamos todas as reações! :D",
+  "CMD_POLL_SUCCESS_DONE": "Enquete realizada por: <@{0}>\nEncerrado em: {1}\n\nResultados:\n{2}\n\nOpção mais votada:\n{3}"
+}
