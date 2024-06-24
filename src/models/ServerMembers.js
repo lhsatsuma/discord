@@ -58,7 +58,7 @@ class ServerMembers extends BeanBase
                 on: 'servers.server = server_members.server',
             }
         ]
-        this.dbh.fields = 'server_members.*, servers.channels_birthday';
+        this.dbh.fields = 'server_members.*, servers.server_config';
         this.dbh.where = `server_members.birthdate LIKE '%-${search}'`;
         return await this.dbh.Select();
     }
@@ -105,7 +105,7 @@ class ServerMembers extends BeanBase
                 let member = await guild.members.fetch(result.user_id);
 
                 if(member) {
-                    let channels = this.unformatField('json', result.channels_birthday);
+                    let channels = this.unformatField('json', result.server_config).channels_birthday;
 
                     let embed = new EmbedBuilder()
                         .setColor('#0099ff')

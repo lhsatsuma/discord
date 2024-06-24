@@ -25,9 +25,12 @@ class Servers extends BeanBase
             name: {
                 type: 'varchar',
             },
-            channels_birthday: {
+            server_config: {
                 type: 'json',
-                default: [],
+                default: {
+                    channels_birthday: [],
+                    channels_voice_state: [],
+                },
             },
         };
     }

@@ -21,7 +21,8 @@ class discordAppClient extends Client
 				GatewayIntentBits.MessageContent,
 				GatewayIntentBits.GuildMembers,
 				GatewayIntentBits.DirectMessageReactions,
-				GatewayIntentBits.GuildMessageReactions
+				GatewayIntentBits.GuildMessageReactions,
+				GatewayIntentBits.GuildVoiceStates,
 			],
 			partials: [
 				Partials.Message,

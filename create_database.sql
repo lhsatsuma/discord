@@ -10,7 +10,7 @@ CREATE TABLE `servers` (
    `server` varchar(255) NOT NULL,
    `active` boolean DEFAULT true,
    `name` varchar(255),
-   `channels_birthday` TEXT NULL,
+   `server_config` TEXT NULL,
    CONSTRAINT server_id UNIQUE (server)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

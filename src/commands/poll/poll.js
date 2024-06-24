@@ -16,6 +16,11 @@ const returned = client.create(
                 .setDescription(translate('poll', 'CMD_POLL_OPTION_OPTIONS'))
                 .setRequired(true)
         )
+        .addBooleanOption(multiple =>
+            multiple.setName('multiple')
+                .setDescription(translate('poll', 'CMD_POLL_OPTION_MULTIPLE'))
+                .setRequired(true)
+        )
         .addIntegerOption(expire =>
             expire.setName('expire')
                 .setDescription(translate('poll', 'CMD_POLL_OPTION_EXPIRE'))
@@ -26,13 +31,14 @@ const returned = client.create(
 module.exports = {
     data: returned.data,
     subcommands: returned.subcommands,
-    cooldown: 10,
+    cooldown: 30,
     async execute(interaction) {
         try {
             let title = interaction.options.getString('title');
             let options = interaction.options.getString('options').split(';');
             let expire = interaction.options.getInteger('expire');
-            if (!title || !options || !expire || expire > 60) {
+            let multiple = interaction.options.getBoolean('multiple');
+            if (!title || !options || !expire || expire > 1440) {
                 throw new Error('CMD_POLL_ERROR_OPTIONS_EMPTY');
             } else if (options.length < 2 || options.length > 9) {
                 throw new Error('CMD_POLL_ERROR_OPTIONS_OPTION_INVALID');
@@ -45,7 +51,7 @@ module.exports = {
             let reactionsValid = [];
             options.forEach((ipt, idx) => {
                 let emoji_number = getUtils().numberToEmoji(idx + 1);
-                description += emoji_number + ` ${ipt}\n\n`;
+                description += emoji_number + ` ${ipt}\n`;
                 reactionsValid.push(emoji_number);
             });
 
@@ -67,10 +73,14 @@ module.exports = {
             };
 
             const collector = message.createReactionCollector({filter: filterCollector, time: (expire * 60) * 1000});
+            let usersReactions = [];
             collector.on('collect', async (reaction, user) => {
-                if (!reaction.me && reactionsValid.indexOf(reaction.emoji.name) == -1) {
+                if (!reaction.me && reactionsValid.indexOf(reaction.emoji.name) == -1 || (!multiple && usersReactions.indexOf(user.id) != -1)) {
                     await reaction.users.remove(user.id);
                     return false;
+                }
+                if(!multiple) {
+                    usersReactions.push(user.id);
                 }
             });
 
@@ -95,9 +105,8 @@ module.exports = {
                     let votes = 0;
                     let perc = 0;
 
-
                     reactionsVote.forEach((vote, idx) => {
-                        if (idx == 0 && vote.count > 0) {
+                        if (!emoji_winner) {
                             emoji_winner = {option_value: ipt, emoji: vote.emoji, count: vote.count};
                         }
                         if (vote.emoji == emoji_number) {
@@ -106,10 +115,10 @@ module.exports = {
                         }
                     });
 
-                    choices += emoji_number + ` ${ipt} ::: [${votes} | ${perc}%]\n\n`;
+                    choices += emoji_number + ` ${ipt} ::: [${votes} | ${perc}%]\n`;
                 });
 
-                let winner = '';
+                let winner = translate('poll', 'CMD_POLL_NO_VOTES');
                 if (emoji_winner) {
                     winner = `**${emoji_winner.emoji} ${emoji_winner.option_value} -> ${emoji_winner.count}**`;
                 }
