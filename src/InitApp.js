@@ -31,7 +31,10 @@ class discordAppClient extends Client
 			]
 		});
 
-		this.author = {name: bot_cfg.BOT_NAME, iconURL: bot_cfg.BOT_ICON}
+		this.author = {name: bot_cfg.BOT_NAME, iconURL: bot_cfg.BOT_ICON};
+
+
+		this.tmp = {};
 	}
 
 	login(token) {
@@ -250,6 +253,32 @@ class discordAppClient extends Client
 		}
 
 		return dataReturn;
+	}
+
+	getTmp(type, key = null)
+	{
+		if(typeof this.tmp[type] === 'undefined'){
+			return null;
+		}
+
+		if(key) {
+			if (typeof this.tmp[type][key] === 'undefined') {
+				return null;
+			}
+			return this.tmp[type][key];
+		}else{
+			return this.tmp[type];
+		}
+	}
+
+	setTmp(type, key, value)
+	{
+		if(typeof this.tmp[type] === 'undefined'){
+			this.tmp[type] = {};
+		}
+		this.tmp[type][key] = value;
+
+		return true;
 	}
 }
 

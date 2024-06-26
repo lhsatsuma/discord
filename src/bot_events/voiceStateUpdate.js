@@ -9,13 +9,19 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
         return true;
     }
 
-    let bean = new BeanServers();
-    bean.server = newState.guild.id;
-    await bean.selectServer();
-    if(!bean.id){
-        log.Error('Unable to select server on VoiceStateUpdate!');
-        return false;
-    }else if(!bean.server_config.channels_voice_state){
+    let bean = client.getTmp('servers_cached', newState.guild.id);
+    if(!bean) {
+        bean = new BeanServers();
+        bean.server = newState.guild.id;
+        await bean.selectServer();
+        if(!bean.id){
+            log.Error('Unable to select server on VoiceStateUpdate!');
+            return false;
+        }
+        client.setTmp('servers_cached', newState.guild.id, bean);
+    }
+
+    if(!bean.server_config.channels_voice_state){
         //Nothing to do
         return false;
     }
