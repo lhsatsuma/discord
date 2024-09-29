@@ -5,6 +5,7 @@ module.exports = {
         subcommand
             .setName(translate('superadmin', 'CMD_RELOADCFG'))
             .setDescription(translate('superadmin', 'CMD_RELOADCFG_DESCRIPTION')),
+    inactive: true,
     async execute(interaction) {
         if(!getUtils().channelSuperAdmin(interaction.channel.id)){
             await interaction.reply({
