@@ -13,15 +13,13 @@ module.exports = {
         bean.server = interaction.guildId;
         let redditUtils = new reddit();
         let search_db = true;
+        let embedMsg = {};
 
         if(redditUtils.validateCfg()) {
             let rand = getUtils().randomInt(1, 10);
             if (rand <= bot_cfg.REDDIT_MEMES_ODD) {
-                let randReddit = await redditUtils.random();
-                if(randReddit){
-                    bean.url = randReddit.url;
-                    bean.order_id = 0;
-                    bean.name = randReddit.title.replace(/<\/[^>]+(>|$)/g, "") + ` | Reddit: ${bot_cfg.REDDIT_SUBREDDIT_MEMES}`;
+                embedMsg = await redditUtils.random();
+                if(embedMsg){
                     search_db = false;
                 }
             }
@@ -47,9 +45,9 @@ module.exports = {
                 });
                 return true;
             }
-        }
 
-        let embedMsg = bean.mountEmbed();
+            embedMsg = bean.mountEmbed();
+        }
 
         await interaction.reply(embedMsg);
     },

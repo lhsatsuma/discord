@@ -6,7 +6,7 @@
  * t - Type Version
  * @type {string}
  */
-global.app_version = '1.4.1b-016';
+global.app_version = '1.4.1b-017';
 
 /**
  *
@@ -41,7 +41,7 @@ global.bot_cfg = {
     REDDIT_PASSWORD: '',
     REDDIT_APP_ID: '',
     REDDIT_CLIENT_SECRET: '',
-    REDDIT_SUBREDDIT_MEMES: '',
+    REDDIT_SUBREDDIT_MEMES: [],
     REDDIT_MEMES_ODD: 2,
 };
 
