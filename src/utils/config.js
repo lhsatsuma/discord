@@ -6,11 +6,11 @@
  * t - Type Version
  * @type {string}
  */
-global.app_version = '1.4.1b-015';
+global.app_version = '1.4.1b-016';
 
 /**
  *
- * @type {{DB_PORT: number, DB_USER: string, IMGUR_CLIENT_ID: string, BOT_SEND_COMMANDS_API: boolean, DB_NAME: string, LOG_REGISTER: number[], LOG_QUERY: boolean, DB_HOST: string, HEARTBEAT: number, BOT_TOKEN: string, LOG_DIR: string, ADMIN_CHANNEL_ID: string, BOT_DESCRIPTION: string, BOT_NAME: string, BOT_ID: string, IMGUR_CLIENT_SECRET: string, BOT_LOCALE: string, BOT_ICON: string, DB_PASSWORD: string}}
+ * @type {{DB_PORT: number, DB_USER: string, BOT_SEND_COMMANDS_API: boolean, DB_NAME: string, REDDIT_SUBREDDIT_MEMES: string, LOG_REGISTER: number[], HEARTBEAT: number, BOT_TOKEN: string, REDDIT_CLIENT_SECRET: string, BOT_ID: string, REDDIT_MEMES_ODD: string, BOT_ICON: string, IMGUR_CLIENT_ID: string, REDDIT_USER: string, LOG_QUERY: boolean, DB_HOST: string, REDDIT_PASSWORD: string, LOG_DIR: string, ADMIN_CHANNEL_ID: string, BOT_DESCRIPTION: string, BOT_NAME: string, REDDIT_APP_ID: string, IMGUR_CLIENT_SECRET: string, BOT_LOCALE: string, DB_PASSWORD: string}}
  */
 global.bot_cfg = {
     ADMIN_CHANNEL_ID: '',
@@ -36,6 +36,13 @@ global.bot_cfg = {
 
     IMGUR_CLIENT_ID: '',
     IMGUR_CLIENT_SECRET: '',
+
+    REDDIT_USER: '',
+    REDDIT_PASSWORD: '',
+    REDDIT_APP_ID: '',
+    REDDIT_CLIENT_SECRET: '',
+    REDDIT_SUBREDDIT_MEMES: '',
+    REDDIT_MEMES_ODD: 2,
 };
 
 
