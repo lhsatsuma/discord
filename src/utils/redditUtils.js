@@ -26,9 +26,10 @@ class RedditUtils
 
     async random()
     {
-        let rand_subreddit = bot_cfg.REDDIT_SUBREDDIT_MEMES[getUtils().randomInt(0, bot_cfg.REDDIT_SUBREDDIT_MEMES.length-1)];
+        console.log(bot_cfg.REDDIT_SUBREDDIT_MEMES.length-1);
+        let rand_subreddit = bot_cfg.REDDIT_SUBREDDIT_MEMES[getUtils().randomInt(1, bot_cfg.REDDIT_SUBREDDIT_MEMES.length)-1];
         let res = await this.lib().get(`/r/${rand_subreddit}/top`,{
-            t: 'month',
+            t: 'year',
             limit: 100,
         });
 
