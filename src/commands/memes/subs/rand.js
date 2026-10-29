@@ -1,5 +1,5 @@
-const { EmbedBuilder} = require('discord.js');
 const BeanMemes = getUtils().requireAgain(process.cwd()+'/src/models/Memes.js');
+const reddit = getUtils().requireAgain(process.cwd()+'/src/utils/redditUtils.js');
 
 module.exports = {
     data: (subcommand) =>
@@ -11,34 +11,44 @@ module.exports = {
     async execute(interaction) {
         let bean = new BeanMemes();
         bean.server = interaction.guildId;
-        let results = await bean.selectRandom();
+        let redditUtils = new reddit();
+        let search_db = true;
+        let embedMsg = {};
 
-        if(results === false){
-            interaction.reply({
-                content: translate('globals', 'DB_ERROR'),
-                ephemeral: true
-            });
-            return false;
+        if(redditUtils.validateCfg()) {
+            let rand = getUtils().randomInt(1, 10);
+            if (rand <= bot_cfg.REDDIT_MEMES_ODD) {
+                embedMsg = await redditUtils.random();
+                if(embedMsg){
+                    search_db = false;
+                }
+            }
         }
 
+        if(search_db) {
+            let results = await bean.selectRandom();
 
-        //Protection against random not found
-        if(!bean.id){
-            await interaction.reply({
-                content: translate('memes', 'NOT_FOUND'),
-                ephemeral: true
-            });
-            return true;
+            if (results === false) {
+                interaction.reply({
+                    content: translate('globals', 'DB_ERROR'),
+                    ephemeral: true
+                });
+                return false;
+            }
+
+
+            //Protection against random not found
+            if (!bean.id) {
+                await interaction.reply({
+                    content: translate('memes', 'NOT_FOUND'),
+                    ephemeral: true
+                });
+                return true;
+            }
+
+            embedMsg = bean.mountEmbed();
         }
 
-        let embedMsg = new EmbedBuilder()
-            .setColor(getUtils().getColor('BLUE'))
-            .setImage(bean.url)
-            .setFooter({text: '#'+bean.order_id.toString() + ' | '+translate('globals', 'CREATED_AT')+ ' '+bean.unformatField('datetime-locale', bean.date_entered)});
-
-        await interaction.reply({
-            content: bean.name,
-            embeds: [embedMsg]
-        });
+        await interaction.reply(embedMsg);
     },
 }

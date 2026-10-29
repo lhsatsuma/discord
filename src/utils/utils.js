@@ -114,7 +114,8 @@ class Utils{
 					.setTitle('Sent a heartbeat!')
 					.setAuthor(client.author)
 					.setThumbnail(client.super_admin_channel.guild.iconURL())
-					.setDescription("Last Update: "+dateNow.toLocaleString('pt-BR'));
+					.setDescription("Last Update: "+dateNow.toLocaleString('pt-BR'))
+					.setTimestamp();
 				if(this.msgHeartbeat){
 					try{
 						await this.msgHeartbeat.message.edit({ embeds: [exampleEmbed] });
@@ -162,6 +163,10 @@ class Utils{
 		return strs[str];
 	}
 
+	numberToEmoji = (number) => {
+		return this.strToEmoji(':'+this.numberToStr(number)+':');
+	}
+
 	reacts = async (message, reacts) => {
 		return new Promise((resolve) => {
 			reacts.forEach((emoji, idx) => {
@@ -181,7 +186,7 @@ class Utils{
 		return date_regex.test(date);
 	}
 
-	channelSuperAdmin = (compare) => {
+	channelSuperAdmin = async (compare) => {
 		return bot_cfg.ADMIN_CHANNEL_ID === compare;
 	}
 

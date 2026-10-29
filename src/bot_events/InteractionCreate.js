@@ -20,11 +20,15 @@ client.on(Events.InteractionCreate, async interaction => {
         commandCD += ':'+interaction.options._subcommand;
         commandName += ':'+interaction.options._subcommand;
         command = command.subcommands[interaction.options._subcommand];
-        coolDown = command.cooldown;
+        coolDown = command ? command.cooldown : 0;
     }
 
     if (!command) {
         log.Error(`No command matching ${commandName} was found.`);
+        await interaction.reply({
+            content: translate('globals', 'CMD_ERROR'),
+            ephemeral: true
+        });
         return;
     }
 

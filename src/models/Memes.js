@@ -1,4 +1,5 @@
 const BeanBase = require('../utils/Bean.js');
+const {EmbedBuilder} = require("discord.js");
 class BeanMemes extends BeanBase
 {
 	constructor()
@@ -29,6 +30,8 @@ class BeanMemes extends BeanBase
                 type: 'varchar',
             },
         };
+
+        this.accept_files = ['png', 'jpg', 'jpeg'];
 	}
     selectRandom()
     {
@@ -83,6 +86,29 @@ class BeanMemes extends BeanBase
         }
         return await super.save();
     }
+
+    mountEmbed()
+    {
+        return {
+            embeds: [
+                new EmbedBuilder()
+                    .setColor(getUtils().getColor('BLUE'))
+                    .setImage(this.url)
+                    .setFooter({text: '#'+this.order_id.toString()+' | '+this.name})
+                    .setTimestamp(this.date_entered)
+            ],
+        };
+    }
+
+    getAcceptFiles(join = false)
+    {
+        return join ? this.accept_files.join(', ').toString() : this.accept_files;
+    }
+    validateExtension(extension)
+    {
+        return this.getAcceptFiles().includes(extension);
+    }
+
 }
 
 module.exports = BeanMemes;

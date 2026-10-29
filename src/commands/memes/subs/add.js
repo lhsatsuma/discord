@@ -1,15 +1,15 @@
-const { EmbedBuilder} = require('discord.js');
 const { ImgurClient } = require('imgur');
 const BeanMemes = getUtils().requireAgain(process.cwd()+'/src/models/Memes.js');
 
+let bean_memes = new BeanMemes();
 module.exports = {
     data: (subcommand) =>
         subcommand
             .setName(translate('memes', 'CMD_ADD'))
             .setDescription(translate('memes', 'CMD_ADD_DESCRIPTION'))
-            .addStringOption(url =>
-                url.setName('url')
-                    .setDescription(translate('memes', 'CMD_ADD_OPTION_URL'))
+            .addAttachmentOption(attachment =>
+                attachment.setName('meme')
+                    .setDescription(translate('memes', 'CMD_ADD_OPTION_MEME', bean_memes.getAcceptFiles(true)))
                     .setRequired(true)
             )
             .addStringOption(name =>
@@ -18,29 +18,29 @@ module.exports = {
                     .setRequired(true)
             ),
     async execute(interaction) {
-        let url_image = interaction.options.getString('url').toString();
+        let image = interaction.options.getAttachment('meme');
         const name = interaction.options.getString('name').toString();
-        if(url_image.substring(0, 7) !== 'http://' && url_image.substring(0, 8) !== 'https://'){
+        let bean = new BeanMemes();
+        bean.server = interaction.guildId;
+        bean.url = image.url;
+        bean.name = name;
+
+        //Accept only this formats of attachments
+        if(!bean.validateExtension(image.url.split('.').pop().split('?')[0])){
             await interaction.reply({
-                content: translate('memes', 'CMD_ADD_INVALID_URL'),
+                content: translate('memes', 'CMD_ADD_INVALID_FORMAT', bean.getAcceptFiles(true)),
                 ephemeral: true
             });
             return false;
         }
-
-        url_image = url_image.replace('format=webp', 'format=png');
-
-        let bean = new BeanMemes();
-        bean.server = interaction.guildId;
-        bean.url = url_image;
-        bean.name = name;
 
         const client = new ImgurClient({ clientId: bot_cfg.IMGUR_CLIENT_ID });
 
         const response = await client.upload({
             image: bean.url,
             title: name,
-            description: 'Meme uploaded via API DBIKE BOT',
+            type: 'url',
+            description: 'Meme uploaded via API '+bot_cfg.BOT_NAME,
         });
         if(response.success && !!response.data.link){
             bean.url = response.data.link;
@@ -53,16 +53,6 @@ module.exports = {
             return false;
         }
 
-        // let exists = await bean.checkExists();
-        // exists = exists[0];
-        // if(!!exists){
-        //     await interaction.reply({
-        //         content: translate('memes', 'CMD_ADD_ALREADY_EXISTS', exists.order_id),
-        //         ephemeral: true
-        //     });
-        //     return true;
-        // }
-
         let saved = await bean.save();
 
         if(!saved){
@@ -73,14 +63,9 @@ module.exports = {
             return false;
         }
 
-        let embedMsg = new EmbedBuilder()
-            .setColor(getUtils().getColor('BLUE'))
-            .setImage(bean.url);
+        let embedMsg = bean.mountEmbed();
+        await interaction.reply(embedMsg);
 
-        await interaction.reply({
-            content: `[${bean.order_id}] ${bean.name}`,
-            embeds: [embedMsg]
-        });
         return true;
     },
 }

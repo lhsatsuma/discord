@@ -7,5 +7,7 @@
   "CMD_ERROR": "Ocorreu um erro ao executar este comando!",
   "CMD_COOLDOWN": "Aguarde {0} segundos para executar novamente o comando...",
   "DB_ERROR": "Ocorreu um erro com o banco de dados! Tente novamente, ou contate o administrador",
-  "CREATED_AT": "Criado em"
+  "CREATED_AT": "Criado em",
+  "VOICE_STATE_CONNECTED": "<@{0}> conectou no canal de voz em <#{1}>",
+  "VOICE_STATE_DISCONNECTED": "<@{0}> desconectou do canal de voz em <#{1}>"
 }
