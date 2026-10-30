@@ -6,7 +6,7 @@
   "main": "test.js",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env test.js"
+    "start": "node --env-file=.env run.js"
   },
   "imports": {
     "#src/*": "./src/*",

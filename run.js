@@ -1,18 +1,10 @@
-global.entryPoint = 'app';
-global.startAppTime = new Date();
-global.fs = require('fs');
-
-//Using dotenv to get config
-require('./old/src/utils/config.js');
-
-const logControl = require("./old/src/utils/LogControl.js");
-global.log = new logControl('app.log', {level_register: bot_cfg.LOG_REGISTER});
-
-discordAppClient = require('./old/src/InitApp.js');
-global.client = new discordAppClient();
-
-try {
-	client.init();
+global.entryMode = 'app';
+global.startTimeApp = new Date();
+const {default: entryPointApp} = await import('./src/entryPointApp.js');
+const main = new entryPointApp();
+try{
+    main.init();
 }catch(e){
-	log.Fatal('Error loading super class: '+e, 1, 1);
+    console.error('Error initializing app: '+e+ ' on: '+e.stack);
+    process.exit();
 }
