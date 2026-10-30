@@ -1,8 +1,8 @@
 import entryPoint from './entryPoint.js';
 import {Collection, Routes, REST} from 'discord.js';
 import fs from 'fs';
-import lang from './Includes/lang.js';
-import log from './Includes/log.js';
+import lang from '#Includes/lang.js';
+import log from '#Includes/log.js';
 export default class entryPointApp extends entryPoint
 {
     init()
@@ -23,6 +23,8 @@ export default class entryPointApp extends entryPoint
 				log.fatal(lang.translate('system', 'START_LOADING_EVENTS_ERR'));
 			}
 			log.debug(lang.translate('system', 'START_LOADED_EVENTS', [loaded_events]));
+
+			super.finishInit();
         });
     }
 

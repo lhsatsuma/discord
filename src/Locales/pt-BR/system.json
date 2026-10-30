@@ -16,5 +16,6 @@
     "START_LOADING_EVENTS_ERR": "Erro ao carregar os eventos!",
     "START_LOADING_EVENT_NAME": "Carregando evento: {0}",
     "START_LOADED_EVENT_NAME": "Evento carregado: {0}",
-    "START_LOADED_EVENTS": "Eventos carregados com sucesso! Total: {0}"
+    "START_LOADED_EVENTS": "Eventos carregados com sucesso! Total: {0}",
+    "DATABASE_ERR": "Erro na requisição! Contate o administrador ou tente novamente!"
 }

@@ -1,13 +1,12 @@
-import config from './Includes/config.js';
-
-import Logger from './Includes/log.js';
-import {Client, GatewayIntentBits,  Partials} from 'discord.js';
+import config from '#Includes/config.js';
 import Discord from 'discord.js';
-import lang from './Includes/lang.js';
-import db from './Includes/database/database_pg.js';
-import log from './Includes/log.js';
+import lang from '#Includes/lang.js';
+import db from '#Includes/database/database_pg.js';
+import log from '#Includes/log.js';
+import utils from '#Includes/utils.js';
+import pickup_lines from '#Models/pickup_lines.js';
+import {Client, GatewayIntentBits,  Partials} from 'discord.js';
 
-global.db = null;
 export default class entryPointApp extends Client
 {
     constructor()
@@ -74,10 +73,6 @@ export default class entryPointApp extends Client
                 resolve(true);
             });
 
-            this.on('error', err => {
-                log.fatal('Discord API Error: ' + err);
-            });
-
             log.debug(lang.translate('system', 'START_TRY_CONNECT_API'));
             try{
                 let logged_in = await this.login(process.env.DISCORD_BOT_TOKEN);
@@ -88,6 +83,15 @@ export default class entryPointApp extends Client
                 log.fatal(lang.translate('system', 'START_TRY_CONNECT_API_ERR', [e]));
             }
         });
+    }
+
+    finishInit()
+    {
+        let load_time = new Date() - global.startTimeApp;
+        log.info("=".repeat(40));
+        log.info('BOT IS UP AND RUNNING');
+        log.info('Load time: '+load_time+ 'ms | Memory Usage: '+utils.memoryUsage().total+'/'+utils.memoryUsage().used);
+        log.info("=".repeat(40));
     }
 
     loadConfig()

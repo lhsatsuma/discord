@@ -1,5 +1,7 @@
 import {Events, MessageFlags} from "discord.js";
-
+import log from '#Includes/log.js';
+import cooldown from '#Includes/commands/cooldown.js';
+import lang from '#Includes/lang.js';
 export default class InteractionCreate
 {
     main;
@@ -21,9 +23,48 @@ export default class InteractionCreate
                 return false;
             }
 
-            interaction.reply({
-                content: 'Command executed!'
-            });
+            let command = interaction.client.commands.get(interaction.commandName);
+            let commandCD = interaction.commandName;
+            let commandName = commandCD;
+            let coolDown = command.cooldown;
+            let optionsStr = '';
+
+            if(interaction.options._hoistedOptions.length){
+                interaction.options._hoistedOptions.forEach((ipt) => {
+                    optionsStr += ` [${ipt.name}::${ipt.value}]`;
+                });
+            }
+
+            let interactionKey = `[${interaction.guild.name}#${interaction.channel.name}@${interaction.user.username}]`;
+            log.debug(`${interactionKey}[CMD] ${commandName}${optionsStr}`);
+
+            let cooldownLeft = 0;
+            if(!!coolDown){
+                cooldownLeft = cooldown.checkUserCd(interaction.user.id, commandCD);
+            }
+
+
+            if(!cooldownLeft){
+                try {
+                    await command.execute(interaction);
+                    if(!!coolDown){
+                        cooldown.insertUserCd(interaction.user.id, commandCD, coolDown);
+                    }
+                } catch (err) {
+                    log.warning('Error executing command: '+err.message);
+                    if(!interaction.replied) {
+                        await interaction.reply({
+                            content: lang.translate('globals', 'CMD_ERROR'),
+                            flags: [MessageFlags.Ephemeral]
+                        });
+                    }
+                }
+            }else{
+                await interaction.reply({
+                    content: lang.translate('globals', 'CMD_COOLDOWN', cooldownLeft),
+                    flags: [MessageFlags.Ephemeral]
+                });
+            }
         });
     }
 }

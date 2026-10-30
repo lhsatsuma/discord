@@ -1,62 +1,54 @@
-import database from './database.js';
-import pg from 'pg';
-import log from '../log.js';
-class database_pg extends database
-{
-	constructor(org)
-	{
-		super(org);
-	}
-	
-	Connect()
-	{
-		return new Promise(async (resolve) => {
-			if(this.connection){
-				const disconnected = await new Promise(resolve => {
-					this.connection.ping(err => {
-						resolve(err);
-					});
-				});
-				if(!disconnected){
-					resolve({status: true, 'conn': this.connection});
-					return true;
-				}else{
-					log.info('Lost connection to database... Reconnecting...');
-				}
-			}
-			this.connection = null;
-			let conn = new pg.Client({
-				host: this.host,
-				user: this.host_user,
-				password: this.host_pwd,
-				database: this.db_name,
-				port: this.db_port
-			});
-			
-			try{
-				conn.connect(async (err) => {
-					if(err){
-						this.last_error = 'Connection Error '+this.origem+' DB: '+err.message;
-						resolve({status: false, 'err': this.last_error});
-					}else{
-						this.connection = conn;
-						resolve({status: true, 'conn': this.connection});
-					}
-				});
-				conn.on('error', async (err) => {
-					if(err.code === 'PROTOCOL_CONNECTION_LOST') { // Connection to the MySQL server is usually
+import { Pool} from 'pg';
+import log from '#Includes/log.js';
 
-						await this.CloseConn();                         // lost due to either server restart, or a
-					} else { // connnection idle timeout (the wait_timeout
-						this.last_error = 'Connection Error '+this.origem+': '+err.message;
-						resolve({status: false, 'err': this.last_error});
-					}
-				});
-			}catch(err){
-				this.last_error = 'Connection Error '+this.origem+': '+err.message;
-				resolve({status: false, 'err': this.last_error});
-			}
+class database_pg
+{
+	constructor()
+	{
+		this.host = process.env.DB_HOST;
+		this.host_user = process.env.DB_USER;
+		this.host_pwd = process.env.DB_PASSWORD;
+		this.db_name = process.env.DB_NAME;
+		this.db_port = process.env.DB_PORT;
+		this.last_error = '';
+	}
+	createPool()
+	{
+		if(this.pool){
+			return this.pool;
+		}
+
+		this.pool = new Pool({
+			host: this.host,
+			user: this.host_user,
+			password: this.host_pwd,
+			database: this.db_name,
+			port: this.db_port
 		});
+		this.pool.on('error', (err, client) => {
+			log.error('[DataBase] Error: '+err);
+			delete this.pool;
+		});
+		return this.pool;
+	}
+	async testConnection()
+	{
+		try{
+			await this.createPool().connect();
+			return {status: true};
+		}catch(e){
+			return {status: false, err: e.message};
+		}
+	}
+
+	getInfo()
+	{
+		return {
+			host: this.host,
+			host_user: this.host_user,
+			host_pwd: this.host_pwd,
+			database: this.db_name,
+		};
 	}
 	
 	async CloseConn()
@@ -69,40 +61,14 @@ class database_pg extends database
 	}
 	
 	ErrorQuery(sql, err_msg = ''){
-		log.Error('SQL Failed: '+sql+' : '+err_msg, 0, 1);
+		log.error('SQL Failed: '+sql+' : '+err_msg, 0, 1);
 		this.last_error = 'SQL Failed: '+sql+' : '+err_msg;
 	}
-	
-	Query(sql, show_sql = false)
+
+	async query(text, params)
 	{
-		if(bot_cfg.LOG_QUERY){
-			log.Debug('[QUERY] '+sql);
-		}
-		return new Promise((resolve) => {
-			this.Connect().then(async () => {
-				if(this.connection){
-					if(show_sql){
-						console.log(sql);
-					}
-					this.connection.query(sql, async (err, result) => {
-						try{
-							if(err){
-								this.ErrorQuery(sql, err.sqlMessage);
-								await this.CloseConn();
-								resolve(false);
-							}else{
-								resolve(result);
-							}
-						}catch(err){
-							this.ErrorQuery(sql, err.sqlMessage);
-							resolve(false);
-						}
-					});
-				}else{
-					resolve(false);
-				}
-			});
-		});
+		log.debug('[SQL][QUERY] '+text+(params ? ' | params: '+JSON.stringify(params ?? []): ''));
+		return await this.createPool().query(text, params);
 	}
 }
 

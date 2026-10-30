@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": false,
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
+        "baseUrl": ".",
+        "paths": {
+            "#src/*": ["src/*"],
+            "#Commands*": ["src/Controllers/Commands/*"],
+            "#Events*": ["src/Controllers/Events/*"],
+            "#Includes/*": ["src/Includes/*"],
+            "#Models/*": ["src/Models/*"],
+            "#Controllers/*": ["src/Controllers/*"]
+        }
+    },
+    "include": ["src/**/*.js", "test.js"]
+}

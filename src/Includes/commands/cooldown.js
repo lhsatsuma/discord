@@ -1,4 +1,4 @@
-class Cooldown
+class cooldown
 {
 	fields = {};
 	constructor()
@@ -32,4 +32,5 @@ class Cooldown
 	}
 }
 
-module.exports = Cooldown;
+const instance = new cooldown();
+export default instance;

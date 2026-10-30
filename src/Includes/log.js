@@ -10,7 +10,7 @@ class log
 	max_file_size = 10485760; //10MB
     constructor(fileName)
     {
-        this.fileName = fileName;
+        this.fileName = fileName.toString() + '.log';
     }
 
     getDatePath()
@@ -95,7 +95,6 @@ class log
         });
 	}
 }
-
 const instance = new log(global.entryMode);
 
 export default instance;

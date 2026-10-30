@@ -8,6 +8,14 @@
   "scripts": {
     "start": "node --env-file=.env test.js"
   },
+  "imports": {
+    "#src/*": "./src/*",
+    "#Commands*": "./src/Controllers/Commands/*",
+    "#Events*": "./src/Controllers/Events/*",
+    "#Includes/*": "./src/Includes/*",
+    "#Models/*": "./src/Models/*",
+    "#Controllers/*": "./src/Controllers/*"
+  },
   "dependencies": {
     "@devraelfreeze/discordjs-pagination": "^2.7.6",
     "cronstrue": "^2.28.0",
@@ -19,6 +27,7 @@
     "node-cron": "^4.6",
     "pidusage": "^3.0.2",
     "read-last-lines": "^1.8.0",
-    "reddit": "^1.2.1"
+    "reddit": "^1.2.1",
+    "uuid": "latest"
   }
 }
