@@ -1,5 +1,6 @@
 import entryPointApp from './src/entryPointApp.js';
 
+global.entryMode = 'app';
 const main = new entryPointApp();
 try{
     main.init();

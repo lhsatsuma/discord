@@ -2,23 +2,28 @@ import {Events, MessageFlags} from "discord.js";
 
 export default class InteractionCreate
 {
-    eventName = Events.InteractionCreate;
-
-    execute(interaction)
+    main;
+    constructor(main)
     {
-        console.log(interaction);
-        if (!interaction.isChatInputCommand()) return;
+        this.main = main;
+        return this;
+    }
+    init()
+    {
+        this.main.on(Events.InteractionCreate, async interaction => {
+            if (!interaction.isChatInputCommand()) return;
 
-        if(!interaction.guildId){
+            if(!interaction.guildId){
+                interaction.reply({
+                    content: 'Bot is only allowed on servers!',
+                    flags: [MessageFlags.Ephemeral]
+                });
+                return false;
+            }
+
             interaction.reply({
-                content: 'Bot is only allowed on servers!',
-                flags: [MessageFlags.Ephemeral]
+                content: 'Command executed!'
             });
-            return false;
-        }
-
-        interaction.reply({
-            content: 'Command executed!'
         });
     }
 }

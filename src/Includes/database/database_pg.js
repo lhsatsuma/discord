@@ -1,7 +1,7 @@
 import database from './database.js';
 import pg from 'pg';
-
-export default class database_pg extends database
+import log from '../log.js';
+class database_pg extends database
 {
 	constructor(org)
 	{
@@ -21,7 +21,7 @@ export default class database_pg extends database
 					resolve({status: true, 'conn': this.connection});
 					return true;
 				}else{
-					log.Info('Lost connection to database... Reconnecting...');
+					log.info('Lost connection to database... Reconnecting...');
 				}
 			}
 			this.connection = null;
@@ -104,5 +104,7 @@ export default class database_pg extends database
 			});
 		});
 	}
-	
 }
+
+const instance = new database_pg(global.entryMode);
+export default instance;

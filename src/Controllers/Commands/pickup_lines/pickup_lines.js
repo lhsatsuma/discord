@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder} from 'discord.js';
-import commandBase from '../../..//Includes/commandBase.js';
-
+import commandBase from '../../../Includes/commandBase.js';
+import lang from '../../../Includes/lang.js';
 export default class command extends commandBase
 {
     cooldown = 3;
@@ -8,12 +8,12 @@ export default class command extends commandBase
     {
         super();
         this.commandBuilder = new SlashCommandBuilder()
-        .setName(global.lang.translate('pickup_lines', 'CMD_PICKUP_LINES'))
-        .setDescription(global.lang.translate('pickup_lines', 'CMD_PICKUP_LINES_DESCRIPTION'))
+        .setName(lang.translate('pickup_lines', 'CMD_PICKUP_LINES'))
+        .setDescription(lang.translate('pickup_lines', 'CMD_PICKUP_LINES_DESCRIPTION'))
         .addUserOption(option =>
             option
                 .setName('user')
-                .setDescription(global.lang.translate('pickup_lines', 'CMD_PICKUP_LINES_OPTION_USER')))
+                .setDescription(lang.translate('pickup_lines', 'CMD_PICKUP_LINES_OPTION_USER')))
     }
 
     async execute(interaction)
@@ -21,7 +21,7 @@ export default class command extends commandBase
         let path = process.cwd() + '/uploads/'+getLang().locale+'/pickup_lines.json';
         if(!fs.existsSync(path)){
             await interaction.reply({
-                content: global.lang.translate('pickup_lines', 'NO_RECORDS', getLang().locale),
+                content: lang.translate('pickup_lines', 'NO_RECORDS', getLang().locale),
                 ephemeral: true,
             });
             return false;
@@ -37,7 +37,7 @@ export default class command extends commandBase
         let pickup_lines = pickup_lines_prontas[random_key];
 
         if(!!user){
-            textRet += global.lang.translate('pickup_lines', 'CMD_PICKUP_SUCCESS_USER', interaction.user.id, user.id);
+            textRet += lang.translate('pickup_lines', 'CMD_PICKUP_SUCCESS_USER', interaction.user.id, user.id);
         }
 
         if(pickup_lines.search('https://') !== -1 || pickup_lines.search('http://') !== -1){

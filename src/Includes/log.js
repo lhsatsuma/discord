@@ -1,5 +1,5 @@
 import fs from 'fs';
-export default class log
+class log
 {
     fileName;
 	basePath;
@@ -95,3 +95,7 @@ export default class log
         });
 	}
 }
+
+const instance = new log(global.entryMode);
+
+export default instance;

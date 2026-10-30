@@ -4,16 +4,14 @@ import Logger from './Includes/log.js';
 import {Client, GatewayIntentBits,  Partials} from 'discord.js';
 import Discord from 'discord.js';
 import lang from './Includes/lang.js';
-import database_pg from './Includes/database/database_pg.js';
+import db from './Includes/database/database_pg.js';
+import log from './Includes/log.js';
 
-global.lang = null;
-global.log = null;
 global.db = null;
 export default class entryPointApp extends Client
 {
-    constructor(entryMode)
+    constructor()
     {
-        global.entryMode = entryMode;
         super({
 			intents: [
 				GatewayIntentBits.Guilds,
@@ -40,33 +38,30 @@ export default class entryPointApp extends Client
             //Load Configs first
             this.loadConfig();
 
-            //Global log class
-            global.log = new Logger('app.log');
-
             //First initialization logs
-            global.log.info("=".repeat(40));
-            global.log.info(`Starting ${entryMode}`);
-            global.log.info(`Node ${process.version} | Discord.JS v${Discord.version} | App v${process.env.npm_package_version}`);
-            global.log.info("=".repeat(40));
+            log.info("=".repeat(40));
+            log.info(`Starting ${entryMode}`);
+            log.info(`Node ${process.version} | Discord.JS v${Discord.version} | App v${process.env.npm_package_version}`);
+            log.info("=".repeat(40));
 
 
 
-            global.log.debug('Loading locale for: '+process.env.DISCORD_BOT_LOCALE);
+            log.debug('Loading locale for: '+process.env.DISCORD_BOT_LOCALE);
             if(!await this.loadLocale())
             {
-                global.log.fatal('Failed to load locale, aborting execution!');
+                log.fatal('Failed to load locale, aborting execution!');
                 reject(false);
             }
-            global.log.debug('Locale loaded successfully!');
+            log.info(lang.translate('system', 'LOCALE_SET', [process.env.DISCORD_BOT_LOCALE]));
 
-            global.log.debug('Testing database connection...');
+            log.debug(lang.translate('system', 'START_LOADING_DATABASE'));
 
             if(!await this.dbTestConnection())
             {
-                global.log.fatal('Database connection failed, aborting execution!');
+                log.fatal(lang.translate('system', 'START_LOADING_DATABASE_ERR'));
                 reject(false);
             }
-            global.log.debug('Database connection successful!');
+            log.debug(lang.translate('system', 'START_LOADED_DATABASE'));
 
 
             this.once('clientReady', async () => {
@@ -80,17 +75,17 @@ export default class entryPointApp extends Client
             });
 
             this.on('error', err => {
-                global.log.fatal('Discord API Error: ' + err);
+                log.fatal('Discord API Error: ' + err);
             });
 
-            global.log.debug('Trying to authenticate into Discord');
+            log.debug(lang.translate('system', 'START_TRY_CONNECT_API'));
             try{
                 let logged_in = await this.login(process.env.DISCORD_BOT_TOKEN);
                 if(logged_in){
-                    global.log.debug('Logged in as ' + this.user.tag);
+                    log.debug(lang.translate('system', 'START_CONNECTED_API', [this.user.tag]));
                 }
             }catch(e){
-                global.log.fatal('Error logging into Discord: ' + e);
+                log.fatal(lang.translate('system', 'START_TRY_CONNECT_API_ERR', [e]));
             }
         });
     }
@@ -104,9 +99,7 @@ export default class entryPointApp extends Client
 
     async loadLocale()
     {
-        global.lang = new lang(process.env.DISCORD_BOT_LOCALE);
-
-		if(!await global.lang.importLocales()){
+		if(!await lang.importLocales()){
             return false;
         }
         return true;
@@ -114,10 +107,9 @@ export default class entryPointApp extends Client
 
     async dbTestConnection()
     {
-        global.db = new database_pg(this.entryMode);
-        let db_connected = await global.db.testConnection();
-        if(!db_connected){
-            global.log.fatal('Database connection failed!');
+        let db_connected = await db.testConnection();
+        if(!db_connected.status){
+            log.fatal(db_connected.err);
             return false;
         }
         return true;

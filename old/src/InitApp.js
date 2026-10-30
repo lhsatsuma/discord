@@ -168,7 +168,7 @@ class discordAppClient extends Client
 
 		for (const commandName of commandPaths) {
 			let commandPath = basePath + commandName + '/';
-			let commandLocaleName = global.lang.translate(commandName, 'CMD_'+commandName.toUpperCase());
+			let commandLocaleName = lang.translate(commandName, 'CMD_'+commandName.toUpperCase());
 			let commandFile = commandPath + commandName + '.js';
 			let command = null;
 			let absolutePath = null;
@@ -228,7 +228,7 @@ class discordAppClient extends Client
 				const subs = fs.readdirSync(subPath);
 				for (const subFileName of subs) {
 					let subName = subFileName.replace('.js', '');
-					let subLocaleName = global.lang.translate(command, 'CMD_'+subName.toUpperCase());
+					let subLocaleName = lang.translate(command, 'CMD_'+subName.toUpperCase());
 					let subFile = subPath + subFileName;
 					let subFullname = command + ':' + subLocaleName;
 					log.Debug('Loading subcommand: ' + subFullname);

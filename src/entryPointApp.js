@@ -1,29 +1,28 @@
 import entryPoint from './entryPoint.js';
 import {Collection, Routes, REST} from 'discord.js';
 import fs from 'fs';
+import lang from './Includes/lang.js';
+import log from './Includes/log.js';
 export default class entryPointApp extends entryPoint
 {
-    constructor()
-    {
-        super('app');
-    }
-
     init()
     {
         super.init().then(async () => {
 
-            global.log.debug('Loading commands...');
-            if(!await this.loadCommands()) {
-                global.log.fatal('Failed to load commands!');
-            }
-            global.log.debug('Commands loaded successfully!');
-
-
-			global.log.debug('Loading events...');
-			if(!await this.loadEvents()) {
-				global.log.fatal('Failed to load events!');
+            log.debug(lang.translate('system', 'START_LOADING_COMMANDS'));
+            let loaded_commands = await this.loadCommands();
+			if(!loaded_commands){
+				log.fatal(lang.translate('system', 'START_LOADING_COMMANDS_ERR'));
 			}
-			global.log.debug('Events loaded successfully!');
+            log.debug(lang.translate('system', 'START_LOADED_COMMANDS', [loaded_commands]));
+
+
+			log.debug(lang.translate('system', 'START_LOADING_EVENTS'));
+			let loaded_events = await this.loadEvents();
+			if(!loaded_events){
+				log.fatal(lang.translate('system', 'START_LOADING_EVENTS_ERR'));
+			}
+			log.debug(lang.translate('system', 'START_LOADED_EVENTS', [loaded_events]));
         });
     }
 
@@ -37,7 +36,7 @@ export default class entryPointApp extends entryPoint
 
 		for (const commandName of commandPaths) {
 			let commandPath = basePath + commandName + '/';
-			let commandLocaleName = global.lang.translate(commandName, 'CMD_'+commandName.toUpperCase());
+			let commandLocaleName = lang.translate(commandName, 'CMD_'+commandName.toUpperCase());
 			let commandFile = commandPath + commandName + '.js';
 			let command = null;
 			let importFile = null;
@@ -46,45 +45,45 @@ export default class entryPointApp extends entryPoint
 			if (fs.existsSync(commandFile)) {
 				importFile = importPath + commandName + '/' + commandName + '.js';
 			} else {
-				global.log.error('CommandDir: ' + commandLocaleName + ' dont have JS');
+				log.error('[loadCommands]: ' + commandLocaleName + ' dont have JS');
 				continue;
 			}
 
 			if (this.commands.get(commandLocaleName)) {
-				global.log.error('Command already loaded: ' + commandFile);
 				continue;
 			}
-
-			global.log.debug('Loading command: ' + commandLocaleName);
+			
+			log.debug(lang.translate('system', 'START_LOADING_COMMAND_NAME', [commandLocaleName]));
 			command = await import(importFile);
             
             let commandClass = new command.default();
 
 			if (!!commandClass.inactive) {
-				global.log.info('Command: ' + commandLocaleName + ' is inactive!');
+				log.info(lang.translate('system', 'START_COMMAND_INNACTIVE', [commandLocaleName]));
 				continue;
 			}
 			this.commands.set(commandClass.commandBuilder.name, commandClass);
 			commandsTmp.push(commandClass.commandBuilder.toJSON());
-			global.log.debug('Loaded command: ' + commandLocaleName);
+
+			log.debug(lang.translate('system', 'START_LOADED_COMMAND_NAME', [commandLocaleName]));
 		}
 
 		// The put method is used to fully refresh all commands in the guild with the current set
 		if (process.env.DISCORD_BOT_SEND_COMMANDS_API == 'true') {
-			global.log.debug(`Sending ${commandsTmp.length} commands to Discord API`);
+			log.debug(`Sending ${commandsTmp.length} commands to Discord API`);
 			try {
 				const rest = new REST().setToken(process.env.DISCORD_BOT_TOKEN);
 				const data = await rest.put(
 					Routes.applicationCommands(process.env.DISCORD_BOT_ID),
 					{body: commandsTmp},
 				)
-				global.log.debug(`Sent ${data.length} commands to Discord API!`);
+				log.debug(`Sent ${data.length} commands to Discord API!`);
 			}catch(e){
-				global.log.fatal('Error on sending commands to Discord: '+e);
+				log.fatal('Error on sending commands to Discord: '+e);
 			}
 		}
 
-        return true;
+        return commandsTmp.length;
     }
 
 	async loadEvents()
@@ -95,17 +94,13 @@ export default class entryPointApp extends entryPoint
 
 
 		for (const eventName of eventsPath) {
-			global.log.debug('Loading event: '+eventName);
+			log.debug(lang.translate('system', 'START_LOADING_EVENT_NAME', [eventName]));
 			let importFile = importPath + eventName;
 			let event = await import(importFile);
-
-			let eventClass = new event.default();
-			this.on(eventClass.eventName, async interaction => {
-				eventClass.execute(interaction);
-			});
-			global.log.debug('Loaded event: '+eventName);
+			let eventClass = new event.default(this).init();
+			log.debug(lang.translate('system', 'START_LOADED_EVENT_NAME', [eventName]));
 		}
 
-		return true;
+		return eventsPath.length;
 	}
 }

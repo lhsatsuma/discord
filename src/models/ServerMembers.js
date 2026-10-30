@@ -90,7 +90,7 @@ class ServerMembers extends BeanBase
                         inline: true
                     }
                 ];
-                let description = global.lang.translate('birthday', 'SCHEDULE_BIRTHDAY_MESSAGE', result.user_id);
+                let description = lang.translate('birthday', 'SCHEDULE_BIRTHDAY_MESSAGE', result.user_id);
                 if(age > 0){
                     fields.push({
                        name: 'Idade',
@@ -109,7 +109,7 @@ class ServerMembers extends BeanBase
 
                     let embed = new EmbedBuilder()
                         .setColor('#0099ff')
-                        .setTitle(global.lang.translate('birthday', 'SCHEDULE_HAPPY_BIRTHDAY'))
+                        .setTitle(lang.translate('birthday', 'SCHEDULE_HAPPY_BIRTHDAY'))
                         .setAuthor({name: member.user.username, iconURL: member.user.avatarURL()})
                         .setThumbnail(this.options.thumb_birthday)
                         .setDescription(description)

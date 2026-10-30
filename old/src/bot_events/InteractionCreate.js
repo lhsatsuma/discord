@@ -26,7 +26,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if (!command) {
         log.Error(`No command matching ${commandName} was found.`);
         await interaction.reply({
-            content: global.lang.translate('globals', 'CMD_ERROR'),
+            content: lang.translate('globals', 'CMD_ERROR'),
             ephemeral: true
         });
         return;
@@ -57,14 +57,14 @@ client.on(Events.InteractionCreate, async interaction => {
             log.Fatal('Error executing command: '+error.message+ ' on line '+error.line);
             if(!interaction.replied) {
                 await interaction.reply({
-                    content: global.lang.translate('globals', 'CMD_ERROR'),
+                    content: lang.translate('globals', 'CMD_ERROR'),
                     ephemeral: true
                 });
             }
         }
     }else{
         await interaction.reply({
-            content: global.lang.translate('globals', 'CMD_COOLDOWN', cooldownLeft),
+            content: lang.translate('globals', 'CMD_COOLDOWN', cooldownLeft),
             ephemeral: true
         });
     }

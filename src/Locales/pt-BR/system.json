@@ -1,0 +1,20 @@
+{
+    "LOCALE_SET": "Idioma carregado: {0}",
+    "START_LOADING_DATABASE": "Testando conexão com o banco de dados...",
+    "START_LOADING_DATABASE_ERR": "Erro ao conectar no banco de dados!",
+    "START_LOADED_DATABASE": "Conectado com o banco de dados com sucesso!",
+    "START_TRY_CONNECT_API": "Conectando a API...",
+    "START_TRY_CONNECT_API_ERR": "Erro ao se conectar na API: {0}",
+    "START_CONNECTED_API": "Conectado na API do Discord como {0}",
+    "START_LOADING_COMMANDS": "Carregando comandos...",
+    "START_LOADING_COMMANDS_ERR": "Erro ao carregar os comandos!",
+    "START_LOADING_COMMAND_NAME": "Carregando comando: {0}",
+    "START_LOADED_COMMAND_NAME": "Comando carregado: {0}",
+    "START_COMMAND_INNACTIVE": "Comando {0} está inativo!",
+    "START_LOADED_COMMANDS": "Comandos carregados com sucesso! Total: {0}",
+    "START_LOADING_EVENTS": "Carregando eventos...",
+    "START_LOADING_EVENTS_ERR": "Erro ao carregar os eventos!",
+    "START_LOADING_EVENT_NAME": "Carregando evento: {0}",
+    "START_LOADED_EVENT_NAME": "Evento carregado: {0}",
+    "START_LOADED_EVENTS": "Eventos carregados com sucesso! Total: {0}"
+}

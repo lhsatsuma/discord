@@ -1,5 +1,5 @@
 import fs from 'fs';
-export default class lang
+class lang
 {
     availableLocales = [
         {
@@ -27,11 +27,11 @@ export default class lang
     {
         //Check if label exists
         if (!this.translates[module]) {
-            global.log.error(`Translate for module ${module} not found!`);
+            log.error(`Translate for module ${module} not found!`);
             return label;
         }
         if (typeof this.translates[module][label] == "undefined") {
-            global.log.error(`Translate ${label} in ${module} not found!`);
+            log.error(`Translate ${label} in ${module} not found!`);
             return label;
         }
 
@@ -55,7 +55,7 @@ export default class lang
     {
         const basePath = process.cwd() + '/src/locales/' + this.locale + '/';
         if (!fs.existsSync(basePath)) {
-            global.log.fatal(`Locale ${this.locale} not found on folder /src/locales/`, 1, 1);
+            log.fatal(`Locale ${this.locale} not found on folder /src/locales/`, 1, 1);
             return false;
         }
         const localesPath = fs.readdirSync(basePath);
@@ -71,10 +71,12 @@ export default class lang
                     this.translates[module] = localeContent;
                 }
             } catch (e) {
-                global.log.fatal('Error on locale file: ' + absolutPath + ' :: ' + e, 1, 1);
+                log.fatal('Error on locale file: ' + absolutPath + ' :: ' + e, 1, 1);
             }
         }
 
         return true;
     }
 }
+const instance = new lang(process.env.DISCORD_BOT_LOCALE);
+export default instance;

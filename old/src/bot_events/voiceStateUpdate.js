@@ -29,10 +29,10 @@ client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     let description = '';
     if(newState.channelId){
         //Connected to a channel
-        description = global.lang.translate('globals', 'VOICE_STATE_CONNECTED', newState.id, newState.channelId);
+        description = lang.translate('globals', 'VOICE_STATE_CONNECTED', newState.id, newState.channelId);
     }else{
         //Disconnect channel
-        description = global.lang.translate('globals', 'VOICE_STATE_DISCONNECTED', newState.id, oldState.channelId);
+        description = lang.translate('globals', 'VOICE_STATE_DISCONNECTED', newState.id, oldState.channelId);
     }
 
     //Send to every channel of server

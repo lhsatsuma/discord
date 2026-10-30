@@ -8,7 +8,7 @@ global.getLang = (reset = false) => {
 }
 
 global.translate = (module, label, ...params) => {
-    return getLang().global.lang.translate(module, label, params);
+    return getLang().lang.translate(module, label, params);
 }
 
 class Lang{
@@ -36,7 +36,7 @@ class Lang{
         return this.availableLocales.filter((available) => available.value === locale).length;
     }
 
-    global.lang.translate(module, label, params)
+    lang.translate(module, label, params)
     {
         //Check if label exists
         if(!this.translates[module]){

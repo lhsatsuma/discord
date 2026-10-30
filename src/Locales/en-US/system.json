@@ -1,0 +1,14 @@
+{
+    "START_LOADING_DATABASE": "Testing database connection...",
+    "START_LOADING_DATABASE_ERR": "Error connecting to the database!",
+    "START_LOADED_DATABASE": "Successfully connected to the database!",
+    "START_TRY_CONNECT_API": "Connecting to the API...",
+    "START_TRY_CONNECT_API_ERR": "Error connecting to the API: {0}",
+    "START_CONNECTED_API": "Connected to the Discord API as {0}",
+    "START_LOADING_COMMANDS": "Loading commands...",
+    "START_LOADING_COMMANDS_ERR": "Error loading commands!",
+    "START_LOADED_COMMANDS": "Commands loaded successfully! Total: {0}",
+    "START_LOADING_EVENTS": "Loading events...",
+    "START_LOADING_EVENTS_ERR": "Error loading events!",
+    "START_LOADED_EVENTS": "Events loaded successfully! Total: {0}"
+}
