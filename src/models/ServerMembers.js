@@ -1,4 +1,4 @@
-const BeanBase = require('../utils/Bean.js');
+const BeanBase = require('../../old/src/utils/Bean.js');
 const moment = require("moment/moment");
 const {EmbedBuilder} = require("discord.js");
 class ServerMembers extends BeanBase
@@ -90,7 +90,7 @@ class ServerMembers extends BeanBase
                         inline: true
                     }
                 ];
-                let description = translate('birthday', 'SCHEDULE_BIRTHDAY_MESSAGE', result.user_id);
+                let description = global.lang.translate('birthday', 'SCHEDULE_BIRTHDAY_MESSAGE', result.user_id);
                 if(age > 0){
                     fields.push({
                        name: 'Idade',
@@ -109,7 +109,7 @@ class ServerMembers extends BeanBase
 
                     let embed = new EmbedBuilder()
                         .setColor('#0099ff')
-                        .setTitle(translate('birthday', 'SCHEDULE_HAPPY_BIRTHDAY'))
+                        .setTitle(global.lang.translate('birthday', 'SCHEDULE_HAPPY_BIRTHDAY'))
                         .setAuthor({name: member.user.username, iconURL: member.user.avatarURL()})
                         .setThumbnail(this.options.thumb_birthday)
                         .setDescription(description)

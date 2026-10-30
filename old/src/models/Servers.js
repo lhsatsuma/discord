@@ -1,0 +1,48 @@
+const BeanBase = require('../../old/src/utils/Bean.js');
+class Servers extends BeanBase
+{
+    constructor()
+    {
+        super();
+
+        this.dbh.table = 'servers';
+        this.fields = {
+            id: {
+                type: 'id',
+            },
+            date_entered: {
+                type: 'datetime',
+            },
+            date_modified: {
+                type: 'datetime',
+            },
+            server: {
+                type: 'varchar',
+            },
+            active: {
+                type: 'bool',
+            },
+            name: {
+                type: 'varchar',
+            },
+            server_config: {
+                type: 'json',
+                default: {
+                    channels_birthday: [],
+                    channels_voice_state: [],
+                },
+            },
+        };
+    }
+
+    selectServer()
+    {
+        return this.select(`server = '${this.server}'`);
+    }
+
+    selectActive() {
+        return this.select(`server = '${this.server}' AND active = 1`);
+    }
+}
+
+module.exports = Servers;

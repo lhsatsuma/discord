@@ -3,12 +3,12 @@ global.startAppTime = new Date();
 global.fs = require('fs');
 
 //Using dotenv to get config
-require('./src/utils/config');
+require('./old/src/utils/config.js');
 
-const logControl = require("./src/utils/LogControl");
+const logControl = require("./old/src/utils/LogControl.js");
 global.log = new logControl('app.log', {level_register: bot_cfg.LOG_REGISTER});
 
-discordAppClient = require('./src/InitApp.js');
+discordAppClient = require('./old/src/InitApp.js');
 global.client = new discordAppClient();
 
 try {

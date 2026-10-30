@@ -1,0 +1,6 @@
+{
+    "CMD_CURIOSITY": "curiosidade",
+    "CMD_CURIOSITY_DESCRIPTION": "Curiosidades sobre o mundo",
+    "NO_RECORDS": "Não existem curiosidades cadastradas :(",
+    "CMD_CURIOSITY_TITLE": "Curiosidades sobre: {0}"
+}

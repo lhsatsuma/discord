@@ -1,14 +1,22 @@
 {
+  "name": "DBIKE BOT",
+  "version": "2.0.0",
+  "description": "A Discord bot for the DBIKE community.",
+  "author": "BigBangDBIKE (Luis Satsuma)",
+  "main": "test.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env test.js"
+  },
   "dependencies": {
     "@devraelfreeze/discordjs-pagination": "^2.7.6",
     "cronstrue": "^2.28.0",
     "discord-emoji-converter": "^1.2.8",
-    "discord.js": "^14.7.1",
-    "dotenv": "^16.3.0",
+    "discord.js": "^14.27",
     "imgur": "^2.3.0",
     "moment": "^2.29.4",
-    "mysql2": "^3.3.5",
-    "node-cron": "^3.0.2",
+    "pg": "^8.23.0",
+    "node-cron": "^4.6",
     "pidusage": "^3.0.2",
     "read-last-lines": "^1.8.0",
     "reddit": "^1.2.1"

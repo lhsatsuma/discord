@@ -1,4 +1,4 @@
-const BeanBase = require('../utils/Bean.js');
+const BeanBase = require('../../old/src/utils/Bean.js');
 class BeanVelha extends BeanBase
 {
 	constructor()
