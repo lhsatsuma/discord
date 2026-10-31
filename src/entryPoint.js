@@ -4,7 +4,7 @@ import lang from '#includes/lang.js';
 import db from '#includes/database/database_pg.js';
 import log from '#includes/log.js';
 import utils from '#includes/utils.js';
-import pickup_lines from '#models/pickup_lines.js';
+import pickup_lines from '#src/models/pickup_lines.js';
 import {Client, GatewayIntentBits,  Partials} from 'discord.js';
 
 export default class entryPointApp extends Client

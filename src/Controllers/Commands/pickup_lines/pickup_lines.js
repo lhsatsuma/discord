@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, MessageFlags, Colors} from 'discord.js';
 import commandBase from '#includes/commands/commandBase.js';
 import lang from '#includes/lang.js';
-import model_pickup_lines from '#models/pickup_lines.js';
+import model_pickup_lines from '#src/models/pickup_lines.js';
 import fs from 'fs';
 export default class command extends commandBase
 {
