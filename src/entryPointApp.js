@@ -47,7 +47,7 @@ export default class entryPointApp extends entryPoint
 			if (fs.existsSync(commandFile)) {
 				importFile = importPath + commandName + '/' + commandName + '.js';
 			} else {
-				log.error('[loadCommands]: ' + commandLocaleName + ' dont have JS');
+				log.err(lang.translate('system', 'START_LOADING_COMMAND_JS', [commandLocaleName]));
 				continue;
 			}
 
@@ -72,16 +72,16 @@ export default class entryPointApp extends entryPoint
 
 		// The put method is used to fully refresh all commands in the guild with the current set
 		if (process.env.DISCORD_BOT_SEND_COMMANDS_API == 'true') {
-			log.debug(`Sending ${commandsTmp.length} commands to Discord API`);
+			log.debug(lang.translate('system', 'START_SENDING_COMMANDS_API'));
 			try {
 				const rest = new REST().setToken(process.env.DISCORD_BOT_TOKEN);
 				const data = await rest.put(
 					Routes.applicationCommands(process.env.DISCORD_BOT_ID),
 					{body: commandsTmp},
 				)
-				log.debug(`Sent ${data.length} commands to Discord API!`);
+				log.debug(lang.translate('system', 'START_SENDED_COMMANDS_API'));
 			}catch(e){
-				log.fatal('Error on sending commands to Discord: '+e);
+				log.fatal(lang.translate('system', 'START_SENDING_COMMANDS_API_ERR', [e.message]));
 			}
 		}
 

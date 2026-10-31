@@ -36,7 +36,7 @@ class utils
 						});
 						return true;
 					}catch(e){
-						log.Error('Error updating heartbeat: ' + e);
+						log.err('Error updating heartbeat: ' + e);
 					}
 				}
 				this.msgHeartbeat = {};

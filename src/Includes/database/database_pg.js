@@ -26,7 +26,7 @@ class database_pg
 			port: this.db_port
 		});
 		this.pool.on('error', (err, client) => {
-			log.error('[DataBase] Error: '+err);
+			log.err('[DataBase] Error: '+err);
 			delete this.pool;
 		});
 		return this.pool;
@@ -61,13 +61,16 @@ class database_pg
 	}
 	
 	ErrorQuery(sql, err_msg = ''){
-		log.error('SQL Failed: '+sql+' : '+err_msg, 0, 1);
+		log.err('SQL Failed: '+sql+' : '+err_msg, 0, 1);
 		this.last_error = 'SQL Failed: '+sql+' : '+err_msg;
 	}
 
 	async query(text, params)
 	{
 		log.debug('[SQL][QUERY] '+text+(params ? ' | params: '+JSON.stringify(params ?? []): ''));
+		if(params){
+			log.debug('[SQL][PARAM] '+JSON.stringify(params));
+		}
 		return await this.createPool().query(text, params);
 	}
 }

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import log from '#Includes/log.js';
 class lang
 {
     availableLocales = [
@@ -27,11 +28,11 @@ class lang
     {
         //Check if label exists
         if (!this.translates[module]) {
-            log.error(`Translate for module ${module} not found!`);
+            log.err(`Translate for module ${module} not found!`);
             return label;
         }
         if (typeof this.translates[module][label] == "undefined") {
-            log.error(`Translate ${label} in ${module} not found!`);
+            log.err(`Translate ${label} in ${module} not found!`);
             return label;
         }
 

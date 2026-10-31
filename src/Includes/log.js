@@ -77,10 +77,19 @@ class log
         });
 	}
 	
-	warning(str)
+	warn(str)
 	{
 		return this.add(str, {
             level: 'WARN',
+            echo: true,
+            die: false
+        });
+	}
+	
+	err(str)
+	{
+		return this.add(str, {
+            level: 'ERROR',
             echo: true,
             die: false
         });

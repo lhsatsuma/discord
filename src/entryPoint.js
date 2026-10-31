@@ -89,8 +89,8 @@ export default class entryPointApp extends Client
     {
         let load_time = new Date() - global.startTimeApp;
         log.info("=".repeat(40));
-        log.info('BOT IS UP AND RUNNING');
-        log.info('Load time: '+load_time+ 'ms | Memory Usage: '+utils.memoryUsage().total+'/'+utils.memoryUsage().used);
+        log.info(lang.translate('system', 'BOT_RUNNING'));
+        log.info(lang.translate('system', 'LOAD_TIME', [load_time, utils.memoryUsage().total+'/'+utils.memoryUsage().used]));
         log.info("=".repeat(40));
     }
 

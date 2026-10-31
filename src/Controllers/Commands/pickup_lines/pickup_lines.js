@@ -24,7 +24,7 @@ export default class command extends commandBase
         
         if(pickup_lines == false){
             await interaction.reply({
-                content: lang.translate('system', 'DATABASE_ERR'),
+                content: lang.translate('globals', 'DB_ERROR'),
                 flags: [MessageFlags.Ephemeral]
             });
             return false;

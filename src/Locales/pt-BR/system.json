@@ -9,6 +9,7 @@
     "START_LOADING_COMMANDS": "Carregando comandos...",
     "START_LOADING_COMMANDS_ERR": "Erro ao carregar os comandos!",
     "START_LOADING_COMMAND_NAME": "Carregando comando: {0}",
+    "START_LOADING_COMMAND_JS": "Comando {0} não possui arquivo JS",
     "START_LOADED_COMMAND_NAME": "Comando carregado: {0}",
     "START_COMMAND_INNACTIVE": "Comando {0} está inativo!",
     "START_LOADED_COMMANDS": "Comandos carregados com sucesso! Total: {0}",
@@ -17,5 +18,9 @@
     "START_LOADING_EVENT_NAME": "Carregando evento: {0}",
     "START_LOADED_EVENT_NAME": "Evento carregado: {0}",
     "START_LOADED_EVENTS": "Eventos carregados com sucesso! Total: {0}",
-    "DATABASE_ERR": "Erro na requisição! Contate o administrador ou tente novamente!"
+    "START_SENDING_COMMANDS_API": "Enviando comandos para a API...",
+    "START_SENDING_COMMANDS_API_ERR": "Erro ao enviar comandos para a API: {0}",
+    "START_SENDED_COMMANDS_API": "Enviando comandos para a API...",
+    "BOT_RUNNING": "BOT iniciado com sucesso!",
+    "LOAD_TIME": "Tempo de inicialização: {0}ms | Mem. RAM: {1}"
 }
