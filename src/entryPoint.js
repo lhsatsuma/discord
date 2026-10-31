@@ -1,10 +1,10 @@
-import config from '#Includes/config.js';
+import config from '#includes/config.js';
 import Discord from 'discord.js';
-import lang from '#Includes/lang.js';
-import db from '#Includes/database/database_pg.js';
-import log from '#Includes/log.js';
-import utils from '#Includes/utils.js';
-import pickup_lines from '#Models/pickup_lines.js';
+import lang from '#includes/lang.js';
+import db from '#includes/database/database_pg.js';
+import log from '#includes/log.js';
+import utils from '#includes/utils.js';
+import pickup_lines from '#models/pickup_lines.js';
 import {Client, GatewayIntentBits,  Partials} from 'discord.js';
 
 export default class entryPointApp extends Client

@@ -1,6 +1,6 @@
-import database_pg from '#Includes/database/database_pg.js';
-import lang from '#Includes/lang.js';
-import log from '#Includes/log.js';
+import database_pg from '#includes/database/database_pg.js';
+import lang from '#includes/lang.js';
+import log from '#includes/log.js';
 class model_pickup_lines
 {
     async getRandom()

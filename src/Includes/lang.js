@@ -1,5 +1,5 @@
 import fs from 'fs';
-import log from '#Includes/log.js';
+import log from '#includes/log.js';
 class lang
 {
     availableLocales = [

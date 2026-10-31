@@ -1,8 +1,8 @@
 import entryPoint from './entryPoint.js';
 import {Collection, Routes, REST} from 'discord.js';
 import fs from 'fs';
-import lang from '#Includes/lang.js';
-import log from '#Includes/log.js';
+import lang from '#includes/lang.js';
+import log from '#includes/log.js';
 export default class entryPointApp extends entryPoint
 {
     init()

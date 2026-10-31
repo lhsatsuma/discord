@@ -1,7 +1,7 @@
 import {Events, MessageFlags} from "discord.js";
-import log from '#Includes/log.js';
-import cooldown from '#Includes/commands/cooldown.js';
-import lang from '#Includes/lang.js';
+import log from '#includes/log.js';
+import cooldown from '#includes/commands/cooldown.js';
+import lang from '#includes/lang.js';
 export default class InteractionCreate
 {
     main;

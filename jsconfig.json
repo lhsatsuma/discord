@@ -7,11 +7,11 @@
         "baseUrl": ".",
         "paths": {
             "#src/*": ["src/*"],
-            "#Commands*": ["src/Controllers/Commands/*"],
-            "#Events*": ["src/Controllers/Events/*"],
-            "#Includes/*": ["src/Includes/*"],
-            "#Models/*": ["src/Models/*"],
-            "#Controllers/*": ["src/Controllers/*"]
+            "#commands/*": ["src/controllers/commands/*"],
+            "#events*": ["src/controllers/events/*"],
+            "#includes/*": ["src/includes/*"],
+            "#models/*": ["src/models/*"],
+            "#controllers/*": ["src/controllers/*"]
         }
     },
     "include": ["src/**/*.js", "run.js"]

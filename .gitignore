@@ -82,3 +82,4 @@ typings/
 discord.code-workspace
 package-lock.json
 .idea/
+old/
