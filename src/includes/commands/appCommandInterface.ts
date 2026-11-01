@@ -1,18 +1,20 @@
 import lang from '#includes/lang.js';
 import fs from 'fs';
 import log from '#includes/log.js';
+import entryPointApp from '#includes/entryPointApp.js';
+import {SlashCommandBuilder} from 'discord.js';
 export default class appCommandInterface
 {
-    main;
-    builded;
+    main: entryPointApp;
+    builded: SlashCommandBuilder;
 	name: string;
-	hasSubcommands = false;
-    cooldown = 0;
-	inactive = false;
-    commandLocaleName;
-    fullCommandLocaleName;
-    subcommands = [];
-    constructor(main)
+	hasSubcommands: boolean = false;
+    cooldown: number = 0;
+	inactive: boolean = false;
+    commandLocaleName: string;
+    fullCommandLocaleName: string;
+    subcommands: any[] = [];
+    constructor(main: entryPointApp)
     {
         this.main = main;
         return this;

@@ -6,7 +6,7 @@ import log from '#includes/log.js';
 import utils from '#includes/utils.js';
 import {Client, GatewayIntentBits,  Partials} from 'discord.js';
 
-export default class entryPointApp extends Client
+export default class entryPoint extends Client
 {
 	author: {name: string | undefined; iconURL: string | undefined};
 	super_admin_channel: any;

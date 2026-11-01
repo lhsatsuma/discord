@@ -1,4 +1,4 @@
-import entryPoint from './entryPoint.js';
+import entryPoint from '#includes/entryPoint.js';
 import {Collection, Routes, REST} from 'discord.js';
 import fs from 'fs';
 import lang from '#includes/lang.js';
