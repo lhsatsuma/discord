@@ -4,7 +4,7 @@ import lang from '#includes/lang.js';
 import db from '#includes/database/database_pg.js';
 import log from '#includes/log.js';
 import utils from '#includes/utils.js';
-import pickup_lines from '#src/models/pickup_lines.js';
+import pickup_lines from '#models/pickup_lines.js';
 import {Client, GatewayIntentBits,  Partials} from 'discord.js';
 
 export default class entryPointApp extends Client
@@ -61,7 +61,6 @@ export default class entryPointApp extends Client
                 reject(false);
             }
             log.debug(lang.translate('system', 'START_LOADED_DATABASE'));
-
 
             this.once('clientReady', async () => {
                 this.super_admin_channel = this.channels.cache.find(channel => channel.id === process.env.DISCORD_BOT_ADMIN_CHANNEL);

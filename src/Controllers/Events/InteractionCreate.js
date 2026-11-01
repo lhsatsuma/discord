@@ -29,6 +29,15 @@ export default class InteractionCreate
             let coolDown = command.cooldown;
             let optionsStr = '';
 
+            //If is subcommand, lets check all vars
+            if(interaction.options._subcommand){
+                commandCD += ':'+interaction.options._subcommand;
+                commandName += ':'+interaction.options._subcommand;
+                command = command.subcommands[interaction.options._subcommand];
+                coolDown = command ? command.cooldown : 0;
+            }
+
+            //If has passed options value, lets mark
             if(interaction.options._hoistedOptions.length){
                 interaction.options._hoistedOptions.forEach((ipt) => {
                     optionsStr += ` [${ipt.name}::${ipt.value}]`;

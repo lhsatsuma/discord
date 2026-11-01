@@ -1,7 +1,12 @@
 {
-  "CMD_PICKUP_LINES": "cantada",
+  "CMD_PICKUP_LINES_NAME": "cantada",
   "CMD_PICKUP_LINES_DESCRIPTION": "Cantadas Engraçadas",
-  "CMD_PICKUP_LINES_OPTION_USER": "Membro para enviar a cantada",
-  "CMD_PICKUP_SUCCESS_USER": "**<@{0}>** enviou uma cantada para **<@{1}>**",
-  "NO_RECORDS": "Cantadas não encontrada para o idioma: {0}"
+
+  "SUBCMD_RAND_NAME": "aleatorio",
+  "SUBCMD_RAND_DESCRIPTION": "Cantada Aleatória",
+  "SUBCMD_RAND_OPTION_USER": "Membro para enviar a cantada",
+  "SUBCMD_RAND_SEND_USER": "**<@{0}>** enviou uma cantada para **<@{1}>**",
+
+  
+  "NOT_FOUND": "Cantada não encontrada"
 }

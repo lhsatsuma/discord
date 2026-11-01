@@ -30,44 +30,40 @@ export default class entryPointApp extends entryPoint
 
     async loadCommands()
     {
-        const importPath = './Controllers/Commands/';
-        const basePath = './src/Controllers/Commands/';
+        const importPath = './controllers/commands/';
+        const basePath = './src/controllers/commands/';
 		const commandPaths = fs.readdirSync(basePath);
 		let commandsTmp = [];
 		this.commands = new Collection();
 
 		for (const commandName of commandPaths) {
 			let commandPath = basePath + commandName + '/';
-			let commandLocaleName = lang.translate(commandName, 'CMD_'+commandName.toUpperCase());
 			let commandFile = commandPath + commandName + '.js';
 			let command = null;
 			let importFile = null;
 
-
+			
 			if (fs.existsSync(commandFile)) {
 				importFile = importPath + commandName + '/' + commandName + '.js';
 			} else {
-				log.err(lang.translate('system', 'START_LOADING_COMMAND_JS', [commandLocaleName]));
+				log.err(lang.translate('system', 'START_LOADING_COMMAND_JS', [commandName]));
 				continue;
 			}
 
-			if (this.commands.get(commandLocaleName)) {
+			if (this.commands.get(commandName)) {
 				continue;
 			}
-			
-			log.debug(lang.translate('system', 'START_LOADING_COMMAND_NAME', [commandLocaleName]));
 			command = await import(importFile);
             
-            let commandClass = new command.default();
+            let commandClass = new command.default().init();
+			await commandClass.build();
 
 			if (!!commandClass.inactive) {
-				log.info(lang.translate('system', 'START_COMMAND_INNACTIVE', [commandLocaleName]));
+				log.info(lang.translate('system', 'START_COMMAND_INNACTIVE', [commandName]));
 				continue;
 			}
-			this.commands.set(commandClass.commandBuilder.name, commandClass);
-			commandsTmp.push(commandClass.commandBuilder.toJSON());
-
-			log.debug(lang.translate('system', 'START_LOADED_COMMAND_NAME', [commandLocaleName]));
+			this.commands.set(commandClass.builded.name, commandClass);
+			commandsTmp.push(commandClass.builded.toJSON());
 		}
 
 		// The put method is used to fully refresh all commands in the guild with the current set
@@ -90,8 +86,8 @@ export default class entryPointApp extends entryPoint
 
 	async loadEvents()
 	{
-		const importPath = './Controllers/Events/';
-        const basePath = './src/Controllers/Events/';
+		const importPath = './controllers/events/';
+        const basePath = './src/controllers/events/';
 		const eventsPath = fs.readdirSync(basePath);
 
 

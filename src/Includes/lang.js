@@ -72,7 +72,7 @@ class lang
                     this.translates[module] = localeContent;
                 }
             } catch (e) {
-                log.fatal('Error on locale file: ' + absolutPath + ' :: ' + e, 1, 1);
+                log.fatal('Error on locale file: ' + absolutPath + ' :: ' + e);
             }
         }
 
