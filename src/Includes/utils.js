@@ -109,6 +109,12 @@ class utils
 			used: ((process.memoryUsage().heapUsed + process.memoryUsage().arrayBuffers + process.memoryUsage().external) / 1024 / 1024).toFixed(2)+'MB',
 		}
 	}
+
+	sleep = (ms) => {
+		return new Promise((resolve) => {
+			setTimeout(resolve, ms);
+		});
+	}
 }
 
 const instance = new utils();

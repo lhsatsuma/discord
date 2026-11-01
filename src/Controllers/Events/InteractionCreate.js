@@ -70,7 +70,7 @@ export default class InteractionCreate
                 }
             }else{
                 await interaction.reply({
-                    content: lang.translate('globals', 'CMD_COOLDOWN', cooldownLeft),
+                    content: lang.translate('globals', 'CMD_COOLDOWN', [cooldownLeft]),
                     flags: [MessageFlags.Ephemeral]
                 });
             }

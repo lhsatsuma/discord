@@ -1,5 +1,3 @@
-import fs from 'fs';
-import log from '#includes/log.js';
 import lang from '#includes/lang.js';
 import { SlashCommandBuilder } from "discord.js";
 import appCommandInterface from "#includes/commands/appCommandInterface.js";
