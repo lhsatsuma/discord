@@ -1,12 +1,23 @@
+import {EmbedBuilder} from 'discord.js';
+import moment from 'moment';
+import log from '#includes/log.js';
+
+declare const bot_cfg: {HEARTBEAT: number; BOT_DESCRIPTION: string; ADMIN_CHANNEL_ID: string};
+declare const client: any;
+declare const getUtils: () => {getColor(color: string): any};
+
 class utils
 {
+	heartbeatInterval?: NodeJS.Timeout;
+	msgHeartbeat: any;
+
 	randomInt (min, max) { // min and max included
 		return Math.floor(Math.random() * (max - min + 1) + min);
 	}
 
 	sendHeartbeat = async () => {
 		if(!!this.heartbeatInterval) {
-			log.Info('Clearing interval of heartbeat');
+			log.info('Clearing interval of heartbeat');
 			clearInterval(this.heartbeatInterval);
 			this.msgHeartbeat = null;
 		}
@@ -20,7 +31,6 @@ class utils
 					}
 				}
 				let dateNow = new Date();
-				const { EmbedBuilder} = require("discord.js");
 				const exampleEmbed = new EmbedBuilder()
 					.setColor('#0099ff')
 					.setTitle('Sent a heartbeat!')

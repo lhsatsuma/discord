@@ -1,14 +1,14 @@
 import fs from 'fs';
 class log
 {
-    fileName;
-	basePath;
-	datePath;
-	absolutPath;
-	error;
+    fileName: string;
+	basePath = '';
+	datePath = '';
+	absolutPath = '';
+	error: string | undefined;
 	max_log_files = 99;
 	max_file_size = 10485760; //10MB
-    constructor(fileName)
+    constructor(fileName: string)
     {
         this.fileName = fileName.toString() + '.log';
     }
@@ -16,7 +16,7 @@ class log
     getDatePath()
 	{
 		let date = new Date();
-		return date.getFullYear()+(parseInt(date.getMonth())+1).toString().padStart(2, '0')+date.getDate().toString().padStart(2, '0');
+		return date.getFullYear()+(date.getMonth()+1).toString().padStart(2, '0')+date.getDate().toString().padStart(2, '0');
 	}
     setBasePath()
 	{
@@ -35,7 +35,7 @@ class log
 		return this;
 	}
 
-    add(str, options = {})
+    add(str: string, options: {level: string; echo: boolean; die: boolean} = {level: '', echo: false, die: false})
 	{
 
 		let date = new Date();

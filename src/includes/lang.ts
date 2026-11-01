@@ -13,7 +13,7 @@ class lang
         }
     ];
     locale;
-    translates = {};
+    translates: Record<string, Record<string, string>> = {};
     constructor(locale)
     {
         this.locale = locale;
@@ -24,7 +24,7 @@ class lang
         return this.availableLocales.filter((available) => available.value === locale).length;
     }
 
-    translate(module, label, params = {})
+    translate(module: string, label: string, params: any[] = [])
     {
         //Check if label exists
         if (!this.translates[module]) {
@@ -44,7 +44,7 @@ class lang
         return translated;
     }
 
-    overrideParams(label, params)
+    overrideParams(label: string, params: any[])
     {
         for (let i = 0; i < params.length; i++) {
             label = label.replaceAll('{' + i + '}', params[i]);
@@ -56,7 +56,7 @@ class lang
     {
         const basePath = process.cwd() + '/src/locales/' + this.locale + '/';
         if (!fs.existsSync(basePath)) {
-            log.fatal(`Locale ${this.locale} not found on folder /src/locales/`, 1, 1);
+            log.fatal(`Locale ${this.locale} not found on folder /src/locales/`);
             return false;
         }
         const localesPath = fs.readdirSync(basePath);
@@ -67,7 +67,7 @@ class lang
             absolutPath = basePath + localeName;
             module = localeName.replace('.json', '');
             try {
-                localeContent = JSON.parse(fs.readFileSync(absolutPath));
+                localeContent = JSON.parse(fs.readFileSync(absolutPath, 'utf8'));
                 if (localeContent !== null) {
                     this.translates[module] = localeContent;
                 }

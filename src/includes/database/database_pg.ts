@@ -1,8 +1,17 @@
-import { Pool} from 'pg';
+import { Pool, type QueryResult, type QueryResultRow} from 'pg';
 import log from '#includes/log.js';
 
 class database_pg
 {
+	host: string | undefined;
+	host_user: string | undefined;
+	host_pwd: string | undefined;
+	db_name: string | undefined;
+	db_port: string | undefined;
+	last_error: string;
+	pool?: Pool;
+	connection: any;
+
 	constructor()
 	{
 		this.host = process.env.DB_HOST;
@@ -23,7 +32,7 @@ class database_pg
 			user: this.host_user,
 			password: this.host_pwd,
 			database: this.db_name,
-			port: this.db_port
+			port: this.db_port ? Number(this.db_port) : undefined
 		});
 		this.pool.on('error', (err, client) => {
 			log.err('[DataBase] Error: '+err);
@@ -61,19 +70,19 @@ class database_pg
 	}
 	
 	ErrorQuery(sql, err_msg = ''){
-		log.err('SQL Failed: '+sql+' : '+err_msg, 0, 1);
+		log.err('SQL Failed: '+sql+' : '+err_msg);
 		this.last_error = 'SQL Failed: '+sql+' : '+err_msg;
 	}
 
-	async query(text, params)
+	async query<Row extends QueryResultRow = any>(text: string, params?: any[]): Promise<QueryResult<Row>>
 	{
 		log.debug('[SQL][QUERY] '+text+(params ? ' | params: '+JSON.stringify(params ?? []): ''));
 		if(params){
 			log.debug('[SQL][PARAM] '+JSON.stringify(params));
 		}
-		return await this.createPool().query(text, params);
+		return await this.createPool().query<Row>(text, params);
 	}
 }
 
-const instance = new database_pg(global.entryMode);
+const instance = new database_pg();
 export default instance;

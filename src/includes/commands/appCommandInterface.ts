@@ -5,6 +5,8 @@ export default class appCommandInterface
 {
     main;
     builded;
+	name: string;
+	hasSubcommands = false;
     cooldown = 0;
 	inactive = false;
     commandLocaleName;
@@ -31,7 +33,7 @@ export default class appCommandInterface
         return this;
     }
 
-    async execute()
+    async execute(_interaction: any): Promise<any>
     {
         return true;
     }
@@ -40,7 +42,7 @@ export default class appCommandInterface
     {
         if(this.hasSubcommands){
             const importPath = '#commands/'+this.constructor.name+'/subs/';
-            const basePath = './src/controllers/commands/'+this.constructor.name+'/subs/';
+            const basePath = './dist/src/Controllers/Commands/'+this.constructor.name+'/subs/';
 
             const subcommandsFiles = fs.readdirSync(basePath);
 

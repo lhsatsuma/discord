@@ -1,9 +1,8 @@
 class cooldown
 {
-	fields = {};
+	cdMessages: Record<string, {user: string; command: string; cooldown: number; expires: Date}> = {};
 	constructor()
 	{
-		this.cdMessages = {};
 	}
 	insertUserCd(user, command, cd)
     {
@@ -23,7 +22,7 @@ class cooldown
 			let expires = this.cdMessages[key_cd].expires;
 			let t2 = new Date();
 			let dif = expires.getTime() - t2.getTime();
-			let dif_sec = parseInt(Math.abs(dif / 1000));
+			let dif_sec = Math.floor(Math.abs(dif / 1000));
 			if(dif_sec > 1){
 				return dif_sec;
 			}

@@ -1,5 +1,16 @@
+import log from '#includes/log.js';
+
 class HelperDataBase
 {
+	db: any;
+	table = '';
+	fields = '*';
+	inner_join: any[] = [];
+	where = '';
+	order_by = '';
+	limit = '';
+	group_by = '';
+
 	constructor(db)
 	{
 		this.db = db;
@@ -35,7 +46,7 @@ class HelperDataBase
 
 			this.db.Query(SQL, show_sql).then((result) => {
 				if(result === false){
-					log.Fatal(this.db.last_error, 0, 1);
+					log.fatal(this.db.last_error);
 					resolve(false);
 				}else{
 					resolve(result);
@@ -77,7 +88,7 @@ class HelperDataBase
 				SQL += ")";
 				this.db.Query(SQL, show_sql).then((result) => {
 					if(result === false){
-						log.Fatal(this.db.last_error, 0, 1);
+						log.fatal(this.db.last_error);
 						resolve(false);
 					}else{
 						if(keyObj == countObj){
@@ -120,7 +131,7 @@ class HelperDataBase
 				}
 				this.db.Query(SQL, show_sql).then((result) => {
 					if(result === false){
-						log.Fatal(this.db.last_error, 0, 1);
+						log.fatal(this.db.last_error);
 						resolve(false);
 					}else{
 						if(keyObj == countObj){
@@ -150,7 +161,7 @@ class HelperDataBase
 				}
 				this.db.Query(SQL, show_sql).then((result) => {
 					if(result === false){
-						log.Fatal(this.db.last_error, 0, 1);
+						log.fatal(this.db.last_error);
 						resolve(false);
 					}else{
 						if(keyObj == countObj){
@@ -167,12 +178,12 @@ class HelperDataBase
 		switch(type){
 			case 'date':
 				if(value instanceof Date){
-					value = value.getFullYear()+'-'+getUtils().padZeroLeft(value.getMonth()+1)+'-'+getUtils().padZeroLeft(value.getDate());
+					value = value.getFullYear()+'-'+String(value.getMonth()+1).padStart(2, '0')+'-'+String(value.getDate()).padStart(2, '0');
 				}
 				break;
 			case 'datetime':
 				if(value instanceof Date){
-					value = value.getFullYear()+'-'+getUtils().padZeroLeft(value.getMonth()+1)+'-'+getUtils().padZeroLeft(value.getDate())+' '+getUtils().padZeroLeft(value.getHours())+':'+getUtils().padZeroLeft(value.getMinutes())+':'+getUtils().padZeroLeft(value.getSeconds());
+					value = value.getFullYear()+'-'+String(value.getMonth()+1).padStart(2, '0')+'-'+String(value.getDate()).padStart(2, '0')+' '+String(value.getHours()).padStart(2, '0')+':'+String(value.getMinutes()).padStart(2, '0')+':'+String(value.getSeconds()).padStart(2, '0');
 				}
 				break;
 			case 'json':
@@ -202,4 +213,4 @@ class HelperDataBase
 		return this;
 	}
 }
-module.exports = HelperDataBase;
+export default HelperDataBase;

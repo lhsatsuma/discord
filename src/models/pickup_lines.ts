@@ -8,7 +8,7 @@ class model_pickup_lines extends model_base
     async getRandom()
     {
         try{
-            const res = await database_pg.query("SELECT content FROM pickup_lines WHERE locale = $1 ORDER BY RANDOM() LIMIT 1", [lang.locale]);
+            const res = await database_pg.query<{content: string}>("SELECT content FROM pickup_lines WHERE locale = $1 ORDER BY RANDOM() LIMIT 1", [lang.locale]);
             if(res.rowCount > 0){
                 return res.rows[0];
             }else{

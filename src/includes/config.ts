@@ -24,7 +24,7 @@ export default class config
         }
     }
 
-    checkRequiredEnvVars(requiredVars)
+    checkRequiredEnvVars(requiredVars: string[])
     {
         let missingVars = [];
         requiredVars.forEach((envVar) => {
@@ -37,9 +37,9 @@ export default class config
     getEnvOverride()
     {
         let path_override = process.cwd()+'/.env.override';
-        let env_override = {};
+        let env_override: Record<string, string> = {};
         if(fs.existsSync(path_override)) {
-            env_override = JSON.parse(fs.readFileSync(process.cwd() + '/.env.override'));
+            env_override = JSON.parse(fs.readFileSync(process.cwd() + '/.env.override', 'utf8'));
         }
         return env_override;
     }

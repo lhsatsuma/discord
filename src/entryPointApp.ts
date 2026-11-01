@@ -5,9 +5,11 @@ import lang from '#includes/lang.js';
 import log from '#includes/log.js';
 export default class entryPointApp extends entryPoint
 {
-    init()
+	commands: Collection<string, any>;
+
+    async init(): Promise<void>
     {
-        super.init().then(async () => {
+        return super.init().then(async () => {
 
             log.debug(lang.translate('system', 'START_LOADING_COMMANDS'));
             let loaded_commands = await this.loadCommands();
@@ -31,7 +33,7 @@ export default class entryPointApp extends entryPoint
     async loadCommands()
     {
         const importPath = '#commands/';
-        const basePath = './src/controllers/commands/';
+        const basePath = './dist/src/Controllers/Commands/';
 		const commandPaths = fs.readdirSync(basePath);
 		let commandsTmp = [];
 		this.commands = new Collection();
@@ -87,7 +89,7 @@ export default class entryPointApp extends entryPoint
 	async loadEvents()
 	{
 		const importPath = './controllers/events/';
-        const basePath = './src/controllers/events/';
+        const basePath = './dist/src/Controllers/Events/';
 		const eventsPath = fs.readdirSync(basePath);
 
 

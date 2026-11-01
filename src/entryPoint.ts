@@ -1,14 +1,16 @@
 import config from '#includes/config.js';
-import Discord from 'discord.js';
+import * as Discord from 'discord.js';
 import lang from '#includes/lang.js';
 import db from '#includes/database/database_pg.js';
 import log from '#includes/log.js';
 import utils from '#includes/utils.js';
-import pickup_lines from '#models/pickup_lines.js';
 import {Client, GatewayIntentBits,  Partials} from 'discord.js';
 
 export default class entryPointApp extends Client
 {
+	author: {name: string | undefined; iconURL: string | undefined};
+	super_admin_channel: any;
+
     constructor()
     {
         super({
@@ -39,7 +41,7 @@ export default class entryPointApp extends Client
 
             //First initialization logs
             log.info("=".repeat(40));
-            log.info(`Starting ${entryMode}`);
+            log.info(`Starting ${global.entryMode}`);
             log.info(`Node ${process.version} | Discord.JS v${Discord.version} | App v${process.env.npm_package_version}`);
             log.info("=".repeat(40));
 
@@ -86,7 +88,7 @@ export default class entryPointApp extends Client
 
     finishInit()
     {
-        let load_time = new Date() - global.startTimeApp;
+        let load_time = Date.now() - global.startTimeApp.getTime();
         log.info("=".repeat(40));
         log.info(lang.translate('system', 'BOT_RUNNING'));
         log.info(lang.translate('system', 'LOAD_TIME', [load_time, utils.memoryUsage().total+'/'+utils.memoryUsage().used]));

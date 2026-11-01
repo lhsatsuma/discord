@@ -3,17 +3,18 @@
   "version": "2.0.0",
   "description": "A Discord bot for the DBIKE community.",
   "author": "BigBangDBIKE (Luis Satsuma)",
-  "main": "test.js",
+  "main": "dist/run.js",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env run.js"
+    "build": "tsc",
+    "start": "npm run build && node --env-file=.env dist/run.js"
   },
   "imports": {
-    "#commands/*": "./src/controllers/commands/*",
-    "#events*": "./src/controllers/events/*",
-    "#includes/*": "./src/includes/*",
-    "#models/*": "./src/models/*",
-    "#controllers/*": "./src/controllers/*"
+    "#commands/*": "./dist/src/Controllers/Commands/*",
+    "#events*": "./dist/src/Controllers/Events/*",
+    "#includes/*": "./dist/src/Includes/*",
+    "#models/*": "./dist/src/models/*",
+    "#controllers/*": "./dist/src/Controllers/*"
   },
   "dependencies": {
     "@devraelfreeze/discordjs-pagination": "^2.7.6",
@@ -28,5 +29,10 @@
     "read-last-lines": "^1.8.0",
     "reddit": "^1.2.1",
     "uuid": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.15.0",
+    "typescript": "^5.9.0"
   }
 }

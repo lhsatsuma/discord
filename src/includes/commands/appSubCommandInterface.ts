@@ -20,12 +20,12 @@ export default class appSubCommandInterface
         return this;
     }
 
-    async build()
+    build(): any
     {
-        return this;
+        return Promise.resolve(this);
     }
 
-    async execute()
+    async execute(_interaction: any): Promise<any>
     {
         return true;
     }

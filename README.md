@@ -20,7 +20,7 @@ Project tested and running with:
 ## Author
 
 - [@lhsatsuma](https://www.github.com/lhsatsuma)
-# BOT Discord with NodeJS
+# BOT Discord with NodeJS and TypeScript
 
 This bot uses the Discord.JS package.
 - [Discord.JS](https://github.com/discordjs/guide)
@@ -40,24 +40,24 @@ Install Node components
 npm install
 ```
 
+The application is written in TypeScript and compiled to `dist/` when started.
+
 Copy ``.env-example`` to ``.env`` and fill all tags
 
 Run ``create_database.sql`` on your database.
 
 ## Running the application
 
-Start the server with:
+Build the application with:
 
 ```bash
-  node run.js
+  npm run build
 ```
 
-## Running the scheduler
-
-Start with:
+Start the application (builds before running):
 
 ```bash
-  node scheduler.js
+  npm start
 ```
 
 

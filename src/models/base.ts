@@ -13,7 +13,7 @@ export default class model_base
     {
         return this;
     }
-    async insert(fields = {})
+    async insert(fields: Record<string, any> = {})
     {
         try{
             if(!fields.id){
