@@ -30,7 +30,7 @@ export default class entryPointApp extends entryPoint
 
     async loadCommands()
     {
-        const importPath = './controllers/commands/';
+        const importPath = '#commands/';
         const basePath = './src/controllers/commands/';
 		const commandPaths = fs.readdirSync(basePath);
 		let commandsTmp = [];

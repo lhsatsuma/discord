@@ -1,8 +1,10 @@
 import database_pg from '#includes/database/database_pg.js';
 import lang from '#includes/lang.js';
 import log from '#includes/log.js';
-class model_pickup_lines
+import model_base from '#models/base.js';
+class model_pickup_lines extends model_base
 {
+    table = 'pickup_lines';
     async getRandom()
     {
         try{

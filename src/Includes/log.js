@@ -77,7 +77,7 @@ class log
         });
 	}
 	
-	warn(str)
+	warning(str)
 	{
 		return this.add(str, {
             level: 'WARN',

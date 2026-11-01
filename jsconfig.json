@@ -6,7 +6,6 @@
         "moduleResolution": "NodeNext",
         "baseUrl": ".",
         "paths": {
-            "#src/*": ["src/*"],
             "#commands/*": ["src/controllers/commands/*"],
             "#events*": ["src/controllers/events/*"],
             "#includes/*": ["src/includes/*"],

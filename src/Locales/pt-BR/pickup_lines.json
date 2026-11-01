@@ -7,6 +7,12 @@
   "SUBCMD_RAND_OPTION_USER": "Membro para enviar a cantada",
   "SUBCMD_RAND_SEND_USER": "**<@{0}>** enviou uma cantada para **<@{1}>**",
 
+  "NOT_FOUND": "Cantada não encontrada",
   
-  "NOT_FOUND": "Cantada não encontrada"
+
+  "SUBCMD_ADD_NAME": "adicionar",
+  "SUBCMD_ADD_DESCRIPTION": "Adicionar uma nova cantada",
+  "SUBCMD_ADD_OPTION_CONTENT": "Conteúdo da cantada (Texto ou URL de imagem)",
+  "SUBCMD_ADD_SUCCESS": "Cantada adicionada com sucesso",
+  "SUBCMD_ADD_ERROR": "Erro ao adicionar a cantada"
 }

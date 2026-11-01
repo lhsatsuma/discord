@@ -9,7 +9,6 @@
     "start": "node --env-file=.env run.js"
   },
   "imports": {
-    "#src/*": "./src/*",
     "#commands/*": "./src/controllers/commands/*",
     "#events*": "./src/controllers/events/*",
     "#includes/*": "./src/includes/*",

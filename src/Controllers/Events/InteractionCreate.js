@@ -60,7 +60,7 @@ export default class InteractionCreate
                         cooldown.insertUserCd(interaction.user.id, commandCD, coolDown);
                     }
                 } catch (err) {
-                    log.warning('Error executing command: '+err.message);
+                    log.warning('Error executing command: '+err.message+ ' on '+err.stack);
                     if(!interaction.replied) {
                         await interaction.reply({
                             content: lang.translate('globals', 'CMD_ERROR'),
