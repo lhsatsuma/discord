@@ -50,7 +50,7 @@ class database_pg
 		}
 	}
 
-	getInfo()
+	getInfo(): Object
 	{
 		return {
 			host: this.host,
@@ -58,20 +58,6 @@ class database_pg
 			host_pwd: this.host_pwd,
 			database: this.db_name,
 		};
-	}
-	
-	async CloseConn()
-	{
-		if(this.connection){
-			await this.connection.end();
-			this.connection = null;
-		}
-		return true;
-	}
-	
-	ErrorQuery(sql, err_msg = ''){
-		log.err('SQL Failed: '+sql+' : '+err_msg);
-		this.last_error = 'SQL Failed: '+sql+' : '+err_msg;
 	}
 
 	async query<Row extends QueryResultRow = any>(text: string, params?: any[]): Promise<QueryResult<Row>>
