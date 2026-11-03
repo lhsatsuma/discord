@@ -1,6 +1,6 @@
 import log from '#includes/log.js';
-
-class HelperDataBase
+import database_pg from '#includes/database/database_pg.js';
+class databaseHelper
 {
 	db: any;
 	table = '';
@@ -10,49 +10,33 @@ class HelperDataBase
 	order_by = '';
 	limit = '';
 	group_by = '';
-
-	constructor(db)
-	{
-		this.db = db;
-		this.table = '';
-		this.resetOptions();
-	}
 	
-	Select(show_sql = false){
-
-		return new Promise((resolve) => {
-			let SQL = "SELECT "+this.fields+" FROM "+this.table;
+	async select(show_sql = false){
+		let SQL = "SELECT "+this.fields+" FROM "+this.table;
 
 
-			this.inner_join.forEach((ipt) => {
-				SQL += " " + ipt.type + " " + ipt.table + " ON " + ipt.on;
-			});
-
-			if (this.where) {
-				SQL += " WHERE " + this.where;
-			}
-
-			if (this.order_by) {
-				SQL += " ORDER BY " + this.order_by;
-			}
-
-			if (this.group_by) {
-				SQL += " GROUP BY " + this.group_by;
-			}
-
-			if (this.limit) {
-				SQL += " LIMIT " + this.limit;
-			}
-
-			this.db.Query(SQL, show_sql).then((result) => {
-				if(result === false){
-					log.fatal(this.db.last_error);
-					resolve(false);
-				}else{
-					resolve(result);
-				}
-			});
+		this.inner_join.forEach((ipt) => {
+			SQL += ` ${ipt.type} ${ipt.table} ON ${ipt.on.join(' AND ')}`;
 		});
+
+		if (this.where) {
+			SQL += " WHERE " + this.where;
+		}
+
+		if (this.order_by) {
+			SQL += " ORDER BY " + this.order_by;
+		}
+
+		if (this.group_by) {
+			SQL += " GROUP BY " + this.group_by;
+		}
+
+		if (this.limit) {
+			SQL += " LIMIT " + this.limit;
+		}
+
+		await database_pg.query(SQL);
+		
 	}
 
 	Insert(insert_tables = {}, show_sql = false)
@@ -213,4 +197,5 @@ class HelperDataBase
 		return this;
 	}
 }
-export default HelperDataBase;
+const instance = new databaseHelper();
+export default instance;

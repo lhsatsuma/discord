@@ -33,7 +33,7 @@ export default class entryPointApp extends entryPoint
     async loadCommands()
     {
         const importPath = '#commands/';
-        const basePath = './dist/src/Controllers/Commands/';
+        const basePath = './dist/src/controllers/commands/';
 		const commandPaths = fs.readdirSync(basePath);
 		let commandsTmp = [];
 		this.commands = new Collection();
@@ -88,8 +88,8 @@ export default class entryPointApp extends entryPoint
 
 	async loadEvents()
 	{
-		const importPath = './controllers/events/';
-        const basePath = './dist/src/Controllers/Events/';
+		const importPath = '#events/';
+        const basePath = './dist/src/controllers/events/';
 		const eventsPath = fs.readdirSync(basePath);
 
 

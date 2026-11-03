@@ -7,11 +7,11 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node --env-file=.env dist/run.js"
+    "start": "npm run build && node --env-file=.env --trace-deprecation dist/run.js"
   },
   "imports": {
     "#commands/*": "./dist/src/controllers/commands/*",
-    "#events*": "./dist/src/controllers/events/*",
+    "#events/*": "./dist/src/controllers/events/*",
     "#includes/*": "./dist/src/includes/*",
     "#models/*": "./dist/src/models/*",
     "#controllers/*": "./dist/src/controllers/*"

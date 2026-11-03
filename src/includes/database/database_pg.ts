@@ -11,6 +11,7 @@ class database_pg
 	last_error: string;
 	pool?: Pool;
 	connection: any;
+	bindParams: any[] = [];
 
 	constructor()
 	{
@@ -32,7 +33,9 @@ class database_pg
 			user: this.host_user,
 			password: this.host_pwd,
 			database: this.db_name,
-			port: this.db_port ? Number(this.db_port) : undefined
+			port: this.db_port ? Number(this.db_port) : undefined,
+			connectionTimeoutMillis: 5000,
+			idleTimeoutMillis: 15000,
 		});
 		this.pool.on('error', (err, client) => {
 			log.err('[DataBase] Error: '+err);
@@ -40,6 +43,7 @@ class database_pg
 		});
 		return this.pool;
 	}
+
 	async testConnection()
 	{
 		try{
@@ -62,11 +66,24 @@ class database_pg
 
 	async query<Row extends QueryResultRow = any>(text: string, params?: any[]): Promise<QueryResult<Row>>
 	{
+		this.resetBind();
 		log.debug('[SQL][QUERY] '+text+(params ? ' | params: '+JSON.stringify(params ?? []): ''));
 		if(params){
 			log.debug('[SQL][PARAM] '+JSON.stringify(params));
 		}
 		return await this.createPool().query<Row>(text, params);
+	}
+
+	async bind(bindValue: any)
+	{
+		this.bindParams.push(bindValue);
+		return this.bindParams.length;
+	}
+
+	async resetBind()
+	{
+		this.bindParams = [];
+		return this;
 	}
 }
 

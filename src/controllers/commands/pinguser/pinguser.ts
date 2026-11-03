@@ -9,7 +9,8 @@ export default class pinguser extends appCommandInterface
     cooldown = 30;
     async build()
     {
-        this.builded = new SlashCommandBuilder()
+        this.builded = new SlashCommandBuilder();
+        this.builded
 		.setName(lang.translate(this.name, `CMD_${this.name.toUpperCase()}_NAME`))
 		.setDescription(lang.translate(this.name, `CMD_${this.name.toUpperCase()}_DESCRIPTION`))
 		.addUserOption(option =>
