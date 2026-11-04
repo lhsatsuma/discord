@@ -6,23 +6,22 @@
   "main": "dist/run.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/minify-dist.js",
     "start": "npm run build && node --env-file=.env --trace-deprecation dist/run.js"
   },
   "imports": {
-    "#commands/*": "./dist/src/controllers/commands/*",
-    "#modals/*": "./dist/src/controllers/modals/*",
-    "#events/*": "./dist/src/controllers/events/*",
-    "#includes/*": "./dist/src/includes/*",
-    "#models/*": "./dist/src/models/*",
-    "#controllers/*": "./dist/src/controllers/*"
+    "#commands/*": "./dist/controllers/commands/*",
+    "#modals/*": "./dist/controllers/modals/*",
+    "#events/*": "./dist/controllers/events/*",
+    "#includes/*": "./dist/includes/*",
+    "#models/*": "./dist/models/*",
+    "#controllers/*": "./dist/controllers/*"
   },
   "dependencies": {
     "@devraelfreeze/discordjs-pagination": "^2.7.6",
     "cronstrue": "^2.28.0",
     "discord-emoji-converter": "^1.2.8",
     "discord.js": "^14.27",
-    "esbuild": "^0.28.2",
     "imgur": "^2.3.0",
     "moment": "^2.29.4",
     "node-cron": "^4.6",
@@ -30,6 +29,7 @@
     "pidusage": "^3.0.2",
     "read-last-lines": "^1.8.0",
     "reddit": "^1.2.1",
+    "terser": "^5.51.2",
     "uuid": "latest"
   },
   "devDependencies": {
