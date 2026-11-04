@@ -9,7 +9,10 @@
 
   "SUBCMD_ADD_NAME": "adicionar",
   "SUBCMD_ADD_DESCRIPTION": "Adicionar uma nova piada",
-  "SUBCMD_ADD_OPTION_CONTENT": "Conteúdo da piada (Texto ou URL de imagem)",
   "SUBCMD_ADD_SUCCESS": "Piada adicionada com sucesso",
-  "SUBCMD_ADD_ERROR": "Erro ao adicionar a piada"
+  "SUBCMD_ADD_ERROR": "Erro ao adicionar a piada",
+
+  "MODAL_ADD_DESCRIPTION": "Adicionar uma nova piada",
+  "MODAL_ADD_COMPONENT_LABEL_CONTENT": "Conteúdo da piada (Texto ou URL de imagem)",
+  "MODAL_ADD_COMPONENT_DESCRIPTION_CONTENT": "Texto ou URL da imagem. Markdown permitido; imagens em Markdown não são suportadas."
 }

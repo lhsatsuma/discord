@@ -6,6 +6,7 @@ import log from '#includes/log.js';
 export default class entryPointApp extends entryPoint
 {
 	commands: Collection<string, any>;
+	modals: Collection<string, any>;
 
     async init(): Promise<void>
     {
@@ -17,6 +18,14 @@ export default class entryPointApp extends entryPoint
 				log.fatal(lang.translate('system', 'START_LOADING_COMMANDS_ERR'));
 			}
             log.debug(lang.translate('system', 'START_LOADED_COMMANDS', [loaded_commands]));
+
+
+			log.debug(lang.translate('system', 'START_LOADING_MODALS'));
+			let loaded_modals = await this.loadModals();
+			if(!loaded_modals){
+				log.fatal(lang.translate('system', 'START_LOADING_MODALS_ERR'));
+			}
+			log.debug(lang.translate('system', 'START_LOADED_MODALS', [loaded_modals]));
 
 
 			log.debug(lang.translate('system', 'START_LOADING_EVENTS'));
@@ -111,16 +120,27 @@ export default class entryPointApp extends entryPoint
 		const importPath = '#modals/';
         const basePath = './dist/controllers/modals/';
 		const modalsPath = fs.readdirSync(basePath);
+		this.modals = new Collection();
 
+		let loaded_modals = 0;
+		for (const modalFolder of modalsPath) {
+			log.debug(lang.translate('system', 'START_LOADING_MODAL_FOLDER', [modalFolder]));
+			let baseModalFolder = basePath + modalFolder;
 
-		for (const modalName of modalsPath) {
-			log.debug(lang.translate('system', 'START_LOADING_MODAL_NAME', [modalName]));
-			let importFile = importPath + modalName;
-			let modal = await import(importFile);
-			let modalClass = new modal.default(this).init();
-			log.debug(lang.translate('system', 'START_LOADED_MODAL_NAME', [modalName]));
+			const modalsPath = fs.readdirSync(baseModalFolder);
+			for (const modalFile of modalsPath) {
+				log.debug(lang.translate('system', 'START_LOADING_MODAL_NAME', [modalFile]));
+				let importFile = importPath + modalFolder + '/' + modalFile;
+				let modal = await import(importFile);
+				let modalClass = new modal.default(this);
+				await modalClass.init();
+				this.modals.set(modalClass.commandName, modalClass);
+				log.debug(lang.translate('system', 'START_LOADED_MODAL_NAME', [modalFile]));
+				loaded_modals++;
+			}
+			log.debug(lang.translate('system', 'START_LOADED_MODAL_FOLDER', [modalFolder]));
 		}
 
-		return modalsPath.length;
+		return loaded_modals;
 	}
 }
