@@ -11,7 +11,7 @@ class utils
 	heartbeatInterval?: NodeJS.Timeout;
 	msgHeartbeat: any;
 
-	randomInt (min, max) { // min and max included
+	randomInt (min: number, max: number) { // min and max included
 		return Math.floor(Math.random() * (max - min + 1) + min);
 	}
 
@@ -56,7 +56,7 @@ class utils
 		}, bot_cfg.HEARTBEAT * 1000);
 	}
 
-	reacts = async (message, reacts) => {
+	reacts = async (message: any, reacts: any[]) => {
 		return new Promise((resolve) => {
 			reacts.forEach((emoji, idx) => {
 				message.react(emoji).then(() => {
@@ -67,7 +67,7 @@ class utils
 			});
 		});
 	}
-	validateDate = (date) => {
+	validateDate = (date: string) => {
 		if(date.length !== 10){
 			return false;
 		}
@@ -75,41 +75,8 @@ class utils
 		return date_regex.test(date);
 	}
 
-	channelSuperAdmin = async (compare) => {
+	channelSuperAdmin = async (compare: string) => {
 		return bot_cfg.ADMIN_CHANNEL_ID === compare;
-	}
-
-	mountEmbedArrays = (data, title, perPage = 10, qtyNewLine = 1) => {
-		let embedDescription = '';
-		let page = 1;
-		let arrayEmbeds = [];
-		let arrayCount = 0;
-		const newLine = '\n'.repeat(qtyNewLine);
-
-		data.forEach((ipt) => {
-			arrayCount++;
-			embedDescription += `${ipt}${newLine}`;
-			if(arrayCount >= perPage){
-				let embedMsg = new EmbedBuilder()
-					.setTitle(title)
-					.setDescription(embedDescription)
-					.setColor(getUtils().getColor('GREEN'));
-				arrayEmbeds.push(embedMsg);
-				embedDescription = '';
-				arrayCount = 0;
-				page++;
-			}
-		});
-
-		if(embedDescription){
-			let embedMsg = new EmbedBuilder()
-				.setTitle(title)
-				.setDescription(embedDescription)
-				.setColor(getUtils().getColor('GREEN'));
-			arrayEmbeds.push(embedMsg);
-		}
-
-		return arrayEmbeds;
 	}
 
 	memoryUsage()
@@ -120,7 +87,7 @@ class utils
 		}
 	}
 
-	sleep = (ms) => {
+	sleep = (ms: number) => {
 		return new Promise((resolve) => {
 			setTimeout(resolve, ms);
 		});

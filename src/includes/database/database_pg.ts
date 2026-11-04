@@ -70,7 +70,9 @@ class database_pg
 		if(params){
 			log.debug('[SQL][PARAM] '+JSON.stringify(params));
 		}
-		return await this.createPool().query(text, params);
+		const res = await this.createPool().query(text, params);
+		log.debug('[SQL][QUERY] Total rows affected: '+res.rowCount);
+		return res;
 	}
 }
 

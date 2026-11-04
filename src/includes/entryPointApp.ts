@@ -105,4 +105,22 @@ export default class entryPointApp extends entryPoint
 
 		return eventsPath.length;
 	}
+
+	async loadModals()
+	{
+		const importPath = '#modals/';
+        const basePath = './dist/src/controllers/modals/';
+		const modalsPath = fs.readdirSync(basePath);
+
+
+		for (const modalName of modalsPath) {
+			log.debug(lang.translate('system', 'START_LOADING_MODAL_NAME', [modalName]));
+			let importFile = importPath + modalName;
+			let modal = await import(importFile);
+			let modalClass = new modal.default(this).init();
+			log.debug(lang.translate('system', 'START_LOADED_MODAL_NAME', [modalName]));
+		}
+
+		return modalsPath.length;
+	}
 }

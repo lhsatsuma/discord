@@ -95,9 +95,8 @@ CREATE TABLE
       created_by varchar(255) NOT NULL DEFAULT 'SYSTEM',
       server varchar(255),
       order_id integer,
-      name varchar(255),
-      url varchar(255),
-      counter integer DEFAULT 1500,
+      description varchar(255),
+      content varchar(255),
       CONSTRAINT fk_jdv_server FOREIGN KEY (server) REFERENCES servers (server)
    );
 

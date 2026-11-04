@@ -1,0 +1,15 @@
+{
+  "CMD_MEMES_NAME": "memes",
+  "CMD_MEMES_DESCRIPTION": "Memes Engraçados",
+
+  "SUBCMD_RAND_NAME": "aleatorio",
+  "SUBCMD_RAND_DESCRIPTION": "Meme Aleatório",
+
+  "NO_RECORDS": "Meme não encontrado",
+
+  "SUBCMD_ADD_NAME": "adicionar",
+  "SUBCMD_ADD_DESCRIPTION": "Adicionar um novo meme",
+  "SUBCMD_ADD_OPTION_CONTENT": "Conteúdo do meme (Texto ou URL de imagem)",
+  "SUBCMD_ADD_SUCCESS": "Meme adicionado com sucesso",
+  "SUBCMD_ADD_ERROR": "Erro ao adicionar o meme"
+}

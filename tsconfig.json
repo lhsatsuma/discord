@@ -8,6 +8,7 @@
     "baseUrl": ".",
     "paths": {
       "#commands/*": ["src/controllers/commands/*"],
+      "#modals/*": ["src/controllers/modals/*"],
       "#events/*": ["src/controllers/events/*"],
       "#includes/*": ["src/includes/*"],
       "#models/*": ["src/models/*"],
