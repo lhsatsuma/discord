@@ -1,0 +1,15 @@
+{
+  "CMD_JOKES_NAME": "piadas",
+  "CMD_JOKES_DESCRIPTION": "Piadas Engraçadas",
+
+  "SUBCMD_RAND_NAME": "aleatorio",
+  "SUBCMD_RAND_DESCRIPTION": "Piada Aleatória",
+
+  "NO_RECORDS": "Piada não encontrada",
+
+  "SUBCMD_ADD_NAME": "adicionar",
+  "SUBCMD_ADD_DESCRIPTION": "Adicionar uma nova piada",
+  "SUBCMD_ADD_OPTION_CONTENT": "Conteúdo da piada (Texto ou URL de imagem)",
+  "SUBCMD_ADD_SUCCESS": "Piada adicionada com sucesso",
+  "SUBCMD_ADD_ERROR": "Erro ao adicionar a piada"
+}

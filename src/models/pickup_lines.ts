@@ -1,4 +1,3 @@
-import database_pg from '#includes/database/database_pg.js';
 import lang from '#includes/lang.js';
 import log from '#includes/log.js';
 import model_base from '#models/base.js';
@@ -8,12 +7,8 @@ class model_pickup_lines extends model_base
     async getRandom()
     {
         try{
-            const res = await database_pg.query<{content: string}>("SELECT content FROM pickup_lines WHERE locale = $1 ORDER BY RANDOM() LIMIT 1", [lang.locale]);
-            if(res.rowCount > 0){
-                return res.rows[0];
-            }else{
-                return null;
-            }
+            const res = await this.select('content', [], `locale = ${this.bind(lang.locale)}`, "RANDOM()", 1);
+            return res.rows[0];
         }catch(e){
             log.warning('Error on database');
             return false;

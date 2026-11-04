@@ -1,19 +1,20 @@
-import {Events, MessageFlags} from "discord.js";
+import {ChatInputCommandInteraction, CommandInteractionOptionResolver, Events, MessageFlags} from "discord.js";
 import log from '#includes/log.js';
 import cooldown from '#includes/commands/cooldown.js';
 import lang from '#includes/lang.js';
+import entryPointApp from "#includes/entryPointApp.js";
 export default class InteractionCreate
 {
-    main;
-    constructor(main)
+    main: entryPointApp;
+    constructor(main: entryPointApp)
     {
         this.main = main;
         return this;
     }
     init()
     {
-        this.main.on(Events.InteractionCreate, async interaction => {
-            if (!interaction.isChatInputCommand()) return;
+        this.main.on(Events.InteractionCreate, async (interaction: ChatInputCommandInteraction) => {
+            if (!interaction.isChatInputCommand() || !interaction.isCommand()) return;
 
             if(!interaction.guildId){
                 interaction.reply({
@@ -22,24 +23,24 @@ export default class InteractionCreate
                 });
                 return false;
             }
-
-            let command = interaction.client.commands.get(interaction.commandName);
+            let command = this.main.commands.get(interaction.commandName);
             let commandCD = interaction.commandName;
             let commandName = commandCD;
             let coolDown = command.cooldown;
             let optionsStr = '';
 
             //If is subcommand, lets check all vars
-            if(interaction.options._subcommand){
-                commandCD += ':'+interaction.options._subcommand;
-                commandName += ':'+interaction.options._subcommand;
-                command = command.subcommands[interaction.options._subcommand];
+            if(interaction.options.getSubcommand(false)){
+                let subCommandName = interaction.options.getSubcommand(false);
+                commandCD += ':'+subCommandName;
+                commandName += ':'+subCommandName;
+                command = command.subcommands[subCommandName];
                 coolDown = command ? command.cooldown : 0;
             }
 
             //If has passed options value, lets mark
-            if(interaction.options._hoistedOptions.length){
-                interaction.options._hoistedOptions.forEach((ipt) => {
+            if(interaction.options.data[0]?.options.length){
+                interaction.options.data[0].options.forEach((ipt) => {
                     optionsStr += ` [${ipt.name}::${ipt.value}]`;
                 });
             }

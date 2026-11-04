@@ -43,6 +43,7 @@ export default class entryPointApp extends entryPoint
 			let commandFile = commandPath + commandName + '.js';
 			let command = null;
 			let importFile = null;
+			let commandClass = null;
 
 			
 			if (fs.existsSync(commandFile)) {
@@ -55,9 +56,10 @@ export default class entryPointApp extends entryPoint
 			if (this.commands.get(commandName)) {
 				continue;
 			}
+
 			command = await import(importFile);
             
-            let commandClass = new command.default().init();
+            commandClass = new command.default().init();
 			await commandClass.build();
 
 			if (!!commandClass.inactive) {
