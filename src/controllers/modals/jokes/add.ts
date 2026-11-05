@@ -1,7 +1,7 @@
-import { ModalSubmitInteraction, MessageFlags, LabelBuilder, TextInputBuilder, TextInputStyle} from 'discord.js';
-import lang from '#includes/lang.js';
-import appModalInterface from '#includes/modals/appModalInterface.js';
-import model_jokes from '#models/jokes.js';
+import { ModalSubmitInteraction, MessageFlags, LabelBuilder, TextInputBuilder, TextInputStyle, Colors, EmbedBuilder} from 'discord.js';
+import lang from '#includes/lang.ts';
+import appModalInterface from '#includes/modals/appModalInterface.ts';
+import model_jokes from '#models/jokes.ts';
 export default class modal_jokes_add extends appModalInterface
 {
     cooldown = 3;
@@ -42,10 +42,22 @@ export default class modal_jokes_add extends appModalInterface
             return false;
         }
 
-        await interaction.reply({
+        let replyData: Record<string, any> = {
             content: lang.translate(this.parentName, `SUBCMD_${this.name.toUpperCase()}_SUCCESS`),
-            flags: [MessageFlags.Ephemeral]
-        });
+        };
+        
+        if(content.toString().search('https://') !== -1 || content.toString().search('http://') !== -1){
+            //It's image
+
+            replyData.embeds = [new EmbedBuilder()
+            .setColor(Colors.Blue)
+            .setImage(content.toString())];
+        }else{
+            //It's a text
+            replyData.content += "\n\n"+content.replace(/\\n/g, '\n');
+        }
+
+        await interaction.reply(replyData);
         
         return true;
     }

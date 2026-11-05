@@ -1,9 +1,9 @@
-import config from '#includes/config.js';
+import config from '#includes/config.ts';
 import * as Discord from 'discord.js';
-import lang from '#includes/lang.js';
-import db from '#includes/database/database_pg.js';
-import log from '#includes/log.js';
-import utils from '#includes/utils.js';
+import lang from '#includes/lang.ts';
+import db from '#includes/database/database_pg.ts';
+import log from '#includes/log.ts';
+import utils from '#includes/utils.ts';
 import {Client, GatewayIntentBits,  Partials} from 'discord.js';
 
 export default class entryPoint extends Client

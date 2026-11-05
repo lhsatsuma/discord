@@ -1,6 +1,6 @@
-import lang from '#includes/lang.js';
-import log from '#includes/log.js';
-import model_base from '#models/base.js';
+import lang from '#includes/lang.ts';
+import log from '#includes/log.ts';
+import model_base from '#models/base.ts';
 class model_pickup_lines extends model_base
 {
     table = 'pickup_lines';

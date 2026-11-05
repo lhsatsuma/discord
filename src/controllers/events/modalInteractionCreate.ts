@@ -1,8 +1,8 @@
 import {ChatInputCommandInteraction, CommandInteractionOptionResolver, Events, MessageFlags, ModalSubmitInteraction} from "discord.js";
-import log from '#includes/log.js';
-import cooldown from '#includes/commands/cooldown.js';
-import lang from '#includes/lang.js';
-import entryPointApp from "#includes/entryPointApp.js";
+import log from '#includes/log.ts';
+import cooldown from '#includes/commands/cooldown.ts';
+import lang from '#includes/lang.ts';
+import entryPointApp from "#includes/entryPointApp.ts";
 export default class InteractionCreate
 {
     main: entryPointApp;

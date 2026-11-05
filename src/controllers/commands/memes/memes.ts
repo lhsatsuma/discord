@@ -1,6 +1,6 @@
-import lang from '#includes/lang.js';
+import lang from '#includes/lang.ts';
 import { SlashCommandBuilder } from "discord.js";
-import appCommandInterface from "#includes/commands/appCommandInterface.js";
+import appCommandInterface from "#includes/commands/appCommandInterface.ts";
 
 export default class memes extends appCommandInterface
 {

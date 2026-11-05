@@ -1,5 +1,5 @@
-import lang from '#includes/lang.js';
-import model_base from '#models/base.js';
+import lang from '#includes/lang.ts';
+import model_base from '#models/base.ts';
 class model_jokes extends model_base
 {
     table = 'jokes';

@@ -1,6 +1,6 @@
 import reddit from 'reddit';
 import {Colors, EmbedBuilder} from 'discord.js';
-import utils from '#includes/utils.js';
+import utils from '#includes/utils.ts';
 class redditUtil
 {
     validateCfg()

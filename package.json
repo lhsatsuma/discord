@@ -3,21 +3,21 @@
   "version": "2.0.0",
   "description": "A Discord bot for the DBIKE community.",
   "author": "BigBangDBIKE (Luis Satsuma)",
-  "main": "dist/run.js",
+  "main": "src/run.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc && node scripts/minify-dist.js",
+    "build": "tsc --noEmit",
     "build-dev": "tsc",
-    "start": "npm run build && node --env-file=.env --trace-deprecation dist/run.js",
-    "dev": "npm run build-dev && node --env-file=.env --trace-deprecation dist/run.js"
+    "start": "npm run build && node --env-file=.env --trace-deprecation src/run.ts",
+    "dev": "npm run build-dev && node --env-file=.env --trace-deprecation src/run.ts"
   },
   "imports": {
-    "#commands/*": "./dist/controllers/commands/*",
-    "#modals/*": "./dist/controllers/modals/*",
-    "#events/*": "./dist/controllers/events/*",
-    "#includes/*": "./dist/includes/*",
-    "#models/*": "./dist/models/*",
-    "#controllers/*": "./dist/controllers/*"
+    "#commands/*": "./src/controllers/commands/*",
+    "#modals/*": "./src/controllers/modals/*",
+    "#events/*": "./src/controllers/events/*",
+    "#includes/*": "./src/includes/*",
+    "#models/*": "./src/models/*",
+    "#controllers/*": "./src/controllers/*"
   },
   "dependencies": {
     "@devraelfreeze/discordjs-pagination": "^2.7.6",

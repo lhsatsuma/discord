@@ -1,6 +1,6 @@
 import {EmbedBuilder} from 'discord.js';
 import moment from 'moment';
-import log from '#includes/log.js';
+import log from '#includes/log.ts';
 
 declare const bot_cfg: {HEARTBEAT: number; BOT_DESCRIPTION: string; ADMIN_CHANNEL_ID: string};
 declare const client: any;

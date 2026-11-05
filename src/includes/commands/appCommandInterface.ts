@@ -1,9 +1,9 @@
-import lang from '#includes/lang.js';
+import lang from '#includes/lang.ts';
 import fs from 'fs';
-import log from '#includes/log.js';
-import entryPointApp from '#includes/entryPointApp.js';
+import log from '#includes/log.ts';
+import entryPointApp from '#includes/entryPointApp.ts';
 import {SlashCommandBuilder, ChatInputCommandInteraction} from 'discord.js';
-import {Pagination, Options} from 'pagination.djs';
+import {Pagination, type Options} from 'pagination.djs';
 export default class appCommandInterface
 {
     main: entryPointApp;
@@ -45,7 +45,7 @@ export default class appCommandInterface
     {
         if(this.hasSubcommands){
             const importPath = '#commands/'+this.constructor.name+'/subs/';
-            const basePath = './dist/controllers/commands/'+this.constructor.name+'/subs/';
+            const basePath = './src/controllers/commands/'+this.constructor.name+'/subs/';
 
             const subcommandsFiles = fs.readdirSync(basePath);
 

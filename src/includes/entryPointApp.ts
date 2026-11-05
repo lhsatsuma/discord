@@ -1,8 +1,8 @@
-import entryPoint from '#includes/entryPoint.js';
+import entryPoint from '#includes/entryPoint.ts';
 import {Collection, Routes, REST} from 'discord.js';
 import fs from 'fs';
-import lang from '#includes/lang.js';
-import log from '#includes/log.js';
+import lang from '#includes/lang.ts';
+import log from '#includes/log.ts';
 export default class entryPointApp extends entryPoint
 {
 	commands: Collection<string, any>;
@@ -42,21 +42,21 @@ export default class entryPointApp extends entryPoint
     async loadCommands()
     {
         const importPath = '#commands/';
-        const basePath = './dist/controllers/commands/';
+        const basePath = './src/controllers/commands/';
 		const commandPaths = fs.readdirSync(basePath);
 		let commandsTmp = [];
 		this.commands = new Collection();
 
 		for (const commandName of commandPaths) {
 			let commandPath = basePath + commandName + '/';
-			let commandFile = commandPath + commandName + '.js';
+			let commandFile = commandPath + commandName + '.ts';
 			let command = null;
 			let importFile = null;
 			let commandClass = null;
 
 			
 			if (fs.existsSync(commandFile)) {
-				importFile = importPath + commandName + '/' + commandName + '.js';
+				importFile = importPath + commandName + '/' + commandName + '.ts';
 			} else {
 				log.err(lang.translate('system', 'START_LOADING_COMMAND_JS', [commandName]));
 				continue;
@@ -100,7 +100,7 @@ export default class entryPointApp extends entryPoint
 	async loadEvents()
 	{
 		const importPath = '#events/';
-        const basePath = './dist/controllers/events/';
+        const basePath = './src/controllers/events/';
 		const eventsPath = fs.readdirSync(basePath);
 
 
@@ -118,7 +118,7 @@ export default class entryPointApp extends entryPoint
 	async loadModals()
 	{
 		const importPath = '#modals/';
-        const basePath = './dist/controllers/modals/';
+        const basePath = './src/controllers/modals/';
 		const modalsPath = fs.readdirSync(basePath);
 		this.modals = new Collection();
 

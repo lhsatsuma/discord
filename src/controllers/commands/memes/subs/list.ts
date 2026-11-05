@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, Collection, SlashCommandSubcommandBuilder } from 'discord.js';
-import lang from '#includes/lang.js';
-import appSubCommandInterface from '#includes/commands/appSubCommandInterface.js';
-import model_memes from '#models/memes.js';
+import lang from '#includes/lang.ts';
+import appSubCommandInterface from '#includes/commands/appSubCommandInterface.ts';
+import model_memes from '#models/memes.ts';
 export default class memes_list extends appSubCommandInterface
 {
     cooldown = 3;

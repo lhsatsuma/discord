@@ -1,5 +1,5 @@
-import lang from '#includes/lang.js';
-import model_base from '#models/base.js';
+import lang from '#includes/lang.ts';
+import model_base from '#models/base.ts';
 class model_memes extends model_base
 {
     table = 'memes';
@@ -11,6 +11,26 @@ class model_memes extends model_base
         }catch(e){
             return false;
         }
+    }
+
+    async beforeInsert(fields: Record<string, any>)
+    {
+        if(!fields.order_id) {
+            fields.order_id = await this.getNextOrder(fields.server);
+            if (isNaN(fields.order_id) || fields.order_id === null) {
+                fields.order_id = 1;
+            }
+        }
+        return super.beforeInsert(fields);
+    }
+
+    async getNextOrder(server: number)
+    {
+        let result = await this.select('MAX(COALESCE(order_id, 0))+1 as order_max', [], `server = ${this.bind(server)}`);
+        if(!result){
+            return null;
+        }
+        return result.rows[0].order_max;
     }
 
     async listAll(server: string): Promise<any>

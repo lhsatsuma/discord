@@ -1,6 +1,6 @@
 import {v7 as uuidV7} from 'uuid';
-import database_pg from '#includes/database/database_pg.js';
-import log from '#includes/log.js';
+import database_pg from '#includes/database/database_pg.ts';
+import log from '#includes/log.ts';
 export default class model_base
 {
     fields = [];
@@ -22,14 +22,35 @@ export default class model_base
         return result;
     }
 
-    async insert(fields: Record<string, any> = {}): Promise<boolean>
+	async beforeInsert(fields: Record<string, any>)
+	{
+
+		if(!fields.date_entered){
+			fields.date_entered = new Date();
+		}
+
+		if(!fields.date_modified){
+			fields.date_modified = new Date();
+		}
+
+		if(!fields.created_by){
+			fields.created_by = 'SYSTEM';
+		}
+		
+		return fields;
+	}
+
+    async insert(fields: Record<string, any> = {}): Promise<any>
     {
         try{
             if(!fields.id){
                 fields.id = uuidV7();
             }
+
+			fields = await this.beforeInsert(fields);
+
             await database_pg.query(`INSERT INTO ${this.table} (${Object.keys(fields).join(', ')}) VALUES (${Object.values(fields).map((_, i) => `$${i + 1}`).join(', ')})`, Object.values(fields));
-            return true;
+            return fields;
         }catch(e){
             log.warning('Error on database: '+e);
             return false;

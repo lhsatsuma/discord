@@ -1,5 +1,5 @@
 import { Pool, type QueryResult, type QueryResultRow} from 'pg';
-import log from '#includes/log.js';
+import log from '#includes/log.ts';
 
 class database_pg
 {

@@ -18,7 +18,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "strict": false,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": ["src/**/*.ts", "src/run.ts"]
 }

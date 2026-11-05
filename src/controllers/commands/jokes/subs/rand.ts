@@ -1,7 +1,7 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
-import lang from '#includes/lang.js';
-import model_jokes from '#models/jokes.js';
-import appSubCommandInterface from '#includes/commands/appSubCommandInterface.js';
+import lang from '#includes/lang.ts';
+import model_jokes from '#models/jokes.ts';
+import appSubCommandInterface from '#includes/commands/appSubCommandInterface.ts';
 export default class jokes_rand extends appSubCommandInterface
 {
     cooldown = 3;
