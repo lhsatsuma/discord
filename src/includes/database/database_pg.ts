@@ -66,10 +66,11 @@ class database_pg
 
 	async query(text: string, params?: any[])
 	{
-		log.debug('[SQL][QUERY] '+text+(params ? ' | params: '+JSON.stringify(params ?? []): ''));
+		log.debug('[SQL][QUERY] '+text);
 		if(params){
 			log.debug('[SQL][PARAM] '+JSON.stringify(params));
 		}
+		console.log(text, params);
 		const res = await this.createPool().query(text, params);
 		log.debug('[SQL][QUERY] Total rows affected: '+res.rowCount);
 		return res;

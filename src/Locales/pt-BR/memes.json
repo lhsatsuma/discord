@@ -9,7 +9,6 @@
 
   "SUBCMD_ADD_NAME": "adicionar",
   "SUBCMD_ADD_DESCRIPTION": "Adicionar um novo meme",
-  "SUBCMD_ADD_OPTION_CONTENT": "Conteúdo do meme (Texto ou URL de imagem)",
   "SUBCMD_ADD_SUCCESS": "Meme adicionado com sucesso",
   "SUBCMD_ADD_ERROR": "Erro ao adicionar o meme",
 
@@ -23,5 +22,9 @@
   "MODAL_ADD_IMGUR_ERROR": "Erro ao realizar o upload para o imgur",
 
   "SUBCMD_LIST_NAME": "listar",
-  "SUBCMD_LIST_DESCRIPTION": "Listar memes do servidor"
+  "SUBCMD_LIST_DESCRIPTION": "Listar memes do servidor",
+
+  "SUBCMD_GET_NAME": "buscar",
+  "SUBCMD_GET_DESCRIPTION": "Mostra um meme pelo ID/Nome",
+  "SUBCMD_GET_OPTION_SEARCH": "ID/Nome do Meme"
 }

@@ -42,6 +42,23 @@ class model_memes extends model_base
             return false;
         }
     }
+
+    async search(server: string, search: string)
+    {
+        let where = `server = ${this.bind(server)}`;
+
+        if(parseInt(search)){
+            where += ` AND order_id = ${this.bind(search)}`;
+        }else{
+            where += ` AND description LIKE ${this.bind(`%${search}%`)}`;
+        }
+        try{
+            const res = await this.select('date_entered, order_id, description, content', [], where, 'RANDOM()', 1);
+            return res.rows[0];
+        }catch(e){
+            return false;
+        }
+    }
 }
 
 const instance = new model_memes();

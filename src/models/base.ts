@@ -17,8 +17,8 @@ export default class model_base
 
     async query(SQL: string, params: any[])
     {
+		this.resetBind();
         let result = await database_pg.query(SQL, params);
-        this.resetBind();
         return result;
     }
 
