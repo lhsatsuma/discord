@@ -27,6 +27,7 @@
     "imgur": "^2.3.0",
     "moment": "^2.29.4",
     "node-cron": "^4.6",
+    "pagination.djs": "^4.0.18",
     "pg": "^8.23.0",
     "pidusage": "^3.0.2",
     "read-last-lines": "^1.8.0",

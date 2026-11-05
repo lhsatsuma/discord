@@ -11,5 +11,8 @@
   "SUBCMD_ADD_DESCRIPTION": "Adicionar um novo meme",
   "SUBCMD_ADD_OPTION_CONTENT": "Conteúdo do meme (Texto ou URL de imagem)",
   "SUBCMD_ADD_SUCCESS": "Meme adicionado com sucesso",
-  "SUBCMD_ADD_ERROR": "Erro ao adicionar o meme"
+  "SUBCMD_ADD_ERROR": "Erro ao adicionar o meme",
+
+  "SUBCMD_LIST_NAME": "listar",
+  "SUBCMD_LIST_DESCRIPTION": "Listar memes do servidor"
 }
