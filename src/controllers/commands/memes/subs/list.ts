@@ -1,7 +1,6 @@
 import { ChatInputCommandInteraction, Collection, SlashCommandSubcommandBuilder } from 'discord.js';
 import lang from '#includes/lang.js';
 import appSubCommandInterface from '#includes/commands/appSubCommandInterface.js';
-import { Pagination } from 'pagination.djs';
 import model_memes from '#models/memes.js';
 export default class memes_list extends appSubCommandInterface
 {
@@ -28,19 +27,10 @@ export default class memes_list extends appSubCommandInterface
             return true;
         }
         memes_found = memes_found.map((meme_found) => { return `#${meme_found.order_id} | ${meme_found.description}`});
-
-        await this.paginate(interaction, memes_found);
-        return true;
-    }
-
-    async paginate(interaction: ChatInputCommandInteraction, data: any[])
-    {
-        const paginationInteraction = interaction as unknown as ConstructorParameters<typeof Pagination>[0];
-        const pag_embed = new Pagination(paginationInteraction, {
-            limit: 20
-        });
-        pag_embed.setDescriptions(data);
-        pag_embed.render();
+        
+        let pag_builded = this.buildPagination(interaction, {limit: 20});
+        pag_builded.setDescriptions(memes_found);
+        pag_builded.render();
         return true;
     }
 }

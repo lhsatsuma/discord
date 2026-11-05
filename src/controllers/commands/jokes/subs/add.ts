@@ -1,4 +1,4 @@
-import { SlashCommandSubcommandBuilder, ModalBuilder, LabelBuilder, TextInputBuilder, TextInputStyle} from 'discord.js';
+import { SlashCommandSubcommandBuilder, ModalBuilder, LabelBuilder, TextInputBuilder, TextInputStyle, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.js';
 import appSubCommandInterface from '#includes/commands/appSubCommandInterface.js';
 import modal_jokes_add from '#modals/jokes/add.js';
@@ -17,7 +17,7 @@ export default class jokes_add extends appSubCommandInterface
         return this;
     }
 
-    async execute(interaction)
+    async execute(interaction: ChatInputCommandInteraction)
     {
         const modal = await new modal_jokes_add(this.main).init();
         await interaction.showModal(modal.builded);

@@ -2,7 +2,8 @@ import lang from '#includes/lang.js';
 import fs from 'fs';
 import log from '#includes/log.js';
 import entryPointApp from '#includes/entryPointApp.js';
-import {SlashCommandBuilder} from 'discord.js';
+import {SlashCommandBuilder, ChatInputCommandInteraction} from 'discord.js';
+import {Pagination, Options} from 'pagination.djs';
 export default class appCommandInterface
 {
     main: entryPointApp;
@@ -63,5 +64,12 @@ export default class appCommandInterface
             }
         }
         return this;
+    }
+
+    buildPagination(interaction: ChatInputCommandInteraction, options: Partial<Options>)
+    {
+        const paginationInteraction = interaction as unknown as ConstructorParameters<typeof Pagination>[0];
+        const pag_embed = new Pagination(paginationInteraction, options);
+        return pag_embed;
     }
 }
