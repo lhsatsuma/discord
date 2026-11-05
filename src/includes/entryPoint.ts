@@ -4,13 +4,14 @@ import lang from '#includes/lang.ts';
 import db from '#includes/database/database_pg.ts';
 import log from '#includes/log.ts';
 import utils from '#includes/utils.ts';
-import {Client, GatewayIntentBits,  Partials} from 'discord.js';
+import {Client, GatewayIntentBits,  Partials, EmbedBuilder, Colors} from 'discord.js';
 
 export default class entryPoint extends Client
 {
 	author: {name: string | undefined; iconURL: string | undefined};
 	super_admin_channel: any;
-
+    heartbeatInterval: NodeJS.Timeout;
+    msgHeartbeat: Record<string,any>;
     constructor()
     {
         super({
@@ -93,6 +94,10 @@ export default class entryPoint extends Client
         log.info(lang.translate('system', 'BOT_RUNNING'));
         log.info(lang.translate('system', 'LOAD_TIME', [load_time, utils.memoryUsage().total+'/'+utils.memoryUsage().used]));
         log.info("=".repeat(40));
+
+        if (parseInt(process.env.DISCORD_BOT_HEARTBEAT) > 0) {
+            this.sendHeartbeat();
+        }
     }
 
     loadConfig()
@@ -119,4 +124,48 @@ export default class entryPoint extends Client
         }
         return true;
     }
+
+    async sendHeartbeat()
+    {
+		if(!!this.heartbeatInterval) {
+			log.info('Clearing interval of heartbeat');
+			clearInterval(this.heartbeatInterval);
+			this.msgHeartbeat = null;
+		}
+
+		this.heartbeatInterval = setInterval(async () => {
+			if(parseInt(process.env.DISCORD_BOT_HEARTBEAT) > 0 && this.super_admin_channel){
+
+				//Reset heartbeat to a new message.
+				if(this.msgHeartbeat){
+					if(new Date().toLocaleDateString(process.env.DISCORD_BOT_LOCALE) !== this.msgHeartbeat.date){
+						this.msgHeartbeat = null;
+					}
+				}
+
+				let dateNow = new Date();
+				const exampleEmbed = new EmbedBuilder()
+					.setColor(Colors.Blue)
+					.setTitle('Sent a heartbeat!')
+					.setAuthor(this.author)
+					.setThumbnail(this.super_admin_channel.guild.iconURL())
+					.setDescription("Last Update: "+dateNow.toLocaleString(process.env.DISCORD_BOT_LOCALE))
+					.setTimestamp();
+
+				if(this.msgHeartbeat){
+					try{
+						await this.msgHeartbeat.message.edit({ embeds: [exampleEmbed] });
+						return true;
+					}catch(e){
+						log.err('Error updating heartbeat: ' + e);
+					}
+				}
+
+				this.msgHeartbeat = {
+                    date: new Date().toLocaleDateString(process.env.DISCORD_BOT_LOCALE)
+                };
+				this.msgHeartbeat.message = await this.super_admin_channel.send({ embeds: [exampleEmbed] });
+			}
+		}, parseInt(process.env.DISCORD_BOT_HEARTBEAT) * 1000);
+	}
 }
