@@ -1,5 +1,6 @@
 import config from '#includes/config.ts';
 import * as Discord from 'discord.js';
+import processRunning from '#includes/processRunning.ts';
 import lang from '#includes/lang.ts';
 import db from '#includes/database/database_pg.ts';
 import log from '#includes/log.ts';
@@ -12,6 +13,7 @@ export default class entryPoint extends Client
 	super_admin_channel: any;
     heartbeatInterval: NodeJS.Timeout;
     msgHeartbeat: Record<string,any>;
+    runningPid: processRunning;
     constructor()
     {
         super({
@@ -41,13 +43,18 @@ export default class entryPoint extends Client
             this.loadConfig();
 
             //First initialization logs
+
+            this.runningPid = new processRunning(this, global.entryMode).init();
+
+            let process_info = this.runningPid.processInfo;
+
+            await this.runningPid.saveInfo();
+            
             log.info("=".repeat(40));
-            log.info(`Starting ${global.entryMode}`);
-            log.info(`Node ${process.version} | Discord.JS v${Discord.version} | App v${process.env.npm_package_version}`);
+            log.info(`Starting ${process_info.entryMode}`);
+            log.info(`Node ${process_info.nodeVersion} | Discord.JS v${process_info.discordjsVersion} | App v${process_info.appVersion}`);
             log.info("=".repeat(40));
-
-
-
+            
             log.debug('Loading locale for: '+process.env.DISCORD_BOT_LOCALE);
             if(!await this.loadLocale())
             {

@@ -68,7 +68,7 @@ export default class entryPointApp extends entryPoint
 
 			command = await import(importFile);
             
-            commandClass = new command.default().init();
+            commandClass = new command.default(this).init();
 			await commandClass.build();
 
 			if (!!commandClass.inactive) {

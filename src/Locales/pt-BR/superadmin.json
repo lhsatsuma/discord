@@ -1,0 +1,9 @@
+{
+  "CMD_SUPERADMIN_NAME": "superadmin",
+  "CMD_SUPERADMIN_DESCRIPTION": "[SUPERADMIN] Comandos para SuperAdmin",
+
+  "SUBCMD_STATUS_NAME": "status",
+  "SUBCMD_STATUS_DESCRIPTION": "Status do BOT",
+  "SUBCMD_STATUS_APP": "Status do App",
+  "SUBCMD_STATUS_SCHEDULER": "Status do Agendador"
+}

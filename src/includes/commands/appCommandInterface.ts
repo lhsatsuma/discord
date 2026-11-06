@@ -54,7 +54,7 @@ export default class appCommandInterface
                 let importFile = importPath + subFileName;
 			    subCommand = await import(importFile);
 
-                let subCommandClass = new subCommand.default().init();
+                let subCommandClass = new subCommand.default(this.main).init();
                 await subCommandClass.build();
 
                 log.debug(lang.translate('system', 'START_LOADING_SUBCOMMAND_NAME', [subCommandClass.commandLocaleName]));
