@@ -5,5 +5,8 @@
   "SUBCMD_STATUS_NAME": "status",
   "SUBCMD_STATUS_DESCRIPTION": "Status do BOT",
   "SUBCMD_STATUS_APP": "Status do App",
-  "SUBCMD_STATUS_SCHEDULER": "Status do Agendador"
+  "SUBCMD_STATUS_SCHEDULER": "Status do Agendador",
+
+  "SUBCMD_LOGS_NAME": "logs",
+  "SUBCMD_LOGS_DESCRIPTION": "Logs do BOT"
 }

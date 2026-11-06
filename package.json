@@ -24,7 +24,6 @@
     "cronstrue": "^2.28.0",
     "discord.js": "^14.27",
     "imgur": "^2.3.0",
-    "moment": "^2.29.4",
     "node-cron": "^4.6",
     "pagination.djs": "^4.0.18",
     "pg": "^8.23.0",

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import readLastLines from 'read-last-lines';
 class log
 {
     fileName: string;
@@ -102,6 +103,11 @@ class log
             echo: true,
             die: true
         });
+	}
+
+	async getLines(lines: number = 1): Promise<string>
+	{
+		return await readLastLines.read(this.absolutPath, lines);
 	}
 }
 const instance = new log(global.entryMode);
