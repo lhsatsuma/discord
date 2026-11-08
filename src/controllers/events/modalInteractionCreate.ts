@@ -1,8 +1,8 @@
 import {ChatInputCommandInteraction, CommandInteractionOptionResolver, Events, MessageFlags, ModalSubmitInteraction} from "discord.js";
 import log from '#includes/log.ts';
-import cooldown from '#includes/commands/cooldown.ts';
+import cooldown from '#includes/cooldown.ts';
 import lang from '#includes/lang.ts';
-import entryPointApp from "#includes/entryPointApp.ts";
+import entryPointApp from "#src/entryPointApp.ts";
 export default class InteractionCreate
 {
     main: entryPointApp;
@@ -44,7 +44,7 @@ export default class InteractionCreate
             log.debug(`${interactionKey}[MDL] ${modalClass.customId}${optionsStr}`);
 
             let result = await modalClass.execute(interaction);
-            if(result == false){
+            if(result == false && interaction.isRepliable() && !interaction.deferred){
                 log.warning(lang.translate('system', 'MODAL_EXECUTE_FAILED', [interaction.customId]));
                 interaction.reply({
                     content: lang.translate('system', 'MODAL_EXECUTE_FAILED'),

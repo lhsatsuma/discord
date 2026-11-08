@@ -1,6 +1,6 @@
 import { SlashCommandSubcommandBuilder, ModalBuilder, LabelBuilder, TextInputBuilder, TextInputStyle, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
-import appSubCommandInterface from '#includes/commands/appSubCommandInterface.ts';
+import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
 import modal_memes_add from '#modals/memes/add.ts';
 export default class memes_add extends appSubCommandInterface
 {

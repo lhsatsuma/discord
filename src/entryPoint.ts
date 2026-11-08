@@ -1,5 +1,4 @@
 import config from '#includes/config.ts';
-import * as Discord from 'discord.js';
 import processRunning from '#includes/processRunning.ts';
 import lang from '#includes/lang.ts';
 import db from '#includes/database/database_pg.ts';

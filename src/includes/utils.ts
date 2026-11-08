@@ -1,5 +1,4 @@
 import {EmbedBuilder} from 'discord.js';
-import moment from 'moment';
 import log from '#includes/log.ts';
 
 declare const bot_cfg: {HEARTBEAT: number; BOT_DESCRIPTION: string; ADMIN_CHANNEL_ID: string};
@@ -26,7 +25,7 @@ class utils
 
 				//Reset heartbeat to a new message.
 				if(this.msgHeartbeat){
-					if(moment().format('YYYYMMDD') !== this.msgHeartbeat.date){
+					if(new Date().toLocaleDateString(process.env.DISCORD_BOT_LOCALE) !== this.msgHeartbeat.date){
 						this.msgHeartbeat = null;
 					}
 				}
@@ -36,7 +35,7 @@ class utils
 					.setTitle('Sent a heartbeat!')
 					.setAuthor(client.author)
 					.setThumbnail(client.super_admin_channel.guild.iconURL())
-					.setDescription("Last Update: "+dateNow.toLocaleString('pt-BR'))
+					.setDescription("Last Update: "+dateNow.toLocaleString(process.env.DISCORD_BOT_LOCALE))
 					.setTimestamp();
 				if(this.msgHeartbeat){
 					try{
@@ -50,7 +49,7 @@ class utils
 					}
 				}
 				this.msgHeartbeat = {};
-				this.msgHeartbeat.date = moment().format('YYYYMMDD');
+				this.msgHeartbeat.date = new Date().toLocaleDateString(process.env.DISCORD_BOT_LOCALE);
 				this.msgHeartbeat.message = await client.super_admin_channel.send({ embeds: [exampleEmbed] });
 			}
 		}, bot_cfg.HEARTBEAT * 1000);

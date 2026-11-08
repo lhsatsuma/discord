@@ -1,8 +1,6 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
-import appSubCommandInterface from '#includes/commands/appSubCommandInterface.ts';
-import redditUtil from '#includes/redditUtil.ts';
-import utils from '#includes/utils.ts';
+import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
 import model_memes from '#models/memes.ts';
 export default class memes_get extends appSubCommandInterface
 {
@@ -30,7 +28,7 @@ export default class memes_get extends appSubCommandInterface
 
 
         let embedMsg = null;
-        let meme = await model_memes.search(interaction.guild.id, searchStr);
+        let meme = await model_memes.search({server: interaction.guild.id}, searchStr);
 
         if(meme == false){
             interaction.reply({

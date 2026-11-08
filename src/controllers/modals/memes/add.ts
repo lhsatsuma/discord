@@ -1,7 +1,7 @@
 import { ModalSubmitInteraction, EmbedBuilder, LabelBuilder, TextInputBuilder, TextInputStyle, FileUploadBuilder} from 'discord.js';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
-import appModalInterface from '#includes/modals/appModalInterface.ts';
+import appModalInterface from '../../../interfaces/appModalInterface.ts';
 import model_memes from '#models/memes.ts';
 import ImgurClient from 'imgur';
 export default class modal_memes_add extends appModalInterface

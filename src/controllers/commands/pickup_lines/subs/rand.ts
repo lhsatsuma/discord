@@ -1,7 +1,7 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors} from 'discord.js';
 import lang from '#includes/lang.ts';
 import model_pickup_lines from '#models/pickup_lines.ts';
-import appSubCommandInterface from '#includes/commands/appSubCommandInterface.ts';
+import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
 export default class pickup_lines_rand extends appSubCommandInterface
 {
     cooldown = 3;
@@ -23,7 +23,7 @@ export default class pickup_lines_rand extends appSubCommandInterface
 
     async execute(interaction)
     {
-        let pickup_lines = await model_pickup_lines.getRandom();
+        let pickup_lines = await model_pickup_lines.getRandom({locale: lang.locale});
         
         if(pickup_lines == false){
             await interaction.reply({

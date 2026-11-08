@@ -1,4 +1,4 @@
-import entryPoint from '#includes/entryPoint.ts';
+import entryPoint from '#src/entryPoint.ts';
 import {Collection, Routes, REST} from 'discord.js';
 import fs from 'fs';
 import lang from '#includes/lang.ts';

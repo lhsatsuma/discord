@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, Collection, SlashCommandSubcommandBuilder } from 'discord.js';
 import lang from '#includes/lang.ts';
-import appSubCommandInterface from '#includes/commands/appSubCommandInterface.ts';
+import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
 import model_memes from '#models/memes.ts';
 export default class memes_list extends appSubCommandInterface
 {
@@ -19,7 +19,7 @@ export default class memes_list extends appSubCommandInterface
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        let memes_found = await model_memes.listAll(interaction.guild.id);
+        let memes_found = await model_memes.listAll({server: interaction.guild.id});
         if(memes_found == false){
             interaction.reply({
                 content: lang.translate('system', 'DB_ERROR')

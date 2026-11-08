@@ -17,7 +17,9 @@
     "#events/*": "./src/controllers/events/*",
     "#includes/*": "./src/includes/*",
     "#models/*": "./src/models/*",
-    "#controllers/*": "./src/controllers/*"
+    "#controllers/*": "./src/controllers/*",
+    "#interfaces/*": "./src/interfaces/*",
+    "#src/*": "./src/*"
   },
   "dependencies": {
     "@devraelfreeze/discordjs-pagination": "^2.7.6",

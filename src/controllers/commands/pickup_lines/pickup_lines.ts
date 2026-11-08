@@ -1,6 +1,6 @@
 import lang from '#includes/lang.ts';
 import { SlashCommandBuilder } from "discord.js";
-import appCommandInterface from "#includes/commands/appCommandInterface.ts";
+import appCommandInterface from "#interfaces/appCommandInterface.ts";
 
 export default class pickup_lines extends appCommandInterface
 {

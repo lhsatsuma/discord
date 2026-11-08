@@ -1,6 +1,6 @@
 global.entryMode = 'app';
 global.startTimeApp = new Date();
-const {default: entryPointApp} = await import('#includes/entryPointApp.ts');
+const {default: entryPointApp} = await import('#src/entryPointApp.ts');
 const main = new entryPointApp();
 try{
     main.init();

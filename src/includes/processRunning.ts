@@ -1,4 +1,4 @@
-import entryPoint from "#includes/entryPoint.ts";
+import entryPoint from "../entryPoint.ts";
 import * as Discord from 'discord.js';
 import fs from 'fs';
 import * as pidusage from 'pidusage';

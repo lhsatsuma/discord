@@ -1,6 +1,6 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
-import appSubCommandInterface from '#includes/commands/appSubCommandInterface.ts';
+import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
 import redditUtil from '#includes/redditUtil.ts';
 import utils from '#includes/utils.ts';
 import model_memes from '#models/memes.ts';
@@ -34,7 +34,7 @@ export default class memes_rand extends appSubCommandInterface
 
         //If don't have a meme from reddit or if the odds didn't hit, search the database for a meme
         if(!embedMsg || search_db){
-            let meme = await model_memes.getRandom(interaction.guild.id);
+            let meme = await model_memes.getRandom({server: interaction.guild.id});
             if(meme){
                 embedMsg = {
                     embeds: [

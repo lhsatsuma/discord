@@ -1,6 +1,6 @@
 import { ModalSubmitInteraction, MessageFlags, LabelBuilder, TextInputBuilder, TextInputStyle, Colors, EmbedBuilder} from 'discord.js';
 import lang from '#includes/lang.ts';
-import appModalInterface from '#includes/modals/appModalInterface.ts';
+import appModalInterface from '../../../interfaces/appModalInterface.ts';
 import model_jokes from '#models/jokes.ts';
 export default class modal_jokes_add extends appModalInterface
 {

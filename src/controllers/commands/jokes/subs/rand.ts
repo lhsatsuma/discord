@@ -1,7 +1,7 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
 import model_jokes from '#models/jokes.ts';
-import appSubCommandInterface from '#includes/commands/appSubCommandInterface.ts';
+import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
 export default class jokes_rand extends appSubCommandInterface
 {
     cooldown = 3;
@@ -19,7 +19,7 @@ export default class jokes_rand extends appSubCommandInterface
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        let jokes = await model_jokes.getRandom();
+        let jokes = await model_jokes.getRandom({locale: lang.locale});
         
         if(jokes == false){
             await interaction.reply({

@@ -1,7 +1,7 @@
 import lang from '#includes/lang.ts';
 import fs from 'fs';
 import log from '#includes/log.ts';
-import entryPointApp from '#includes/entryPointApp.ts';
+import entryPointApp from '../entryPointApp.ts';
 import {SlashCommandBuilder, ChatInputCommandInteraction} from 'discord.js';
 import {Pagination, type Options} from 'pagination.djs';
 export default class appCommandInterface

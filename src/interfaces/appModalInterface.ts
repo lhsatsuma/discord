@@ -1,5 +1,5 @@
 import lang from '#includes/lang.ts';
-import entryPointApp from '#includes/entryPointApp.ts';
+import entryPointApp from '../entryPointApp.ts';
 import { ModalBuilder } from 'discord.js';
 export default class appModalInterface
 {
