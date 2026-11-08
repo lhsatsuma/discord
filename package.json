@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "app": "npm run build && node --env-file=.env --trace-deprecation src/run.ts",
-    "scheduler": "npm run build && node --env-file=.env --trace-deprecation src/run.ts"
+    "scheduler": "npm run build && node --env-file=.env --trace-deprecation src/runScheduler.ts"
   },
   "imports": {
     "#commands/*": "./src/controllers/commands/*",
