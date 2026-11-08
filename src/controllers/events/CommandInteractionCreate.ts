@@ -39,9 +39,10 @@ export default class InteractionCreate
             }
 
             //If has passed options value, lets mark
-            if(interaction.options.data[0]?.options.length){
-                interaction.options.data[0].options.forEach((ipt) => {
-                    optionsStr += ` [${ipt.name}::${ipt.value}]`;
+            if(interaction.options?.data.length){
+                interaction.options?.data.forEach((ipt) => {
+                    let value = ipt.options ? ipt.options[0].value : ipt.value;
+                    optionsStr += ` [${ipt.name}::${value}]`;
                 });
             }
 

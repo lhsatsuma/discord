@@ -1,5 +1,5 @@
 import lang from '#includes/lang.ts';
-import { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } from "discord.js";
+import { SlashCommandBuilder, PermissionFlagsBits, MessageFlags, ChatInputCommandInteraction } from "discord.js";
 import appCommandInterface from "#interfaces/appCommandInterface.ts";
 import utils from '#includes/utils.ts';
 
@@ -29,7 +29,7 @@ export default class pinguser extends appCommandInterface
         return super.build();
     }
 
-    async execute(interaction)
+    async execute(interaction: ChatInputCommandInteraction)
     {
         const target = interaction.options.getUser('target');
 		const times = interaction.options.getInteger('times');

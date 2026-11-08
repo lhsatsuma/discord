@@ -1,4 +1,4 @@
-import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors} from 'discord.js';
+import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
 import model_pickup_lines from '#models/pickup_lines.ts';
 import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
@@ -21,7 +21,7 @@ export default class pickup_lines_rand extends appSubCommandInterface
         return this;
     }
 
-    async execute(interaction)
+    async execute(interaction: ChatInputCommandInteraction)
     {
         let pickup_lines = await model_pickup_lines.getRandom({locale: lang.locale});
         
