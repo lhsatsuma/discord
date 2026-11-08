@@ -81,6 +81,22 @@ export default class model_admin_channels extends model_base
         }
     }
 
+    async listByServer(fields: Pick<adminChannelFilter, 'server'>): Promise<string[] | false>
+    {
+        try {
+            const result = await this.select(
+                'channel_id',
+                [],
+                `server = ${this.bind(fields.server)}`,
+                'channel_id'
+            );
+            return result.rows.map((row: {channel_id: string}) => row.channel_id);
+        } catch (error) {
+            log.warning(`Error listing admin channels: ${error}`);
+            return false;
+        }
+    }
+
     async removeActive(fields: adminChannelFilter): Promise<boolean>
     {
         try {
