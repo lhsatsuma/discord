@@ -38,5 +38,8 @@
   "START_SENDED_COMMANDS_API": "Successfully sent commands.",
 
   "BOT_RUNNING": "Bot started successfully.",
-  "LOAD_TIME": "Startup time: {0} ms | RAM: {1}"
+  "LOAD_TIME": "Startup time: {0} ms | RAM: {1}",
+
+  "MODAL_NOT_FOUND": "Modal not found: {0}",
+  "MODAL_EXECUTE_FAILED": "Fail on executing modal: {0}"
 }

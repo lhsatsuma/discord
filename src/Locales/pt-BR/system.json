@@ -39,5 +39,8 @@
     "START_SENDED_COMMANDS_API": "Comandos enviados com sucesso!",
 
     "BOT_RUNNING": "BOT iniciado com sucesso!",
-    "LOAD_TIME": "Tempo de inicialização: {0}ms | Mem. RAM: {1}"
+    "LOAD_TIME": "Tempo de inicialização: {0}ms | Mem. RAM: {1}",
+
+    "MODAL_NOT_FOUND": "Modal não encontrado: {0}",
+    "MODAL_EXECUTE_FAILED": "Falha na execução do modal: {0}"
 }
