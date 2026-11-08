@@ -1,7 +1,7 @@
 {
   "name": "DBIKE BOT",
   "version": "2.0.0",
-  "description": "A Discord bot for the DBIKE community.",
+  "description": "A Discord bot for Discord community.",
   "author": "BigBangDBIKE (Luis Satsuma)",
   "main": "src/run.ts",
   "type": "module",

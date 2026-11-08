@@ -3,19 +3,27 @@
 
 Project tested and running with: 
 
-[![NPM Version](https://img.shields.io/badge/npm-9.8.1-green)](https://www.npmjs.com/)
-[![Node Version](https://img.shields.io/badge/nodejs-20.5.1-green)](https://nodejs.org/)
+[![NPM Version](https://img.shields.io/badge/npm-12.2.1-green)](https://www.npmjs.com/)
+[![Node Version](https://img.shields.io/badge/nodejs-26.13.0-green)](https://nodejs.org/)
 
-## NPM Dependecies
-[![DiscordJS](https://img.shields.io/npm/v/discord.js?color=success&label=DiscordJS)](https://www.npmjs.com/package/discord.js)
-[![Discord Emoji Converter](https://img.shields.io/npm/v/discord-emoji-converter?color=success&label=Discord%20Emoji%20Converter)](https://www.npmjs.com/package/discord-emoji-converter)
-[![MySQL2](https://img.shields.io/npm/v/mysql2?color=success&label=MySQL2)](https://www.npmjs.com/package/mysql2)
-[![dotenv](https://img.shields.io/npm/v/dotenv?color=success&label=dotenv)](https://www.npmjs.com/package/dotenv)
-[![Node-Cron](https://img.shields.io/npm/v/node-cron?color=success&label=Node%20Cron)](https://www.npmjs.com/package/node-cron)
-[![cronstrue](https://img.shields.io/npm/v/cronstrue?color=success&label=cronstrue)](https://www.npmjs.com/package/cronstrue)
+## NPM Dependencies
 [![@devraelfreeze/discordjs-pagination](https://img.shields.io/npm/v/@devraelfreeze/discordjs-pagination?color=success&label=DiscordJS%20Pagination)](https://www.npmjs.com/package/@devraelfreeze/discordjs-pagination)
-[![moment](https://img.shields.io/npm/v/moment?color=success&label=moment)](https://www.npmjs.com/package/moment)
+[![cronstrue](https://img.shields.io/npm/v/cronstrue?color=success&label=cronstrue)](https://www.npmjs.com/package/cronstrue)
+[![DiscordJS](https://img.shields.io/npm/v/discord.js?color=success&label=DiscordJS)](https://www.npmjs.com/package/discord.js)
+[![Imgur](https://img.shields.io/npm/v/imgur?color=success&label=Imgur)](https://www.npmjs.com/package/imgur)
+[![Node-Cron](https://img.shields.io/npm/v/node-cron?color=success&label=Node%20Cron)](https://www.npmjs.com/package/node-cron)
+[![pagination.djs](https://img.shields.io/npm/v/pagination.djs?color=success&label=pagination.djs)](https://www.npmjs.com/package/pagination.djs)
+[![pg](https://img.shields.io/npm/v/pg?color=success&label=pg)](https://www.npmjs.com/package/pg)
+[![pidusage](https://img.shields.io/npm/v/pidusage?color=success&label=pidusage)](https://www.npmjs.com/package/pidusage)
+[![read-last-lines](https://img.shields.io/npm/v/read-last-lines?color=success&label=read-last-lines)](https://www.npmjs.com/package/read-last-lines)
+[![reddit](https://img.shields.io/npm/v/reddit?color=success&label=reddit)](https://www.npmjs.com/package/reddit)
+[![terser](https://img.shields.io/npm/v/terser?color=success&label=terser)](https://www.npmjs.com/package/terser)
+[![uuid](https://img.shields.io/npm/v/uuid?color=success&label=uuid)](https://www.npmjs.com/package/uuid)
 
+### Development Dependencies
+[![@types/node](https://img.shields.io/npm/v/@types/node?color=success&label=%40types%2Fnode)](https://www.npmjs.com/package/@types/node)
+[![@types/pg](https://img.shields.io/npm/v/@types/pg?color=success&label=%40types%2Fpg)](https://www.npmjs.com/package/@types/pg)
+[![TypeScript](https://img.shields.io/npm/v/typescript?color=success&label=TypeScript)](https://www.npmjs.com/package/typescript)
 
 ## Author
 
@@ -24,9 +32,6 @@ Project tested and running with:
 
 This bot uses the Discord.JS package.
 - [Discord.JS](https://github.com/discordjs/guide)
-
-
-
 
 ## Install
 
@@ -40,21 +45,13 @@ Install Node components
 npm install
 ```
 
-The application is written in TypeScript and compiled to `dist/` when started.
+The application is written in TypeScript.
 
 Copy ``.env-example`` to ``.env`` and fill all tags
 
 Run ``create_database.sql`` on your database.
 
 ## Running the application
-
-Build the application with:
-
-```bash
-  npm run build
-```
-
-Start the application (builds before running):
 
 ```bash
   npm start
@@ -63,6 +60,6 @@ Start the application (builds before running):
 
 ## Contribute
 
-If you wanna create commands and contribute with this project, just copy one of the files on ```src/commands/```, modify and create a pull request.
+If you wanna create commands and contribute with this project, just copy one of the files on ```./src/controllers/commands/```, modify and create a pull request.
 
 All of the code it's free to use! Just be happy :)

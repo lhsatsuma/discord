@@ -31,6 +31,7 @@ export default class birthday_add extends appSubCommandInterface
 
     async execute(interaction: ChatInputCommandInteraction)
     {
+        console.log(process.env.TZ);
         let user = interaction.options.getUser('user');
         let birthdate = interaction.options.getString('birthdate');
 
@@ -60,8 +61,7 @@ export default class birthday_add extends appSubCommandInterface
             return false;
         }
 
-        let birthdate_full = new Date('1500-'+birthdate_split[1].padStart(2, '0')+'-'+birthdate_split[0].padStart(2, '0'));
-
+        let birthdate_full = new Date('1500-'+birthdate_split[1].padStart(2, '0')+'-'+birthdate_split[0].padStart(2, '0')).toUTCString();
         birthdayClass.birthdate = birthdate_full;
         birthdayClass.server = interaction.guild.id;
         birthdayClass.user_id = user.id;

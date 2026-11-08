@@ -50,11 +50,11 @@ export default class model_base
 	{
 
 		if(!fields.date_entered){
-			fields.date_entered = new Date();
+			fields.date_entered = new Date().toUTCString();
 		}
 
 		if(!fields.date_modified){
-			fields.date_modified = new Date();
+			fields.date_modified = new Date().toUTCString();
 		}
 
 		if(!fields.created_by){
