@@ -1,4 +1,4 @@
-import lang from '#includes/lang.ts';
+import log from '#includes/log.ts';
 import model_base from '#models/base.ts';
 import { fieldTypeInterface } from '../interfaces/fieldInterface.ts';
 import type { fieldInterface } from '../interfaces/fieldInterface.ts';
@@ -48,6 +48,15 @@ const birthdayFields = {
 
 type birthdayFieldName = keyof typeof birthdayFields;
 
+export interface birthdayRecord
+{
+    id: string;
+    server: string;
+    user_id: string;
+    username: string | null;
+    birthdate: Date | string;
+}
+
 export default class model_birthday extends model_base
 {
     table = 'server_members';
@@ -94,6 +103,22 @@ export default class model_birthday extends model_base
 
             return records;
         }catch(e){
+            return false;
+        }
+    }
+
+    async getBirthdaysForDate(month: number, day: number): Promise<birthdayRecord[] | false>
+    {
+        try {
+            const result = await this.select(
+                'id, server, user_id, username, birthdate',
+                [],
+                `birthdate IS NOT NULL AND EXTRACT(MONTH FROM birthdate) = ${this.bind(month)} AND EXTRACT(DAY FROM birthdate) = ${this.bind(day)}`,
+                'server, user_id'
+            );
+            return result.rows as birthdayRecord[];
+        } catch (error) {
+            log.warning(`Error selecting birthdays for ${month}/${day}: ${error}`);
             return false;
         }
     }

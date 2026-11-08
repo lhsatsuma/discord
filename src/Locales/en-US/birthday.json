@@ -35,5 +35,10 @@
   "SUBCMD_REMOVE_OPTION_USER": "User (defaults to you)",
   "SUBCMD_REMOVE_NOT_FOUND": "No birthday is registered for <@{0}>.",
   "SUBCMD_REMOVE_SUCCESS": "The birthday for <@{0}> has been removed.",
-  "SUBCMD_REMOVE_ERROR": "Could not remove the birthday."
+  "SUBCMD_REMOVE_ERROR": "Could not remove the birthday.",
+
+  "SCHEDULE_HAPPY_BIRTHDAY": "Happy birthday!",
+  "SCHEDULE_BIRTHDAY_MESSAGE": "Today is <@{0}>'s birthday!",
+  "SCHEDULE_BIRTHDAY_DATE_LABEL": "Date",
+  "SCHEDULE_BIRTHDAY_AGE_LABEL": "Age"
 }

@@ -35,5 +35,10 @@
   "SUBCMD_REMOVE_OPTION_USER": "Usuário (padrão: você)",
   "SUBCMD_REMOVE_NOT_FOUND": "Não há aniversário cadastrado para <@{0}>.",
   "SUBCMD_REMOVE_SUCCESS": "O aniversário de <@{0}> foi removido.",
-  "SUBCMD_REMOVE_ERROR": "Não foi possível remover o aniversário."
+  "SUBCMD_REMOVE_ERROR": "Não foi possível remover o aniversário.",
+
+  "SCHEDULE_HAPPY_BIRTHDAY": "Feliz aniversário!",
+  "SCHEDULE_BIRTHDAY_MESSAGE": "Hoje é o aniversário de <@{0}>!",
+  "SCHEDULE_BIRTHDAY_DATE_LABEL": "Data",
+  "SCHEDULE_BIRTHDAY_AGE_LABEL": "Idade"
 }
