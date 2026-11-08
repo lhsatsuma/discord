@@ -1,5 +1,14 @@
 import fs from 'fs';
 import readLastLines from 'read-last-lines';
+export const logLevelInterface ={
+	debug: 1,
+	info: 2,
+	warn: 4,
+	error: 8,
+	fatal: 16
+}
+export type logLevelInterface = typeof logLevelInterface[keyof typeof logLevelInterface];
+
 class log
 {
     fileName: string;
@@ -9,9 +18,11 @@ class log
 	error: string | undefined;
 	max_log_files = 99;
 	max_file_size = 10485760; //10MB
+	logLevel: logLevelInterface;
     constructor(fileName: string)
     {
         this.fileName = fileName.toString() + '.log';
+		this.logLevel = logLevelInterface[process.env.LOG_LEVEL];
     }
 
     getDatePath()
@@ -62,6 +73,9 @@ class log
 
     debug(str)
 	{
+		if(this.logLevel >= 2){
+			return true;
+		}
 		return this.add(str, {
             level: 'DEBUG',
             echo: true,
@@ -70,7 +84,10 @@ class log
 	}
 	
 	info(str)
-	{		
+	{
+		if(this.logLevel >= 4){
+			return true;
+		}
 		return this.add(str, {
             level: 'INFO',
             echo: true,
@@ -80,6 +97,9 @@ class log
 	
 	warning(str)
 	{
+		if(this.logLevel >= 8){
+			return true;
+		}
 		return this.add(str, {
             level: 'WARN',
             echo: true,
@@ -89,6 +109,9 @@ class log
 	
 	err(str)
 	{
+		if(this.logLevel < 8){
+			return true;
+		}
 		return this.add(str, {
             level: 'ERROR',
             echo: true,
