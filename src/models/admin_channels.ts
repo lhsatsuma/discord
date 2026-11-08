@@ -41,6 +41,11 @@ const adminChannelFields = {
 type adminChannelFieldName = keyof typeof adminChannelFields;
 type adminChannelFilter = Pick<Record<adminChannelFieldName, string | undefined>, 'server' | 'channel_id'>;
 
+const ADMIN_CHANNEL_CACHE_TTL_MS = 5 * 60 * 1000;
+const adminChannelCache = new Map<string, {channelIds: string[]; expiresAt: number}>();
+const adminChannelRequests = new Map<string, Promise<string[] | false>>();
+const adminChannelCacheVersions = new Map<string, number>();
+
 export default class model_admin_channels extends model_base
 {
     table = 'admin_channels';
@@ -83,18 +88,57 @@ export default class model_admin_channels extends model_base
 
     async listByServer(fields: Pick<adminChannelFilter, 'server'>): Promise<string[] | false>
     {
-        try {
-            const result = await this.select(
-                'channel_id',
-                [],
-                `server = ${this.bind(fields.server)}`,
-                'channel_id'
-            );
-            return result.rows.map((row: {channel_id: string}) => row.channel_id);
-        } catch (error) {
-            log.warning(`Error listing admin channels: ${error}`);
+        const serverId = fields.server;
+        if (!serverId) {
             return false;
         }
+
+        const cached = adminChannelCache.get(serverId);
+        if (cached && cached.expiresAt > Date.now()) {
+            return [...cached.channelIds];
+        }
+        adminChannelCache.delete(serverId);
+
+        const pending = adminChannelRequests.get(serverId);
+        if (pending) {
+            const channelIds = await pending;
+            return channelIds === false ? false : [...channelIds];
+        }
+
+        const cacheVersion = adminChannelCacheVersions.get(serverId) ?? 0;
+        const request = this.select(
+            'channel_id',
+            [],
+            `server = ${this.bind(serverId)}`,
+            'channel_id'
+        ).then((result) => {
+            const channelIds = result.rows.map((row: {channel_id: string}) => row.channel_id);
+            if ((adminChannelCacheVersions.get(serverId) ?? 0) === cacheVersion) {
+                adminChannelCache.set(serverId, {
+                    channelIds,
+                    expiresAt: Date.now() + ADMIN_CHANNEL_CACHE_TTL_MS
+                });
+            }
+            return channelIds;
+        }).catch((error: unknown) => {
+            log.warning(`Error listing admin channels: ${error}`);
+            return false as const;
+        }).finally(() => {
+            if (adminChannelRequests.get(serverId) === request) {
+                adminChannelRequests.delete(serverId);
+            }
+        });
+
+        adminChannelRequests.set(serverId, request);
+        const channelIds = await request;
+        return channelIds === false ? false : [...channelIds];
+    }
+
+    invalidateCache(serverId: string): void
+    {
+        adminChannelCache.delete(serverId);
+        adminChannelRequests.delete(serverId);
+        adminChannelCacheVersions.set(serverId, (adminChannelCacheVersions.get(serverId) ?? 0) + 1);
     }
 
     async removeActive(fields: adminChannelFilter): Promise<boolean>
@@ -104,7 +148,11 @@ export default class model_admin_channels extends model_base
                 `DELETE FROM ${this.table} WHERE server = $1 AND channel_id = $2`,
                 [fields.server, fields.channel_id]
             );
-            return (result.rowCount ?? 0) > 0;
+            const removed = (result.rowCount ?? 0) > 0;
+            if (removed && fields.server) {
+                this.invalidateCache(fields.server);
+            }
+            return removed;
         } catch (error) {
             log.warning(`Error removing admin channel: ${error}`);
             return false;
