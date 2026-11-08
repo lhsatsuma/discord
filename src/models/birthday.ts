@@ -59,7 +59,7 @@ export default class model_birthday extends model_base
     server?: string;
     user_id?: string;
     username?: string | null;
-    birthdate?: Date | string;
+    birthdate?: Date | string | null;
 
     async selectActive(fields: Pick<Record<birthdayFieldName, string | undefined>, 'server' | 'user_id'>): Promise<this | null | false>
     {

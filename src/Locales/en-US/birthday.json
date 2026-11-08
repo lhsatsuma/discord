@@ -12,5 +12,28 @@
 
   "SUBCMD_LIST_NAME": "list",
   "SUBCMD_LIST_DESCRIPTION": "List birthdays",
-  "SUBCMD_LIST_NO_MEMBERS": "No members have a birthday registered."
+  "SUBCMD_LIST_NO_MEMBERS": "No members have a birthday registered.",
+
+  "SUBCMD_ADD_CHANNEL_NAME": "add_channel",
+  "SUBCMD_ADD_CHANNEL_DESCRIPTION": "Add this channel to the birthday announcement channels",
+  "SUBCMD_ADD_CHANNEL_DUPLICATE": "Channel <#{0}> is already registered for birthday announcements.",
+  "SUBCMD_ADD_CHANNEL_SUCCESS": "Channel <#{0}> has been registered for birthday announcements.",
+  "SUBCMD_ADD_CHANNEL_ERROR": "Could not register this channel for birthday announcements.",
+
+  "SUBCMD_REMOVE_CHANNEL_NAME": "remove_channel",
+  "SUBCMD_REMOVE_CHANNEL_DESCRIPTION": "Remove this channel from birthday announcements",
+  "SUBCMD_REMOVE_CHANNEL_NOT_FOUND": "This channel is not registered for birthday announcements.",
+  "SUBCMD_REMOVE_CHANNEL_SUCCESS": "Channel <#{0}> has been removed from birthday announcements.",
+
+  "SUBCMD_LIST_CHANNELS_NAME": "list_channels",
+  "SUBCMD_LIST_CHANNELS_DESCRIPTION": "List the channels configured for birthday announcements",
+  "SUBCMD_LIST_CHANNELS_EMPTY": "No channels are registered for birthday announcements.",
+  "SUBCMD_LIST_CHANNELS_SUCCESS": "Birthday announcement channels: {0}",
+
+  "SUBCMD_REMOVE_NAME": "remove",
+  "SUBCMD_REMOVE_DESCRIPTION": "Remove a registered birthday",
+  "SUBCMD_REMOVE_OPTION_USER": "User (defaults to you)",
+  "SUBCMD_REMOVE_NOT_FOUND": "No birthday is registered for <@{0}>.",
+  "SUBCMD_REMOVE_SUCCESS": "The birthday for <@{0}> has been removed.",
+  "SUBCMD_REMOVE_ERROR": "Could not remove the birthday."
 }

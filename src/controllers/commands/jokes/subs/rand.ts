@@ -19,7 +19,8 @@ export default class jokes_rand extends appSubCommandBase
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        let jokes = await model_jokes.getRandom({locale: lang.locale});
+        let jokeClass = new model_jokes();
+        let jokes = await jokeClass.getRandom({locale: lang.locale});
         
         if(jokes == false){
             await interaction.reply({

@@ -33,7 +33,8 @@ export default class modal_jokes_add extends appModalBase
     {
         let content = interaction.fields.getTextInputValue(`${this.name}_content`);
 
-        let result = await model_jokes.insert({
+        let jokeClass = new model_jokes();
+        let result = await jokeClass.insert({
             locale: lang.locale,
             content: content,
             created_by: interaction.user.id

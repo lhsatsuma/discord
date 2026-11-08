@@ -12,5 +12,28 @@
 
   "SUBCMD_LIST_NAME": "lista",
   "SUBCMD_LIST_DESCRIPTION": "Lista de Aniversários",
-  "SUBCMD_LIST_NO_MEMBERS": "Não existem membros com data de aniversário cadastrado!"
+  "SUBCMD_LIST_NO_MEMBERS": "Não existem membros com data de aniversário cadastrado!",
+
+  "SUBCMD_ADD_CHANNEL_NAME": "adicionar_canal",
+  "SUBCMD_ADD_CHANNEL_DESCRIPTION": "Adicionar este canal à lista de canais de aniversário",
+  "SUBCMD_ADD_CHANNEL_DUPLICATE": "O canal <#{0}> já está cadastrado para os avisos de aniversário.",
+  "SUBCMD_ADD_CHANNEL_SUCCESS": "O canal <#{0}> foi cadastrado para os avisos de aniversário.",
+  "SUBCMD_ADD_CHANNEL_ERROR": "Não foi possível cadastrar este canal para os avisos de aniversário.",
+
+  "SUBCMD_REMOVE_CHANNEL_NAME": "remover_canal",
+  "SUBCMD_REMOVE_CHANNEL_DESCRIPTION": "Remover este canal da lista de avisos de aniversário",
+  "SUBCMD_REMOVE_CHANNEL_NOT_FOUND": "Este canal não está cadastrado para os avisos de aniversário.",
+  "SUBCMD_REMOVE_CHANNEL_SUCCESS": "O canal <#{0}> foi removido dos avisos de aniversário.",
+
+  "SUBCMD_LIST_CHANNELS_NAME": "listar_canais",
+  "SUBCMD_LIST_CHANNELS_DESCRIPTION": "Listar os canais configurados para avisos de aniversário",
+  "SUBCMD_LIST_CHANNELS_EMPTY": "Não há canais cadastrados para os avisos de aniversário.",
+  "SUBCMD_LIST_CHANNELS_SUCCESS": "Canais de avisos de aniversário: {0}",
+
+  "SUBCMD_REMOVE_NAME": "remover",
+  "SUBCMD_REMOVE_DESCRIPTION": "Remover um aniversário cadastrado",
+  "SUBCMD_REMOVE_OPTION_USER": "Usuário (padrão: você)",
+  "SUBCMD_REMOVE_NOT_FOUND": "Não há aniversário cadastrado para <@{0}>.",
+  "SUBCMD_REMOVE_SUCCESS": "O aniversário de <@{0}> foi removido.",
+  "SUBCMD_REMOVE_ERROR": "Não foi possível remover o aniversário."
 }

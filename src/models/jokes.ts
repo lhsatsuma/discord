@@ -42,7 +42,7 @@ const jokeFields = {
 
 type jokeFieldName = keyof typeof jokeFields;
 
-class model_jokes extends model_base
+export default class model_jokes extends model_base
 {
     table = 'jokes';
     fields = jokeFields;
@@ -57,6 +57,3 @@ class model_jokes extends model_base
         }
     }
 }
-
-const instance = new model_jokes();
-export default instance;
