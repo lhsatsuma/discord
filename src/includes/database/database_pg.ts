@@ -47,7 +47,7 @@ class database_pg
 	async testConnection()
 	{
 		try{
-			await this.createPool().connect();
+			(await this.createPool().connect()).release();
 			return {status: true};
 		}catch(e){
 			return {status: false, err: e.message};

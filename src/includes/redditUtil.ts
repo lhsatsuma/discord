@@ -1,6 +1,8 @@
 import reddit from 'reddit';
 import {Colors, EmbedBuilder} from 'discord.js';
 import utils from '#includes/utils.ts';
+import log from '#includes/log.ts';
+import lang from '#includes/lang.ts';
 class redditUtil
 {
     validateCfg()
@@ -18,10 +20,17 @@ class redditUtil
                 appSecret: process.env.REDDIT_CLIENT_SECRET,
             });
         }
+
+        throw new Error(lang.translate('memes', 'NO_CONFIG_REDDIT'));
     }
 
     async random()
     {
+        if(!process.env.REDDIT_SUBREDDIT_MEMES){
+            log.info(lang.translate('memes', 'NO_SUBREDDIT_FOUND'));
+            return null;
+        }
+
         let subreddits = process.env.REDDIT_SUBREDDIT_MEMES.split(',');
         let rand_subreddit = subreddits[utils.randomInt(0, subreddits.length - 1)];
         let res = await this.lib().get(`/r/${rand_subreddit}/top`,{

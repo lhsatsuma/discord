@@ -4,6 +4,8 @@
 
   "SUBCMD_ADD_NAME": "add",
   "SUBCMD_ADD_DESCRIPTION": "Add a birthday",
+  "SUBCMD_ADD_OPTION_USER": "User",
+  "SUBCMD_ADD_OPTION_BIRTHDATE": "Birth date (DD/MM)",
   "SUBCMD_ADD_SUCCESS": "Birthday added successfully.",
   "SUBCMD_ADD_ERROR": "Could not add the birthday.",
   "SUBCMD_ADD_FORMAT_ERROR": "Invalid format. Use MM/DD, for example: 12/31.",

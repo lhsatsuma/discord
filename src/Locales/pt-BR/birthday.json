@@ -4,6 +4,8 @@
 
   "SUBCMD_ADD_NAME": "adicionar",
   "SUBCMD_ADD_DESCRIPTION": "Adicionar um novo aniversário",
+  "SUBCMD_ADD_OPTION_USER": "Usuário",
+  "SUBCMD_ADD_OPTION_BIRTHDATE": "Data do Aniversário (DD/MM)",
   "SUBCMD_ADD_SUCCESS": "Aniversário adicionado com sucesso",
   "SUBCMD_ADD_ERROR": "Erro ao adicionar o aniversário",
   "SUBCMD_ADD_FORMAT_ERROR": "Formato inválido! Utilize o formato DD/MM. Ex: 31/12",

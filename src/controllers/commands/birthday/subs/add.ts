@@ -21,7 +21,7 @@ export default class birthday_add extends appSubCommandBase
             )
             .addStringOption(option =>
                 option.setName('birthdate')
-                    .setDescription(lang.translate('birthday', `SUBCMD_${this.name.toUpperCase()}_OPTION_DAY`))
+                    .setDescription(lang.translate('birthday', `SUBCMD_${this.name.toUpperCase()}_OPTION_BIRTHDATE`))
                     .setRequired(true)
                     .setMinLength(5)
                     .setMaxLength(5)
@@ -40,8 +40,8 @@ export default class birthday_add extends appSubCommandBase
         if(birthdate_split.length != 2
             || isNaN(parseInt(birthdate_split[0]))
             || isNaN(parseInt(birthdate_split[1]))
-            || parseInt(birthdate_split[0]) > 12
-            || parseInt(birthdate_split[1]) > 31
+            || parseInt(birthdate_split[0]) > 31
+            || parseInt(birthdate_split[1]) > 12
         ){
             await interaction.reply({
                 content: lang.translate(this.parentName, `SUBCMD_${this.name.toUpperCase()}_FORMAT_ERROR`),

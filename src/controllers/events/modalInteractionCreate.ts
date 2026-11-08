@@ -43,14 +43,24 @@ export default class InteractionCreate
             
             log.debug(`${interactionKey}[MDL] ${modalClass.customId}${optionsStr}`);
 
-            let result = await modalClass.execute(interaction);
-            if(result == false && interaction.isRepliable() && !interaction.deferred){
-                log.warning(lang.translate('system', 'MODAL_EXECUTE_FAILED', [interaction.customId]));
-                interaction.reply({
-                    content: lang.translate('system', 'MODAL_EXECUTE_FAILED'),
-                    flags: [MessageFlags.Ephemeral]
-                });
-                return;
+            try {
+                let result = await modalClass.execute(interaction);
+                if(result == false && interaction.isRepliable() && !interaction.deferred){
+                    log.warning(lang.translate('system', 'MODAL_EXECUTE_FAILED', [interaction.customId]));
+                    interaction.reply({
+                        content: lang.translate('system', 'MODAL_EXECUTE_FAILED'),
+                        flags: [MessageFlags.Ephemeral]
+                    });
+                    return;
+                }
+            } catch (err) {
+                log.warning('Error executing command: '+err.message+ ' on '+err.stack);
+                if(!interaction.replied) {
+                    await interaction.reply({
+                        content: lang.translate('system', 'MODAL_EXECUTE_FAILED'),
+                        flags: [MessageFlags.Ephemeral]
+                    });
+                }
             }
 
             return true;

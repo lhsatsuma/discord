@@ -24,6 +24,10 @@ export default class InteractionCreate
                 return false;
             }
             let command = this.main.commands.get(interaction.commandName);
+            if(!command){
+                log.err('[Commands] Command not found: '+interaction.commandName);
+                return false;
+            }
             let commandCD = interaction.commandName;
             let commandName = commandCD;
             let coolDown = command.cooldown;
@@ -61,7 +65,10 @@ export default class InteractionCreate
 
             if(!cooldownLeft){
                 try {
-                    await command.execute(interaction);
+                    let result = await command.execute(interaction);
+                    if(!result){
+                        throw new Error('Command failed!');
+                    }
                     if(!!coolDown){
                         cooldown.insertUserCd(interaction.user.id, commandCD, coolDown);
                     }

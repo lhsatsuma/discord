@@ -3,7 +3,7 @@ global.startTimeApp = new Date();
 const {default: entryPointApp} = await import('#src/entryPointApp.ts');
 const main = new entryPointApp();
 try{
-    main.init();
+    await main.init();
 }catch(e){
     console.error('Error initializing app: '+e+ ' on: '+e.stack);
     process.exit();

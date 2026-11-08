@@ -26,5 +26,8 @@
 
   "SUBCMD_GET_NAME": "buscar",
   "SUBCMD_GET_DESCRIPTION": "Mostra um meme pelo ID/Nome",
-  "SUBCMD_GET_OPTION_SEARCH": "ID/Nome do Meme"
+  "SUBCMD_GET_OPTION_SEARCH": "ID/Nome do Meme",
+
+  "NO_SUBREDDIT_FOUND": "Não existem subreddits configurados!",
+  "NO_CONFIG_REDDIT": "Não existe configuração para a API do Reddit"
 }

@@ -86,7 +86,7 @@ export default class model_birthday extends model_base
     async getMembersBirthdays(fields: Pick<Record<birthdayFieldName, string>, 'server'>): Promise<any[] | false>
     {
         try{
-            const res = await this.select(Object.keys(this.fields).join(', '), [], `server = ${this.bind(fields.server)}`, '', 1);
+            const res = await this.select(Object.keys(this.fields).join(', '), [], `server = ${this.bind(fields.server)}`, 'EXTRACT(MONTH FROM birthdate), EXTRACT(DAY FROM birthdate)');
             const records = res.rows;
             if (!records) {
                 return [];
