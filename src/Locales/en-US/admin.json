@@ -1,0 +1,15 @@
+{
+  "CMD_ADMIN_NAME": "admin",
+  "CMD_ADMIN_DESCRIPTION": "Manage server administration channels",
+
+  "SUBCMD_ADD_CHANNEL_NAME": "add_channel",
+  "SUBCMD_ADD_CHANNEL_DESCRIPTION": "Add this channel to the administration channels",
+  "SUBCMD_ADD_CHANNEL_DUPLICATE": "Channel <#{0}> is already registered as an administration channel.",
+  "SUBCMD_ADD_CHANNEL_SUCCESS": "Channel <#{0}> has been registered as an administration channel.",
+  "SUBCMD_ADD_CHANNEL_ERROR": "Could not register this administration channel.",
+
+  "SUBCMD_REMOVE_CHANNEL_NAME": "remove_channel",
+  "SUBCMD_REMOVE_CHANNEL_DESCRIPTION": "Remove this channel from the administration channels",
+  "SUBCMD_REMOVE_CHANNEL_NOT_FOUND": "This channel is not registered as an administration channel.",
+  "SUBCMD_REMOVE_CHANNEL_SUCCESS": "Channel <#{0}> has been removed from the administration channels."
+}

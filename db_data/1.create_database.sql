@@ -136,5 +136,16 @@ CREATE TABLE
       created_by varchar(255) default 'SYSTEM',
       server varchar(255) not null,
       channel_id varchar(255) not null,
-      CONSTRAINT fk_jokes_server FOREIGN KEY (server) REFERENCES servers (server)
+      CONSTRAINT fk_birthday_channels_server FOREIGN KEY (server) REFERENCES servers (server)
+   );
+
+CREATE TABLE
+   admin_channels (
+      id varchar(36) NOT NULL PRIMARY KEY,
+      date_entered timestamp DEFAULT now (),
+      date_modified timestamp DEFAULT now (),
+      created_by varchar(255) default 'SYSTEM',
+      server varchar(255) not null,
+      channel_id varchar(255) not null,
+      CONSTRAINT fk_admin_channels_server FOREIGN KEY (server) REFERENCES servers (server)
    );
