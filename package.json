@@ -1,16 +1,43 @@
 {
+  "name": "DBIKE BOT",
+  "version": "2.0.0",
+  "description": "A Discord bot for Discord community.",
+  "author": "BigBangDBIKE (Luis Satsuma)",
+  "main": "src/run.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "build-dev": "tsc",
+    "start": "npm run build && node --env-file=.env --trace-deprecation src/run.ts",
+    "dev": "npm run build-dev && node --env-file=.env --trace-deprecation src/run.ts"
+  },
+  "imports": {
+    "#commands/*": "./src/controllers/commands/*",
+    "#modals/*": "./src/controllers/modals/*",
+    "#events/*": "./src/controllers/events/*",
+    "#includes/*": "./src/includes/*",
+    "#models/*": "./src/models/*",
+    "#controllers/*": "./src/controllers/*",
+    "#interfaces/*": "./src/interfaces/*",
+    "#src/*": "./src/*"
+  },
   "dependencies": {
     "@devraelfreeze/discordjs-pagination": "^2.7.6",
     "cronstrue": "^2.28.0",
-    "discord-emoji-converter": "^1.2.8",
-    "discord.js": "^14.7.1",
-    "dotenv": "^16.3.0",
+    "discord.js": "^14.27",
     "imgur": "^2.3.0",
-    "moment": "^2.29.4",
-    "mysql2": "^3.3.5",
-    "node-cron": "^3.0.2",
-    "pidusage": "^3.0.2",
+    "node-cron": "^4.6",
+    "pagination.djs": "^4.0.18",
+    "pg": "^8.23.0",
+    "pidusage": "^4.1.0",
     "read-last-lines": "^1.8.0",
-    "reddit": "^1.2.1"
+    "reddit": "^1.2.1",
+    "terser": "^5.51.2",
+    "uuid": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.15.0",
+    "typescript": "^5.9.0"
   }
 }

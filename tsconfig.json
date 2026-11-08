@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "paths": {
+      "#commands/*": ["./src/controllers/commands/*"],
+      "#modals/*": ["./src/controllers/modals/*"],
+      "#events/*": ["./src/controllers/events/*"],
+      "#includes/*": ["./src/includes/*"],
+      "#models/*": ["./src/models/*"],
+      "#controllers/*": ["./src/controllers/*"],
+      "#interfaces/*": ["./src/interfaces/*"],
+      "#src/*": ["./src/*"]
+    },
+    "types": ["node"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["src/**/*.ts", "src/run.ts"]
+}
