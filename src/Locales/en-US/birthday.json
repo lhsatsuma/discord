@@ -1,0 +1,14 @@
+{
+  "CMD_BIRTHDAY_NAME": "birthday",
+  "CMD_BIRTHDAY_DESCRIPTION": "Member birthdays",
+
+  "SUBCMD_ADD_NAME": "add",
+  "SUBCMD_ADD_DESCRIPTION": "Add a birthday",
+  "SUBCMD_ADD_SUCCESS": "Birthday added successfully.",
+  "SUBCMD_ADD_ERROR": "Could not add the birthday.",
+  "SUBCMD_ADD_FORMAT_ERROR": "Invalid format. Use MM/DD, for example: 12/31.",
+
+  "SUBCMD_LIST_NAME": "list",
+  "SUBCMD_LIST_DESCRIPTION": "List birthdays",
+  "SUBCMD_LIST_NO_MEMBERS": "No members have a birthday registered."
+}
