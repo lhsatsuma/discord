@@ -1,8 +1,8 @@
 import { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, MessageFlags} from 'discord.js';
 import lang from '#includes/lang.ts';
-import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
+import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import model_birthday from '#models/birthday.ts';
-export default class birthday_add extends appSubCommandInterface
+export default class birthday_add extends appSubCommandBase
 {
     cooldown = 3;
     parentName = 'birthday';

@@ -18,7 +18,7 @@ The application uses aliases such as `#commands/*`, `#events/*`, `#models/*`, an
 | `src/controllers/commands/` | Slash commands and subcommands |
 | `src/controllers/modals/` | Modal definitions and submit handlers |
 | `src/controllers/events/` | Discord event listeners |
-| `src/interfaces/` | Base classes for commands, subcommands, modals, and field metadata |
+| `src/interfaces/` | TypeScript contracts and shared command/subcommand base classes |
 | `src/models/` | Database models and shared persistence behavior |
 | `src/includes/` | Shared configuration, logging, localization, database, and utilities |
 | `src/locales/<locale>/` | JSON translation modules, for example `pt-BR/jokes.json` |

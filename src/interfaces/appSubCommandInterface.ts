@@ -1,43 +1,19 @@
-import lang from '#includes/lang.ts';
-import {SlashCommandSubcommandBuilder, ChatInputCommandInteraction} from 'discord.js';
-import {Pagination, type Options} from 'pagination.djs';
-import entryPointApp from '../entryPointApp.ts';
-export default class appSubCommandInterface
+import type { ChatInputCommandInteraction, SlashCommandSubcommandBuilder } from 'discord.js';
+import type entryPointApp from '../entryPointApp.ts';
+import type { Options } from 'pagination.djs';
+
+export default interface appSubCommandInterface
 {
     main: entryPointApp;
     builded: SlashCommandSubcommandBuilder;
     parentName: string;
     name: string;
-    cooldown: number = 0;
-	inactive: boolean = false;
+    cooldown: number;
+    inactive: boolean;
     commandLocaleName: string;
     fullCommandLocaleName: string;
-    constructor(main: entryPointApp)
-    {
-        this.main = main;
-        return this;
-    }
-    init()
-    {
-        this.commandLocaleName = lang.translate(this.parentName, 'SUBCMD_'+this.name.toUpperCase()+'_NAME');
-        return this;
-    }
-
-    build(): any
-    {
-        return Promise.resolve(this);
-    }
-
-    async execute(_interaction: any): Promise<any>
-    {
-        return true;
-    }
-
-    buildPagination(interaction: ChatInputCommandInteraction, options: Partial<Options> = null)
-    {
-        const paginationInteraction = interaction as unknown as ConstructorParameters<typeof Pagination>[0];
-        const pag_embed = new Pagination(paginationInteraction, options);
-        return pag_embed;
-    }
-
+    init(): this;
+    build(): any;
+    execute(interaction: ChatInputCommandInteraction): Promise<any>;
+    buildPagination(interaction: ChatInputCommandInteraction, options?: Partial<Options>): any;
 }

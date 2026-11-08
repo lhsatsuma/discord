@@ -1,8 +1,8 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
-import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
+import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import log from '#includes/log.ts';
-export default class superadmin_logs extends appSubCommandInterface
+export default class superadmin_logs extends appSubCommandBase
 {
     cooldown = 3;
     parentName = 'superadmin';

@@ -1,10 +1,10 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
-import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
+import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import redditUtil from '#includes/redditUtil.ts';
 import utils from '#includes/utils.ts';
 import model_memes from '#models/memes.ts';
-export default class memes_rand extends appSubCommandInterface
+export default class memes_rand extends appSubCommandBase
 {
     cooldown = 3;
     parentName = 'memes';

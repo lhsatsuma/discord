@@ -1,9 +1,9 @@
 import lang from '#includes/lang.ts';
 import { SlashCommandBuilder, PermissionFlagsBits, MessageFlags, ChatInputCommandInteraction } from "discord.js";
-import appCommandInterface from "#interfaces/appCommandInterface.ts";
+import appCommandBase from "#includes/commands/appCommandBase.ts";
 import utils from '#includes/utils.ts';
 
-export default class pinguser extends appCommandInterface
+export default class pinguser extends appCommandBase
 {
     name = 'pinguser';
     cooldown = 30;

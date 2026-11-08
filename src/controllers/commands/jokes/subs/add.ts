@@ -1,8 +1,8 @@
 import { SlashCommandSubcommandBuilder, ModalBuilder, LabelBuilder, TextInputBuilder, TextInputStyle, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
-import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
+import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import modal_jokes_add from '#modals/jokes/add.ts';
-export default class jokes_add extends appSubCommandInterface
+export default class jokes_add extends appSubCommandBase
 {
     cooldown = 3;
     parentName = 'jokes';

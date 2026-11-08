@@ -1,8 +1,8 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
 import model_pickup_lines from '#models/pickup_lines.ts';
-import appSubCommandInterface from '#interfaces/appSubCommandInterface.ts';
-export default class pickup_lines_add extends appSubCommandInterface
+import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
+export default class pickup_lines_add extends appSubCommandBase
 {
     cooldown = 3;
     parentName = 'pickup_lines';
