@@ -62,4 +62,6 @@ Run ``create_database.sql`` on your database.
 
 If you wanna create commands and contribute with this project, just copy one of the files on ```./src/controllers/commands/```, modify and create a pull request.
 
+For an overview of the project and a step-by-step guide to adding slash commands, see [Architecture](./docs/architecture.md) and [Adding commands](./docs/adding-commands.md).
+
 All of the code it's free to use! Just be happy :)
