@@ -2,6 +2,7 @@ import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, Chat
 import lang from '#includes/lang.ts';
 import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import log from '#includes/log.ts';
+import config from '#includes/config.ts';
 export default class superadmin_logs extends appSubCommandBase
 {
     cooldown = 3;
@@ -19,7 +20,7 @@ export default class superadmin_logs extends appSubCommandBase
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        if(process.env.DISCORD_BOT_ADMIN_CHANNEL != interaction.channel.id){
+        if(config.DISCORD_BOT_ADMIN_CHANNEL != interaction.channel?.id){
             await interaction.reply({
                 content: lang.translate('globals', 'CHANNEL_NOT_ALLOWED'),
                 flags: [MessageFlags.Ephemeral]
@@ -50,8 +51,13 @@ export default class superadmin_logs extends appSubCommandBase
         await interaction.deferReply();
         await interaction.deleteReply();
 
+        const channel = interaction.channel;
+        if (!channel?.isSendable()) {
+            return false;
+        }
+
         for (const ipt of resultArr) {
-            await interaction.channel.send({
+            await channel.send({
                 content: ipt
             });
         }

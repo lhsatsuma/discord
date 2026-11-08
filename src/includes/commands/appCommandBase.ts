@@ -9,13 +9,13 @@ import type appCommandInterface from '#interfaces/appCommandInterface.ts';
 export default class appCommandBase implements appCommandInterface
 {
     main: entryPointApp;
-    builded: SlashCommandBuilder;
-    name: string;
+    builded: SlashCommandBuilder | null = null;
+    name: string = '';
     hasSubcommands = false;
     cooldown = 0;
     inactive = false;
-    commandLocaleName: string;
-    fullCommandLocaleName: string;
+    commandLocaleName: string= '';
+    fullCommandLocaleName: string= '';
     subcommands: any[] = [];
 
     constructor(main: entryPointApp)
@@ -61,7 +61,7 @@ export default class appCommandBase implements appCommandInterface
 
                 log.debug(lang.translate('system', 'START_LOADING_SUBCOMMAND_NAME', [subCommandClass.commandLocaleName]));
 
-                this.builded.addSubcommand(subCommandClass.builded);
+                this.builded?.addSubcommand(subCommandClass.builded);
                 this.subcommands[subCommandClass.commandLocaleName] = subCommandClass;
             }
         }

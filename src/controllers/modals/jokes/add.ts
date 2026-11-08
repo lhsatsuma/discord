@@ -10,6 +10,11 @@ export default class modal_jokes_add extends appModalBase
 
     async buildComponents()
     {
+        const modal = this.builded;
+        if (!modal) {
+            throw new Error('Jokes add modal must be initialized before building components.');
+        }
+
         let textLabel = new LabelBuilder()
                 .setLabel(lang.translate(this.parentName, `MODAL_${this.name.toUpperCase()}_COMPONENT_LABEL_CONTENT`))
                 .setDescription(lang.translate(this.parentName, `MODAL_${this.name.toUpperCase()}_COMPONENT_DESCRIPTION_CONTENT`))
@@ -20,7 +25,7 @@ export default class modal_jokes_add extends appModalBase
                         .setMaxLength(1_000)
                         .setMinLength(10)
                 );
-        this.builded.addLabelComponents(textLabel);
+        modal.addLabelComponents(textLabel);
         return this;
     }
 

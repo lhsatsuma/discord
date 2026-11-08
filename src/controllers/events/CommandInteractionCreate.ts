@@ -1,4 +1,4 @@
-import {ChatInputCommandInteraction, Events, MessageFlags} from "discord.js";
+import {Events, MessageFlags} from "discord.js";
 import log from '#includes/log.ts';
 import cooldown from '#includes/cooldown.ts';
 import lang from '#includes/lang.ts';
@@ -13,8 +13,8 @@ export default class InteractionCreate
     }
     init()
     {
-        this.main.on(Events.InteractionCreate, async (interaction: ChatInputCommandInteraction) => {
-            if (!interaction.isChatInputCommand() || !interaction.isCommand()) return;
+        this.main.on(Events.InteractionCreate, async (interaction) => {
+            if (!interaction.isChatInputCommand()) return;
 
             if(!interaction.guildId){
                 interaction.reply({
@@ -36,10 +36,12 @@ export default class InteractionCreate
             //If is subcommand, lets check all vars
             if(interaction.options.getSubcommand(false)){
                 let subCommandName = interaction.options.getSubcommand(false);
-                commandCD += ':'+subCommandName;
-                commandName += ':'+subCommandName;
-                command = command.subcommands[subCommandName];
-                coolDown = command ? command.cooldown : 0;
+                if(subCommandName){
+                    commandCD += ':'+subCommandName;
+                    commandName += ':'+subCommandName;
+                    command = command.subcommands[subCommandName];
+                    coolDown = command ? command.cooldown : 0;
+                }
             }
 
             //If has passed options value, lets mark
@@ -54,7 +56,7 @@ export default class InteractionCreate
             };
             appendOptionValues(interaction.options.data);
 
-            let interactionKey = `[${interaction.guild.name}#${interaction.channel.name}@${interaction.user.username}]`;
+            let interactionKey = `[${interaction.guild?.name}#${interaction.channelId}@${interaction.user.username}]`;
             log.debug(`${interactionKey}[CMD] ${commandName}${optionsStr}`);
 
             let cooldownLeft = 0;
@@ -73,7 +75,7 @@ export default class InteractionCreate
                         cooldown.insertUserCd(interaction.user.id, commandCD, coolDown);
                     }
                 } catch (err) {
-                    log.warning('Error executing command: '+err.message+ ' on '+err.stack);
+                    log.warning('Error executing command: '+err);
                     if(!interaction.replied) {
                         await interaction.reply({
                             content: lang.translate('globals', 'CMD_ERROR'),

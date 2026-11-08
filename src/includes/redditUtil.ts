@@ -1,37 +1,34 @@
-import reddit from 'reddit';
+import Reddit from 'reddit';
 import {Colors, EmbedBuilder} from 'discord.js';
 import utils from '#includes/utils.ts';
 import log from '#includes/log.ts';
 import lang from '#includes/lang.ts';
+import config from '#includes/config.ts';
 class redditUtil
 {
-    validateCfg()
-    {
-        return process.env.REDDIT_USER && !!process.env.REDDIT_PASSWORD && !!process.env.REDDIT_APP_ID && !!process.env.REDDIT_CLIENT_SECRET;
-    }
-
     lib()
     {
-        if(this.validateCfg()){
-            return new reddit({
-                username: process.env.REDDIT_USER,
-                password: process.env.REDDIT_PASSWORD,
-                appId: process.env.REDDIT_APP_ID,
-                appSecret: process.env.REDDIT_CLIENT_SECRET,
-            });
+        const {REDDIT_USER, REDDIT_PASSWORD, REDDIT_APP_ID, REDDIT_CLIENT_SECRET} = config;
+        if (!REDDIT_USER || !REDDIT_PASSWORD || !REDDIT_APP_ID || !REDDIT_CLIENT_SECRET) {
+            throw new Error(lang.translate('memes', 'NO_CONFIG_REDDIT'));
         }
 
-        throw new Error(lang.translate('memes', 'NO_CONFIG_REDDIT'));
+        return new Reddit({
+            username: REDDIT_USER,
+            password: REDDIT_PASSWORD,
+            appId: REDDIT_APP_ID,
+            appSecret: REDDIT_CLIENT_SECRET,
+        });
     }
 
     async random()
     {
-        if(!process.env.REDDIT_SUBREDDIT_MEMES){
+        if(!config.REDDIT_SUBREDDIT_MEMES.length){
             log.info(lang.translate('memes', 'NO_SUBREDDIT_FOUND'));
             return null;
         }
 
-        let subreddits = process.env.REDDIT_SUBREDDIT_MEMES.split(',');
+        let subreddits = config.REDDIT_SUBREDDIT_MEMES;
         let rand_subreddit = subreddits[utils.randomInt(0, subreddits.length - 1)];
         let res = await this.lib().get(`/r/${rand_subreddit}/top`,{
             t: 'year',
@@ -39,7 +36,7 @@ class redditUtil
         });
 
         if(res.data.children.length) {
-            const childrens = res.data.children.filter((child) => !child.data.is_video);
+            const childrens = res.data.children.filter((child: any) => !child.data.is_video);
 
             let randInt = utils.randomInt(0, childrens.length - 1);
             return {

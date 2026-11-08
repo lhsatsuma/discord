@@ -1,14 +1,15 @@
-import entryPoint from "../entryPoint.ts";
+import entryPoint from "#src/entryPoint.ts";
 import * as Discord from 'discord.js';
 import fs from 'fs';
-import * as pidusage from 'pidusage';
+import pidusage from 'pidusage';
+import config from '#includes/config.ts';
 export default class processRunning
 {
     name: string;
     main: entryPoint;
     basePath: string;
     filePath: string;
-    processInfo: Record<string,any>;
+    processInfo: Record<string,any> | undefined;
     constructor(main: entryPoint, entryMode: string)
     {
         this.main = main;
@@ -69,14 +70,14 @@ export default class processRunning
             discordjsVersion: Discord.version,
             appVersion: process.env.npm_package_version,
             startAppTime: global.startTimeApp,
-            heartbeatInterval: parseInt(process.env.DISCORD_BOT_HEARTBEAT),
+            heartbeatInterval: config.DISCORD_BOT_HEARTBEAT,
         }   
     }
 
     checkRunningPid()
     {
         try {
-			process.kill(this.processInfo.pid, 0);
+			process.kill(this.processInfo?.pid, 0);
 			return true;
 		} catch(e) {
 			return false;
@@ -85,7 +86,7 @@ export default class processRunning
 
     async getUptime()
     {
-        const stats = await pidusage.default([process.pid]);
+        const stats = await pidusage([process.pid]);
         let uptime = stats[process.pid].elapsed / 1000;
 
         let days = Math.floor(uptime / (3600*24));

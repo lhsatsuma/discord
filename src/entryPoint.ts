@@ -8,10 +8,10 @@ import {Client, GatewayIntentBits,  Partials, EmbedBuilder, Colors} from 'discor
 
 export default class entryPoint extends Client
 {
-	author: {name: string | undefined; iconURL: string | undefined};
+	author: {name: string; iconURL: string};
 	super_admin_channel: any;
-    heartbeatInterval: NodeJS.Timeout;
-    msgHeartbeat: Record<string,any>;
+    heartbeatInterval: NodeJS.Timeout  | null = null;
+    msgHeartbeat: Record<string,any> | null = null;
     runningPid: processRunning;
     constructor()
     {
@@ -32,20 +32,21 @@ export default class entryPoint extends Client
 			]
 		});
 
-		this.author = {name: process.env.DISCORD_BOT_NAME, iconURL: process.env.DISCORD_BOT_ICON};
+		this.author = {name: config.DISCORD_BOT_NAME, iconURL: config.DISCORD_BOT_ICON};
+        this.runningPid = new processRunning(this, global.entryMode).init();
     }
     init()
     {
         return new Promise(async (resolve, reject) => {
 
-            //Load Configs first
-            this.loadConfig();
-
             //First initialization logs
 
-            this.runningPid = new processRunning(this, global.entryMode).init();
-
             let process_info = this.runningPid.processInfo;
+
+            if(!process_info){
+                resolve(false);
+                return;
+            }
 
             await this.runningPid.saveInfo();
             
@@ -54,13 +55,13 @@ export default class entryPoint extends Client
             log.info(`Node ${process_info.nodeVersion} | Discord.JS v${process_info.discordjsVersion} | App v${process_info.appVersion}`);
             log.info("=".repeat(40));
             
-            log.debug('Loading locale for: '+process.env.DISCORD_BOT_LOCALE);
+            log.debug('Loading locale for: '+config.DISCORD_BOT_LOCALE);
             if(!await this.loadLocale())
             {
                 log.fatal('Failed to load locale, aborting execution!');
                 reject(false);
             }
-            log.info(lang.translate('system', 'LOCALE_SET', [process.env.DISCORD_BOT_LOCALE]));
+            log.info(lang.translate('system', 'LOCALE_SET', [config.DISCORD_BOT_LOCALE]));
 
             log.debug(lang.translate('system', 'START_LOADING_DATABASE'));
 
@@ -72,10 +73,10 @@ export default class entryPoint extends Client
             log.debug(lang.translate('system', 'START_LOADED_DATABASE'));
 
             this.once('clientReady', async () => {
-                this.super_admin_channel = this.channels.cache.find(channel => channel.id === process.env.DISCORD_BOT_ADMIN_CHANNEL);
+                this.super_admin_channel = this.channels.cache.find(channel => channel.id === config.DISCORD_BOT_ADMIN_CHANNEL);
 
-                this.user.setActivity({
-                    name: process.env.DISCORD_BOT_DESCRIPTION,
+                this.user?.setActivity({
+                    name: config.DISCORD_BOT_DESCRIPTION,
                 });
 
                 resolve(true);
@@ -83,9 +84,9 @@ export default class entryPoint extends Client
 
             log.debug(lang.translate('system', 'START_TRY_CONNECT_API'));
             try{
-                let logged_in = await this.login(process.env.DISCORD_BOT_TOKEN);
+                let logged_in = await this.login(config.DISCORD_BOT_TOKEN);
                 if(logged_in){
-                    log.debug(lang.translate('system', 'START_CONNECTED_API', [this.user.tag]));
+                    log.debug(lang.translate('system', 'START_CONNECTED_API', [this.user?.tag]));
                 }
             }catch(e){
                 log.fatal(lang.translate('system', 'START_TRY_CONNECT_API_ERR', [e]));
@@ -101,16 +102,9 @@ export default class entryPoint extends Client
         log.info(lang.translate('system', 'LOAD_TIME', [load_time, utils.memoryUsage().total+'/'+utils.memoryUsage().used]));
         log.info("=".repeat(40));
 
-        if (parseInt(process.env.DISCORD_BOT_HEARTBEAT) > 0) {
+        if (config.DISCORD_BOT_HEARTBEAT > 0) {
             this.sendHeartbeat();
         }
-    }
-
-    loadConfig()
-    {
-        var config_ = new config();
-        config_.init();
-        return this;
     }
 
     async loadLocale()
@@ -140,11 +134,11 @@ export default class entryPoint extends Client
 		}
 
 		this.heartbeatInterval = setInterval(async () => {
-			if(parseInt(process.env.DISCORD_BOT_HEARTBEAT) > 0 && this.super_admin_channel){
+			if(config.DISCORD_BOT_HEARTBEAT > 0 && this.super_admin_channel){
 
 				//Reset heartbeat to a new message.
 				if(this.msgHeartbeat){
-					if(new Date().toLocaleDateString(process.env.DISCORD_BOT_LOCALE) !== this.msgHeartbeat.date){
+					if(new Date().toLocaleDateString(config.DISCORD_BOT_LOCALE) !== this.msgHeartbeat.date){
 						this.msgHeartbeat = null;
 					}
 				}
@@ -155,7 +149,7 @@ export default class entryPoint extends Client
 					.setTitle('Sent a heartbeat!')
 					.setAuthor(this.author)
 					.setThumbnail(this.super_admin_channel.guild.iconURL())
-					.setDescription("Last Update: "+dateNow.toLocaleString(process.env.DISCORD_BOT_LOCALE))
+					.setDescription("Last Update: "+dateNow.toLocaleString(config.DISCORD_BOT_LOCALE))
 					.setTimestamp();
 
 				if(this.msgHeartbeat){
@@ -168,10 +162,10 @@ export default class entryPoint extends Client
 				}
 
 				this.msgHeartbeat = {
-                    date: new Date().toLocaleDateString(process.env.DISCORD_BOT_LOCALE)
+                    date: new Date().toLocaleDateString(config.DISCORD_BOT_LOCALE)
                 };
 				this.msgHeartbeat.message = await this.super_admin_channel.send({ embeds: [exampleEmbed] });
 			}
-		}, parseInt(process.env.DISCORD_BOT_HEARTBEAT) * 1000);
+		}, config.DISCORD_BOT_HEARTBEAT * 1000);
 	}
 }

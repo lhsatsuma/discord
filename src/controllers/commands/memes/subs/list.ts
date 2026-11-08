@@ -19,14 +19,14 @@ export default class memes_list extends appSubCommandBase
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        let memes_found = await model_memes.listAll({server: interaction.guild.id});
+        let memes_found = await model_memes.listAll({server: interaction.guild?.id});
         if(memes_found == false){
             interaction.reply({
                 content: lang.translate('system', 'DB_ERROR')
             });
             return true;
         }
-        memes_found = memes_found.map((meme_found) => { return `#${meme_found.order_id} | ${meme_found.description}`});
+        memes_found = memes_found.map((meme_found: Record<string, any>) => { return `#${meme_found.order_id} | ${meme_found.description}`});
         
         let pag_builded = this.buildPagination(interaction, {limit: 20});
         pag_builded.setDescriptions(memes_found);

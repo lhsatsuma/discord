@@ -4,7 +4,7 @@ import log from '#includes/log.ts';
 import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 export default class model_base
 {
-    table: string;
+    table: string = '';
     bindParams: any[] = [];
     fields: Record<string, fieldInterface> = {};
     constructor()
@@ -31,7 +31,7 @@ export default class model_base
 		for (const column of Object.keys(this.fields)) {
 			const value = Object.prototype.hasOwnProperty.call(values, column)
 				? values[column]
-				: this[column];
+				: Reflect.get(this, column);
 			if (value !== undefined) {
 				fields[column] = value;
 			}
@@ -127,7 +127,7 @@ export default class model_base
 			: await this.insert(values);
 	}
 
-	async select(fields: string = '*', inner_join: any[] = [], where: string = '', order_by: string = '', limit: number = null, group_by: string = ''): Promise<any>
+	async select(fields: string = '*', inner_join: any[] = [], where: string = '', order_by: string = '', limit: number = 0, group_by: string = ''): Promise<any>
     {
 		try{
 			let SQL = "SELECT "+fields+" FROM "+this.table;

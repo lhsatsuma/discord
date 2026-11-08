@@ -4,7 +4,7 @@ import type entryPointApp from '../entryPointApp.ts';
 export default interface appModalInterface
 {
     main: entryPointApp;
-    builded: ModalBuilder;
+    builded: ModalBuilder | null;
     name: string;
     parentName: string;
     commandName: string;

@@ -1,6 +1,7 @@
 import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, ChatInputCommandInteraction} from 'discord.js';
 import lang from '#includes/lang.ts';
 import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
+import config from '#includes/config.ts';
 export default class superadmin_status extends appSubCommandBase
 {
     cooldown = 3;
@@ -18,7 +19,7 @@ export default class superadmin_status extends appSubCommandBase
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        if(process.env.DISCORD_BOT_ADMIN_CHANNEL != interaction.channel.id){
+        if(config.DISCORD_BOT_ADMIN_CHANNEL != interaction.channel?.id){
             await interaction.reply({
                 content: lang.translate('globals', 'CHANNEL_NOT_ALLOWED'),
                 flags: [MessageFlags.Ephemeral]
@@ -28,13 +29,13 @@ export default class superadmin_status extends appSubCommandBase
 
         const uptime = await this.main.runningPid.getUptime();
         const file_info = this.main.runningPid.getFileInfo();
-        const date = new Date().toLocaleDateString(process.env.DISCORD_BOT_LOCALE);
+        const date = new Date().toLocaleDateString(config.DISCORD_BOT_LOCALE);
 
-        const pagEmbed = this.buildPagination(interaction);
+        const pagEmbed = this.buildPagination(interaction, {});
         pagEmbed.addEmbeds([
             new EmbedBuilder()
                 .setTitle(lang.translate('superadmin', `SUBCMD_${this.name.toUpperCase()}_APP`))
-                .setThumbnail(process.env.DISCORD_BOT_ICON)
+                .setThumbnail(config.DISCORD_BOT_ICON)
                 .setDescription(`**${date}**\n\nUptime: ${uptime}`)
                 .addFields([
                     { name: 'OS', value: String(file_info.platform ?? 'N/A'), inline: true},

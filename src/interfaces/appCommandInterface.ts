@@ -5,7 +5,7 @@ import type { Options } from 'pagination.djs';
 export default interface appCommandInterface
 {
     main: entryPointApp;
-    builded: SlashCommandBuilder;
+    builded: SlashCommandBuilder | null;
     name: string;
     hasSubcommands: boolean;
     cooldown: number;

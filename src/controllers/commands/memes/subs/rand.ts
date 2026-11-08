@@ -4,6 +4,7 @@ import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import redditUtil from '#includes/redditUtil.ts';
 import utils from '#includes/utils.ts';
 import model_memes from '#models/memes.ts';
+import config from '#includes/config.ts';
 export default class memes_rand extends appSubCommandBase
 {
     cooldown = 3;
@@ -23,9 +24,9 @@ export default class memes_rand extends appSubCommandBase
     {
         let search_db = true;
         let embedMsg = null;
-        if(parseInt(process.env.REDDIT_MEMES_ODD) > 0){
+        if(config.REDDIT_MEMES_ODD > 0){
             let randInt = utils.randomInt(1, 10);
-            if(randInt <= parseInt(process.env.REDDIT_MEMES_ODD)){
+            if(randInt <= config.REDDIT_MEMES_ODD){
                 search_db = false;
                 embedMsg = await redditUtil.random();
             }
@@ -34,7 +35,7 @@ export default class memes_rand extends appSubCommandBase
 
         //If don't have a meme from reddit or if the odds didn't hit, search the database for a meme
         if(!embedMsg || search_db){
-            let meme = await model_memes.getRandom({server: interaction.guild.id});
+            let meme = await model_memes.getRandom({server: interaction.guild?.id});
             if(meme){
                 embedMsg = {
                     embeds: [

@@ -8,12 +8,12 @@ export default class appSubCommandBase implements appSubCommandInterface
 {
     main: entryPointApp;
     builded: any;
-    parentName: string;
-    name: string;
+    parentName: string = '';
+    name: string = '';
     cooldown = 0;
     inactive = false;
-    commandLocaleName: string;
-    fullCommandLocaleName: string;
+    commandLocaleName: string = '';
+    fullCommandLocaleName: string = '';
 
     constructor(main: entryPointApp)
     {
@@ -37,7 +37,7 @@ export default class appSubCommandBase implements appSubCommandInterface
         return true;
     }
 
-    buildPagination(interaction: ChatInputCommandInteraction, options: Partial<Options> = null)
+    buildPagination(interaction: ChatInputCommandInteraction, options: Partial<Options>)
     {
         const paginationInteraction = interaction as unknown as ConstructorParameters<typeof Pagination>[0];
         return new Pagination(paginationInteraction, options);

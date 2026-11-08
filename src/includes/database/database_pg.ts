@@ -1,13 +1,14 @@
 import { Pool, type QueryResult, type QueryResultRow} from 'pg';
 import log from '#includes/log.ts';
+import config from '#includes/config.ts';
 
 class database_pg
 {
-	host: string | undefined;
-	host_user: string | undefined;
-	host_pwd: string | undefined;
-	db_name: string | undefined;
-	db_port: string | undefined;
+	host: string;
+	host_user: string;
+	host_pwd: string;
+	db_name: string;
+	db_port: number;
 	last_error: string;
 	pool?: Pool;
 	connection: any;
@@ -15,11 +16,11 @@ class database_pg
 
 	constructor()
 	{
-		this.host = process.env.DB_HOST;
-		this.host_user = process.env.DB_USER;
-		this.host_pwd = process.env.DB_PASSWORD;
-		this.db_name = process.env.DB_NAME;
-		this.db_port = process.env.DB_PORT;
+		this.host = config.DB_HOST;
+		this.host_user = config.DB_USER;
+		this.host_pwd = config.DB_PASSWORD;
+		this.db_name = config.DB_NAME;
+		this.db_port = config.DB_PORT;
 		this.last_error = '';
 	}
 	createPool()
@@ -44,13 +45,13 @@ class database_pg
 		return this.pool;
 	}
 
-	async testConnection()
+	async testConnection(): Promise <any>
 	{
 		try{
 			(await this.createPool().connect()).release();
 			return {status: true};
 		}catch(e){
-			return {status: false, err: e.message};
+			return {status: false, err: e};
 		}
 	}
 

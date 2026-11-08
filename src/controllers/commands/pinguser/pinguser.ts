@@ -32,14 +32,20 @@ export default class pinguser extends appCommandBase
     async execute(interaction: ChatInputCommandInteraction)
     {
         const target = interaction.options.getUser('target');
-		const times = interaction.options.getInteger('times');
+		const times = interaction.options.getInteger('times') ?? 0;
 		interaction.reply({
 			content: lang.translate(this.name, `CMD_${this.name.toUpperCase()}_SUCCESS`),
 			flags: [MessageFlags.Ephemeral],
 		});
+
+		const channel = interaction.channel;
+        if (!channel?.isSendable()) {
+            return false;
+        }
+		
 		let messageSended = null;
 		for(let i=0;i<times;i++){
-		 	messageSended = await interaction.channel.send(lang.translate(this.name, `CMD_${this.name.toUpperCase()}_SUCCESS_USER`, [target.id]));
+		 	messageSended = await channel.send(lang.translate(this.name, `CMD_${this.name.toUpperCase()}_SUCCESS_USER`, [target?.id]));
 			await utils.sleep(1500);
 			if(i<times-1) {
 				await messageSended.delete();

@@ -61,7 +61,7 @@ export default class model_birthday extends model_base
     username?: string | null;
     birthdate?: Date | string;
 
-    async selectActive(fields: Pick<Record<birthdayFieldName, string>, 'server' | 'user_id'>): Promise<this | null | false>
+    async selectActive(fields: Pick<Record<birthdayFieldName, string | undefined>, 'server' | 'user_id'>): Promise<this | null | false>
     {
         this.resetFields();
 
@@ -83,7 +83,7 @@ export default class model_birthday extends model_base
         }
     }
 
-    async getMembersBirthdays(fields: Pick<Record<birthdayFieldName, string>, 'server'>): Promise<any[] | false>
+    async getMembersBirthdays(fields: Pick<Record<birthdayFieldName, string | undefined>, 'server'>): Promise<any[] | false>
     {
         try{
             const res = await this.select(Object.keys(this.fields).join(', '), [], `server = ${this.bind(fields.server)}`, 'EXTRACT(MONTH FROM birthdate), EXTRACT(DAY FROM birthdate)');

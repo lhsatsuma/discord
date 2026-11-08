@@ -1,6 +1,5 @@
-import {ChatInputCommandInteraction, CommandInteractionOptionResolver, Events, MessageFlags, ModalSubmitInteraction} from "discord.js";
+import {Events, MessageFlags} from "discord.js";
 import log from '#includes/log.ts';
-import cooldown from '#includes/cooldown.ts';
 import lang from '#includes/lang.ts';
 import entryPointApp from "#src/entryPointApp.ts";
 export default class InteractionCreate
@@ -13,7 +12,7 @@ export default class InteractionCreate
     }
     init()
     {
-        this.main.on(Events.InteractionCreate, async (interaction: ModalSubmitInteraction) => {
+        this.main.on(Events.InteractionCreate, async (interaction) => {
             if (!interaction.isModalSubmit()) return;
 
             //The interaction is a modal submit interaction, we need to check if the modal is registered in the modals collection
@@ -31,13 +30,14 @@ export default class InteractionCreate
                 return;
             }
 
-            let interactionKey = `[${interaction.guild.name}#${interaction.channel.name}@${interaction.user.username}]`;
+            let interactionKey = `[${interaction.guild?.name}#${interaction.channelId}@${interaction.user.username}]`;
 
             //If has passed options value, lets mark
             let optionsStr = '';
             if(interaction.fields.fields.size > 0){
                 for (const [key, value] of interaction.fields.fields) {
-                    optionsStr += ` [${key}::${value['value']}]`;
+                    let val_option = 'value' in value ? value.value : 'values' in value ? value.values.join(', ') : '';
+                    optionsStr += ` [${key}::${val_option}]`;
                 }
             }
             
@@ -54,7 +54,7 @@ export default class InteractionCreate
                     return;
                 }
             } catch (err) {
-                log.warning('Error executing command: '+err.message+ ' on '+err.stack);
+                log.warning('Error executing command: '+err);
                 if(!interaction.replied) {
                     await interaction.reply({
                         content: lang.translate('system', 'MODAL_EXECUTE_FAILED'),

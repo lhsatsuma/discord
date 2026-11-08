@@ -4,7 +4,7 @@ class cooldown
 	constructor()
 	{
 	}
-	insertUserCd(user, command, cd)
+	insertUserCd(user: string, command: string, cd: number)
     {
 		let key_cd = user+command;
 		let expires = new Date();
@@ -15,7 +15,7 @@ class cooldown
             delete this.cdMessages[key_cd];
           }, cd * 1000);
     }
-	checkUserCd(user, command)
+	checkUserCd(user: string, command: string)
 	{
 		let key_cd = user+command;
 		if(typeof this.cdMessages[key_cd] != 'undefined'){

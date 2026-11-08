@@ -1,5 +1,6 @@
 import fs from 'fs';
 import log from '#includes/log.ts';
+import config from '#includes/config.ts';
 class lang
 {
     availableLocales = [
@@ -14,12 +15,12 @@ class lang
     ];
     locale;
     translates: Record<string, Record<string, string>> = {};
-    constructor(locale)
+    constructor(locale: string)
     {
         this.locale = locale;
     }
 
-    validateLocale(locale)
+    validateLocale(locale: string)
     {
         return this.availableLocales.filter((available) => available.value === locale).length;
     }
@@ -79,5 +80,5 @@ class lang
         return true;
     }
 }
-const instance = new lang(process.env.DISCORD_BOT_LOCALE);
+const instance = new lang(config.DISCORD_BOT_LOCALE);
 export default instance;

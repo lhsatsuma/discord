@@ -3,6 +3,7 @@ import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
 import appModalBase from '#includes/commands/appModalBase.ts';
 import model_memes from '#models/memes.ts';
+import config from '#includes/config.ts';
 import ImgurClient from 'imgur';
 export default class modal_memes_add extends appModalBase
 {
@@ -12,6 +13,11 @@ export default class modal_memes_add extends appModalBase
 
     async buildComponents()
     {
+        const modal = this.builded;
+        if (!modal) {
+            throw new Error('Memes add modal must be initialized before building components.');
+        }
+
         let textLabel = new LabelBuilder()
                 .setLabel(lang.translate(this.parentName, `MODAL_${this.name.toUpperCase()}_COMPONENT_LABEL_DESCRIPTION`))
                 .setDescription(lang.translate(this.parentName, `MODAL_${this.name.toUpperCase()}_COMPONENT_DESCRIPTION_DESCRIPTION`))
@@ -22,7 +28,7 @@ export default class modal_memes_add extends appModalBase
                         .setMaxLength(1_000)
                         .setMinLength(2)
                 );
-        this.builded.addLabelComponents(textLabel);
+        modal.addLabelComponents(textLabel);
 
         let uploadLabel = new LabelBuilder()
                 .setLabel(lang.translate(this.parentName, `MODAL_${this.name.toUpperCase()}_COMPONENT_LABEL_CONTENT`))
@@ -32,7 +38,7 @@ export default class modal_memes_add extends appModalBase
                         .setCustomId(`${this.name}_content`)
                         .setMinValues(1)
                 );
-        this.builded.addLabelComponents(uploadLabel);
+        modal.addLabelComponents(uploadLabel);
         return this;
     }
 
@@ -47,12 +53,12 @@ export default class modal_memes_add extends appModalBase
             return false;
         }
 
-        const client = new ImgurClient({ clientId: process.env.IMGUR_CLIENT_ID });
+        const client = new ImgurClient({ clientId: config.IMGUR_CLIENT_ID });
         const response = await client.upload({
             image: uploadedFile.url,
             title: description,
             type: 'url',
-            description: 'Meme uploaded via API '+process.env.DISCORD_BOT_NAME,
+            description: 'Meme uploaded via API '+config.DISCORD_BOT_NAME,
         });
 
         if(!response.success){
@@ -62,7 +68,7 @@ export default class modal_memes_add extends appModalBase
 
 
         let result = await model_memes.insert({
-            server: interaction.guild.id,
+            server: interaction.guild?.id,
             description: description,
             content: response.data.link,
             created_by: interaction.user.id

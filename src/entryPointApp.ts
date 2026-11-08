@@ -3,10 +3,18 @@ import {Collection, Routes, REST} from 'discord.js';
 import fs from 'fs';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
+import config from '#includes/config.ts';
 export default class entryPointApp extends entryPoint
 {
 	commands: Collection<string, any>;
 	modals: Collection<string, any>;
+
+	constructor()
+	{
+		super();
+		this.commands = new Collection();
+		this.modals = new Collection();
+	}
 
     async init(): Promise<void>
     {
@@ -80,17 +88,17 @@ export default class entryPointApp extends entryPoint
 		}
 
 		// The put method is used to fully refresh all commands in the guild with the current set
-		if (process.env.DISCORD_BOT_SEND_COMMANDS_API == 'true') {
+		if (config.DISCORD_BOT_SEND_COMMANDS_API) {
 			log.debug(lang.translate('system', 'START_SENDING_COMMANDS_API'));
 			try {
-				const rest = new REST().setToken(process.env.DISCORD_BOT_TOKEN);
+				const rest = new REST().setToken(config.DISCORD_BOT_TOKEN);
 				const data = await rest.put(
-					Routes.applicationCommands(process.env.DISCORD_BOT_ID),
+					Routes.applicationCommands(config.DISCORD_BOT_ID),
 					{body: commandsTmp},
 				)
 				log.debug(lang.translate('system', 'START_SENDED_COMMANDS_API'));
 			}catch(e){
-				log.fatal(lang.translate('system', 'START_SENDING_COMMANDS_API_ERR', [e.message]));
+				log.fatal(lang.translate('system', 'START_SENDING_COMMANDS_API_ERR', [e]));
 			}
 		}
 

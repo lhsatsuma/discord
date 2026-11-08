@@ -31,18 +31,24 @@ export default class birthday_add extends appSubCommandBase
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        console.log(process.env.TZ);
-        let user = interaction.options.getUser('user');
-        let birthdate = interaction.options.getString('birthdate');
+        const user = interaction.options.getUser('user');
+        const birthdate = interaction.options.getString('birthdate');
 
-        let birthdate_split = birthdate.split('/');
-        
-        if(birthdate_split.length != 2
-            || isNaN(parseInt(birthdate_split[0]))
-            || isNaN(parseInt(birthdate_split[1]))
-            || parseInt(birthdate_split[0]) > 31
-            || parseInt(birthdate_split[1]) > 12
-        ){
+        if(!user || !birthdate){
+            return false;
+        }
+
+        const birthdateParts = /^(\d{2})\/(\d{2})$/.exec(birthdate);
+        const isUsLocale = lang.locale?.startsWith('en');
+        const firstPart = birthdateParts ? Number(birthdateParts[1]) : 0;
+        const secondPart = birthdateParts ? Number(birthdateParts[2]) : 0;
+        const month = isUsLocale ? firstPart : secondPart;
+        const day = isUsLocale ? secondPart : firstPart;
+        const daysInMonth = month >= 1 && month <= 12
+            ? new Date(Date.UTC(2000, month, 0)).getUTCDate()
+            : 0;
+
+        if (!birthdateParts || day < 1 || day > daysInMonth) {
             await interaction.reply({
                 content: lang.translate(this.parentName, `SUBCMD_${this.name.toUpperCase()}_FORMAT_ERROR`),
                 flags: [MessageFlags.Ephemeral]
@@ -52,7 +58,7 @@ export default class birthday_add extends appSubCommandBase
 
         let birthdayClass = new model_birthday();
         
-        const activeBirthday = await birthdayClass.selectActive({server: interaction.guild.id, user_id: user.id});
+        const activeBirthday = await birthdayClass.selectActive({server: interaction.guild?.id, user_id: user.id});
         if(activeBirthday === false){
             await interaction.reply({
                 content: lang.translate('globals', 'DB_ERROR'),
@@ -61,9 +67,9 @@ export default class birthday_add extends appSubCommandBase
             return false;
         }
 
-        let birthdate_full = new Date('1500-'+birthdate_split[1].padStart(2, '0')+'-'+birthdate_split[0].padStart(2, '0')).toUTCString();
-        birthdayClass.birthdate = birthdate_full;
-        birthdayClass.server = interaction.guild.id;
+        const birthdateFull = new Date(Date.UTC(2000, month - 1, day)).toUTCString();
+        birthdayClass.birthdate = birthdateFull;
+        birthdayClass.server = interaction.guild?.id;
         birthdayClass.user_id = user.id;
         birthdayClass.username = user.username;
         birthdayClass.created_by = interaction.user.id;

@@ -24,11 +24,14 @@ export default class memes_get extends appSubCommandBase
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        const searchStr = interaction.options.getString('search').toString();
+        const searchStr = interaction.options.getString('search');
+        if(!searchStr){
+            return false;
+        }
 
 
         let embedMsg = null;
-        let meme = await model_memes.search({server: interaction.guild.id}, searchStr);
+        let meme = await model_memes.search({server: interaction.guild?.id}, searchStr);
 
         if(meme == false){
             interaction.reply({

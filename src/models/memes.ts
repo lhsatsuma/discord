@@ -47,7 +47,7 @@ const memeFields = {
 } as const satisfies Record<string, fieldInterface>;
 
 type memeFieldName = keyof typeof memeFields;
-type memeServerFilter = Pick<Record<memeFieldName, string>, 'server'>;
+type memeServerFilter = Pick<Record<memeFieldName, string | undefined>, 'server'>;
 
 class model_memes extends model_base
 {

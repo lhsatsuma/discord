@@ -1,5 +1,6 @@
 import fs from 'fs';
 import readLastLines from 'read-last-lines';
+import config from '#includes/config.ts';
 export const logLevelInterface ={
 	debug: 1,
 	info: 2,
@@ -22,7 +23,7 @@ class log
     constructor(fileName: string)
     {
         this.fileName = fileName.toString() + '.log';
-		this.logLevel = logLevelInterface[process.env.LOG_LEVEL];
+		this.logLevel = logLevelInterface[config.LOG_LEVEL as keyof typeof logLevelInterface];
     }
 
     getDatePath()
@@ -37,7 +38,7 @@ class log
 		}
 
 		this.datePath = this.getDatePath();
-		let dirPath = process.env.LOG_DIR;
+		let dirPath = config.LOG_DIR;
 		if(dirPath.substring(dirPath.length - 1, dirPath.length) !== '/'){
 			dirPath += '/';
 		}
@@ -52,7 +53,7 @@ class log
 
 		let date = new Date();
 		
-		str = date.toLocaleString(process.env.DISCORD_BOT_LOCALE) + '[' + process.pid.toString()+']['+options.level.padEnd(5, ' ')+'] '+str;
+		str = date.toLocaleString(config.DISCORD_BOT_LOCALE) + '[' + process.pid.toString()+']['+options.level.padEnd(5, ' ')+'] '+str;
 
 		this.setBasePath();
 
@@ -71,7 +72,7 @@ class log
 		return str;
 	}
 
-    debug(str)
+    debug(str: string)
 	{
 		if(this.logLevel >= 2){
 			return true;
@@ -83,7 +84,7 @@ class log
         });
 	}
 	
-	info(str)
+	info(str: string)
 	{
 		if(this.logLevel >= 4){
 			return true;
@@ -95,7 +96,7 @@ class log
         });
 	}
 	
-	warning(str)
+	warning(str: string)
 	{
 		if(this.logLevel >= 8){
 			return true;
@@ -107,7 +108,7 @@ class log
         });
 	}
 	
-	err(str)
+	err(str: string)
 	{
 		if(this.logLevel < 8){
 			return true;
@@ -119,7 +120,7 @@ class log
         });
 	}
 	
-	fatal(str)
+	fatal(str: string)
 	{
 		return this.add(str, {
             level: 'FATAL',

@@ -20,9 +20,13 @@ export default class birthday_lsit extends appSubCommandBase
     {
         let birthdayClass = new model_birthday();
         
-        let birthdays = await birthdayClass.getMembersBirthdays({server: interaction.guild.id});
+        let birthdays = await birthdayClass.getMembersBirthdays({server: interaction.guild?.id});
 
         if(birthdays == false){
+            await interaction.reply({
+                content: lang.translate('globals', 'DB_ERROR'),
+                flags: [MessageFlags.Ephemeral]
+            });
             return false;
         }
 

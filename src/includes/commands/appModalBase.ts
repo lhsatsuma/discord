@@ -6,10 +6,10 @@ import type appModalInterface from '../../interfaces/appModalInterface.ts';
 export default class appModalBase implements appModalInterface
 {
     main: entryPointApp;
-    builded: ModalBuilder;
-    name: string;
-    parentName: string;
-    commandName: string;
+    builded: ModalBuilder | null = null;
+    name: string = '';
+    parentName: string = '';
+    commandName: string = '';
     cooldown = 0;
     inactive = false;
     subcommands: any[] = [];
