@@ -41,7 +41,7 @@ export default class InteractionCreate
                 }
             }
             
-            log.debug(`${interactionKey}[MDL] ${modalClass.customId}${optionsStr}`);
+            log.debug(`${interactionKey}[MDL] ${modalClass.commandName}${optionsStr}`);
 
             try {
                 let result = await modalClass.execute(interaction);
