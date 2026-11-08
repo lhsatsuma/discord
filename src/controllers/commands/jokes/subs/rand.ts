@@ -51,5 +51,6 @@ export default class jokes_rand extends appSubCommandBase
         }
 
         await interaction.reply(replyData);
+        return true;
     }
 }

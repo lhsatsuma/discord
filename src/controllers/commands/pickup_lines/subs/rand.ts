@@ -62,5 +62,6 @@ export default class pickup_lines_rand extends appSubCommandBase
             content: textRet,
             embeds: [embedMsg]
         });
+        return true;
     }
 }

@@ -51,5 +51,6 @@ export default class pinguser extends appCommandBase
 				await messageSended.delete();
 			}
 		}
+		return true;
     }
 }

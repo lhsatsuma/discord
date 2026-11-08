@@ -60,5 +60,6 @@ export default class memes_rand extends appSubCommandBase
             return false;
         }
         await interaction.reply(embedMsg);
+        return true;
     }
 }

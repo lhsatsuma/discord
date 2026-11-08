@@ -1,4 +1,4 @@
-import { ModalSubmitInteraction, EmbedBuilder, LabelBuilder, TextInputBuilder, TextInputStyle, FileUploadBuilder} from 'discord.js';
+import { ModalSubmitInteraction, EmbedBuilder, LabelBuilder, TextInputBuilder, TextInputStyle, FileUploadBuilder, MessageFlags} from 'discord.js';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
 import appModalBase from '#includes/commands/appModalBase.ts';
@@ -25,7 +25,7 @@ export default class modal_memes_add extends appModalBase
                     new TextInputBuilder()
                         .setCustomId(`${this.name}_description`)
                         .setStyle(TextInputStyle.Paragraph)
-                        .setMaxLength(1_000)
+                        .setMaxLength(255)
                         .setMinLength(2)
                 );
         modal.addLabelComponents(textLabel);
@@ -73,6 +73,14 @@ export default class modal_memes_add extends appModalBase
             content: response.data.link,
             created_by: interaction.user.id
         });
+
+        if(!result){
+            await interaction.reply({
+                content: lang.translate(this.parentName, `SUBCMD_${this.name.toUpperCase()}_ERROR`),
+                flags: [MessageFlags.Ephemeral]
+            });
+            return true;
+        }
 
         await interaction.reply({
             content: lang.translate(this.parentName, `SUBCMD_${this.name.toUpperCase()}_SUCCESS`),
