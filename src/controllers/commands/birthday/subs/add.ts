@@ -51,7 +51,14 @@ export default class birthday_add extends appSubCommandInterface
 
         let birthdayClass = new model_birthday();
         
-        await birthdayClass.selectActive({server: interaction.guild.id, user_id: user.id});
+        const activeBirthday = await birthdayClass.selectActive({server: interaction.guild.id, user_id: user.id});
+        if(activeBirthday === false){
+            await interaction.reply({
+                content: lang.translate('globals', 'DB_ERROR'),
+                flags: [MessageFlags.Ephemeral]
+            });
+            return false;
+        }
 
         let birthdate_full = new Date('1500-'+birthdate_split[1].padStart(2, '0')+'-'+birthdate_split[0].padStart(2, '0'));
 
@@ -60,9 +67,7 @@ export default class birthday_add extends appSubCommandInterface
         birthdayClass.user_id = user.id;
         birthdayClass.username = user.username;
         birthdayClass.created_by = interaction.user.id;
-        console.log(await birthdayClass.save());
-
-        console.log(birthdayClass.id);
+        
         if(!await birthdayClass.save()){
             await interaction.reply({
                 content: lang.translate(this.parentName, `SUBCMD_${this.name.toUpperCase()}_FORMAT_ERROR`),

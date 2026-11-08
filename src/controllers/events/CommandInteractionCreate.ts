@@ -1,4 +1,4 @@
-import {ChatInputCommandInteraction, CommandInteractionOptionResolver, Events, MessageFlags} from "discord.js";
+import {ChatInputCommandInteraction, Events, MessageFlags} from "discord.js";
 import log from '#includes/log.ts';
 import cooldown from '#includes/cooldown.ts';
 import lang from '#includes/lang.ts';
@@ -39,12 +39,16 @@ export default class InteractionCreate
             }
 
             //If has passed options value, lets mark
-            if(interaction.options?.data.length){
-                interaction.options?.data.forEach((ipt) => {
-                    let value = ipt.options ? ipt.options[0].value : ipt.value;
-                    optionsStr += ` [${ipt.name}::${value}]`;
+            const appendOptionValues = (options: typeof interaction.options.data) => {
+                options.forEach((option) => {
+                    if (option.options?.length) {
+                        appendOptionValues(option.options);
+                    } else if ('value' in option) {
+                        optionsStr += ` [${option.name}::${option.value}]`;
+                    }
                 });
-            }
+            };
+            appendOptionValues(interaction.options.data);
 
             let interactionKey = `[${interaction.guild.name}#${interaction.channel.name}@${interaction.user.username}]`;
             log.debug(`${interactionKey}[CMD] ${commandName}${optionsStr}`);

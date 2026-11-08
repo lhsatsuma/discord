@@ -61,13 +61,16 @@ export default class model_birthday extends model_base
     username?: string | null;
     birthdate?: Date;
 
-    async selectActive(fields: Pick<Record<birthdayFieldName, string>, 'server' | 'user_id'>): Promise<this | false>
+    async selectActive(fields: Pick<Record<birthdayFieldName, string>, 'server' | 'user_id'>): Promise<this | null | false>
     {
         this.resetFields();
 
         try{
-            const columns = Object.keys(this.fields).join(', ');
-            const res = await this.select(columns, [], `server = ${this.bind(fields.server)} AND user_id = ${this.bind(fields.user_id)}`, '', 1);
+            const res = await this.select(Object.keys(this.fields).join(', '), [], `server = ${this.bind(fields.server)} AND user_id = ${this.bind(fields.user_id)}`, '', 1);
+            if(res.rowCount < 1){
+                return null;
+            }
+
             const record = res.rows[0];
             if (!record) {
                 return false;
@@ -75,6 +78,21 @@ export default class model_birthday extends model_base
 
             Object.assign(this, record);
             return this;
+        }catch(e){
+            return false;
+        }
+    }
+
+    async getMembersBirthdays(fields: Pick<Record<birthdayFieldName, string>, 'server'>): Promise<any[] | false>
+    {
+        try{
+            const res = await this.select(Object.keys(this.fields).join(', '), [], `server = ${this.bind(fields.server)}`, '', 1);
+            const records = res.rows;
+            if (!records) {
+                return [];
+            }
+
+            return records;
         }catch(e){
             return false;
         }

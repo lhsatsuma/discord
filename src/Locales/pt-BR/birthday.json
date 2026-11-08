@@ -6,5 +6,9 @@
   "SUBCMD_ADD_DESCRIPTION": "Adicionar um novo aniversário",
   "SUBCMD_ADD_SUCCESS": "Aniversário adicionado com sucesso",
   "SUBCMD_ADD_ERROR": "Erro ao adicionar o aniversário",
-  "SUBCMD_ADD_FORMAT_ERROR": "Formato inválido! Utilize o formato DD/MM. Ex: 31/12"
+  "SUBCMD_ADD_FORMAT_ERROR": "Formato inválido! Utilize o formato DD/MM. Ex: 31/12",
+
+  "SUBCMD_LIST_NAME": "lista",
+  "SUBCMD_LIST_DESCRIPTION": "Lista de Aniversários",
+  "SUBCMD_LIST_NO_MEMBERS": "Não existem membros com data de aniversário cadastrado!"
 }
