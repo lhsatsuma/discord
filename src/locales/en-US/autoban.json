@@ -20,5 +20,7 @@
   "LOG_MESSAGE": "Message",
   "LOG_EMPTY_MESSAGE": "(message has no text)",
   "LOG_ACTIONS": "Actions",
-  "LOG_ACTIONS_RESULT": "Banned: {0} | Message deleted: {1}"
+  "LOG_ACTIONS_RESULT": "Banned: {0} | Message sweep: {1}",
+  "LOG_SWEEP_STARTED": "started",
+  "LOG_SWEEP_RESULT": "{0} message(s) deleted across {1} channel(s); {2} channel(s) failed"
 }
