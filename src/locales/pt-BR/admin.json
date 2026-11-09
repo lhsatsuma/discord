@@ -1,0 +1,15 @@
+{
+  "CMD_ADMIN_NAME": "admin",
+  "CMD_ADMIN_DESCRIPTION": "Gerenciar canais de administração do servidor",
+
+  "SUBCMD_ADD_CHANNEL_NAME": "adicionar_canal",
+  "SUBCMD_ADD_CHANNEL_DESCRIPTION": "Adicionar este canal à lista de canais administrativos",
+  "SUBCMD_ADD_CHANNEL_DUPLICATE": "O canal <#{0}> já está cadastrado como canal administrativo.",
+  "SUBCMD_ADD_CHANNEL_SUCCESS": "O canal <#{0}> foi cadastrado como canal administrativo.",
+  "SUBCMD_ADD_CHANNEL_ERROR": "Não foi possível cadastrar este canal administrativo.",
+
+  "SUBCMD_REMOVE_CHANNEL_NAME": "remover_canal",
+  "SUBCMD_REMOVE_CHANNEL_DESCRIPTION": "Remover este canal da lista de canais administrativos",
+  "SUBCMD_REMOVE_CHANNEL_NOT_FOUND": "Este canal não está cadastrado como canal administrativo.",
+  "SUBCMD_REMOVE_CHANNEL_SUCCESS": "O canal <#{0}> foi removido da lista de canais administrativos."
+}

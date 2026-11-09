@@ -1,0 +1,24 @@
+{
+  "CMD_AUTOBAN_NAME": "autoban",
+  "CMD_AUTOBAN_DESCRIPTION": "Manage channels used by autoban",
+
+  "SUBCMD_ADD_CHANNEL_NAME": "add_channel",
+  "SUBCMD_ADD_CHANNEL_DESCRIPTION": "Add this channel to the autoban list",
+  "SUBCMD_ADD_CHANNEL_DUPLICATE": "Channel <#{0}> is already registered for autoban.",
+  "SUBCMD_ADD_CHANNEL_SUCCESS": "Channel <#{0}> has been registered for autoban.",
+  "SUBCMD_ADD_CHANNEL_ERROR": "Could not register this channel for autoban.",
+
+  "SUBCMD_REMOVE_CHANNEL_NAME": "remove_channel",
+  "SUBCMD_REMOVE_CHANNEL_DESCRIPTION": "Remove this channel from the autoban list",
+  "SUBCMD_REMOVE_CHANNEL_NOT_FOUND": "This channel is not registered for autoban.",
+  "SUBCMD_REMOVE_CHANNEL_SUCCESS": "Channel <#{0}> has been removed from the autoban list.",
+
+  "LOG_TITLE": "Autoban: forbidden channel use",
+  "LOG_DESCRIPTION": "<@{0}> sent a message in <#{1}>.",
+  "LOG_MEMBER": "Member",
+  "LOG_CHANNEL": "Channel",
+  "LOG_MESSAGE": "Message",
+  "LOG_EMPTY_MESSAGE": "(message has no text)",
+  "LOG_ACTIONS": "Actions",
+  "LOG_ACTIONS_RESULT": "Banned: {0} | Message deleted: {1}"
+}

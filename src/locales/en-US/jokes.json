@@ -1,0 +1,18 @@
+{
+  "CMD_JOKES_NAME": "jokes",
+  "CMD_JOKES_DESCRIPTION": "Funny jokes",
+
+  "SUBCMD_RAND_NAME": "random",
+  "SUBCMD_RAND_DESCRIPTION": "Get a random joke",
+
+  "NO_RECORDS": "No joke was found.",
+
+  "SUBCMD_ADD_NAME": "add",
+  "SUBCMD_ADD_DESCRIPTION": "Add a new joke",
+  "SUBCMD_ADD_SUCCESS": "Joke added successfully.",
+  "SUBCMD_ADD_ERROR": "Could not add the joke.",
+
+  "MODAL_ADD_DESCRIPTION": "Add a new joke",
+  "MODAL_ADD_COMPONENT_LABEL_CONTENT": "Joke content (text or image URL)",
+  "MODAL_ADD_COMPONENT_DESCRIPTION_CONTENT": "Enter text or an image URL. Markdown is allowed, but Markdown images are not supported."
+}
