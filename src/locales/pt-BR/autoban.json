@@ -20,5 +20,7 @@
   "LOG_MESSAGE": "Mensagem",
   "LOG_EMPTY_MESSAGE": "(mensagem sem texto)",
   "LOG_ACTIONS": "Ações",
-  "LOG_ACTIONS_RESULT": "Banido: {0} | Mensagem removida: {1}"
+  "LOG_ACTIONS_RESULT": "Banido: {0} | Varredura de mensagens: {1}",
+  "LOG_SWEEP_STARTED": "iniciada",
+  "LOG_SWEEP_RESULT": "{0} mensagem(ns) removida(s) em {1} canal(is); falhas em {2} canal(is)"
 }
