@@ -86,8 +86,13 @@ export default class processRunning
 
     async getUptime()
     {
-        const stats = await pidusage([this.processInfo?.pid]);
-        let uptime = stats[this.processInfo?.pid].elapsed / 1000;
+        let uptime = 0;
+        try{
+            const stats = await pidusage([this.processInfo?.pid]);
+            uptime = stats[this.processInfo?.pid].elapsed / 1000;
+        }catch(e){
+            return '';
+        }
 
         let days = Math.floor(uptime / (3600*24));
         let hours = Math.floor(uptime % (3600*24) / 3600);
