@@ -11,5 +11,13 @@
   "SUBCMD_REMOVE_CHANNEL_NAME": "remove_channel",
   "SUBCMD_REMOVE_CHANNEL_DESCRIPTION": "Remove this channel from the administration channels",
   "SUBCMD_REMOVE_CHANNEL_NOT_FOUND": "This channel is not registered as an administration channel.",
-  "SUBCMD_REMOVE_CHANNEL_SUCCESS": "Channel <#{0}> has been removed from the administration channels."
+  "SUBCMD_REMOVE_CHANNEL_SUCCESS": "Channel <#{0}> has been removed from the administration channels.",
+
+  "SUBCMD_CONFIG_AUTOBAN_NAME": "config_autoban",
+  "SUBCMD_CONFIG_AUTOBAN_DESCRIPTION": "Configure the autoban message deletion period",
+  "MODAL_CONFIG_AUTOBAN_DESCRIPTION": "Configure autoban period",
+  "MODAL_CONFIG_AUTOBAN_PERIOD_LABEL": "Period in minutes",
+  "MODAL_CONFIG_AUTOBAN_PERIOD_DESCRIPTION": "Minutes of previous messages to delete when banning (0 to 10,080)",
+  "MODAL_CONFIG_AUTOBAN_INVALID": "Enter a whole number between 0 and 10,080 minutes.",
+  "MODAL_CONFIG_AUTOBAN_SUCCESS": "Autoban period updated to {0} minute(s)."
 }

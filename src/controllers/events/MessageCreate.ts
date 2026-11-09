@@ -3,6 +3,7 @@ import entryPointApp from '#src/entryPointApp.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
 import model_admin_channels from '#models/admin_channels.ts';
+import model_autoban_config from '#models/autoban_config.ts';
 import model_channels_forbidden from '#models/channels_forbidden.ts';
 
 export default class MessageCreate
@@ -56,6 +57,12 @@ export default class MessageCreate
             return;
         }
 
+        const deletePeriodMinutes = await new model_autoban_config().getDeletePeriod(message.guild.id);
+        if (deletePeriodMinutes === false) {
+            log.warning(`Could not load autoban configuration for guild ${message.guild.id}; skipping ban.`);
+            return;
+        }
+
         let messageDeleted = false;
         try {
             await message.delete();
@@ -67,7 +74,8 @@ export default class MessageCreate
         let memberBanned = false;
         try {
             await message.guild.members.ban(member, {
-                reason: `Message sent in autoban channel ${message.channelId} (${message.id}).`
+                reason: `Message sent in autoban channel ${message.channelId} (${message.id}).`,
+                deleteMessageSeconds: deletePeriodMinutes * 60
             });
             memberBanned = true;
         } catch (error) {

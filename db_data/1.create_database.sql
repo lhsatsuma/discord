@@ -182,6 +182,21 @@ CREATE TABLE public.tic_tac_toe (
 
 
 
+CREATE TABLE autoban_config (
+	id varchar(36) NOT NULL,
+	date_entered timestamp DEFAULT now() NULL,
+	date_modified timestamp DEFAULT now() NULL,
+	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NULL,
+	"server" varchar(255) NOT NULL,
+	delete_period numeric(5) NOT NULL DEFAULT 60,
+	CONSTRAINT autoban_config_id_not_null NOT NULL id,
+	CONSTRAINT autoban_config_pkey PRIMARY KEY (id),
+	CONSTRAINT autoban_config_server_not_null NOT NULL server,
+	CONSTRAINT fk_autoban_config_server FOREIGN KEY ("server") REFERENCES servers("server")
+);
+
+
+
 CREATE TABLE channels_forbidden (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
