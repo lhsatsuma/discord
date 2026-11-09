@@ -179,3 +179,20 @@ CREATE TABLE public.tic_tac_toe (
 	CONSTRAINT tic_tac_toe_pkey PRIMARY KEY (id),
 	CONSTRAINT fk_tic_tac_toe_server_members FOREIGN KEY ("server",user_id) REFERENCES public.server_members("server",user_id)
 );
+
+
+
+CREATE TABLE channels_forbidden (
+	id varchar(36) NOT NULL,
+	date_entered timestamp DEFAULT now() NULL,
+	date_modified timestamp DEFAULT now() NULL,
+	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NULL,
+	"server" varchar(255) NOT NULL,
+	channel_id varchar(255) NOT NULL,
+	CONSTRAINT channels_forbidden_channel_id_not_null NOT NULL channel_id,
+	CONSTRAINT channels_forbidden_id_not_null NOT NULL id,
+	CONSTRAINT channels_forbidden_pkey PRIMARY KEY (id),
+	CONSTRAINT channels_forbidden_server_not_null NOT NULL server,
+	CONSTRAINT channels_forbidden_unique UNIQUE (server, channel_id),
+	CONSTRAINT fk_channels_forbidden_server FOREIGN KEY ("server") REFERENCES servers("server")
+);

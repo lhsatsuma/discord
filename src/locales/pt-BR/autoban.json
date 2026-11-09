@@ -1,0 +1,24 @@
+{
+  "CMD_AUTOBAN_NAME": "autoban",
+  "CMD_AUTOBAN_DESCRIPTION": "Gerenciar canais usados pelo autoban",
+
+  "SUBCMD_ADD_CHANNEL_NAME": "adicionar_canal",
+  "SUBCMD_ADD_CHANNEL_DESCRIPTION": "Adicionar este canal à lista do autoban",
+  "SUBCMD_ADD_CHANNEL_DUPLICATE": "O canal <#{0}> já está cadastrado para o autoban.",
+  "SUBCMD_ADD_CHANNEL_SUCCESS": "O canal <#{0}> foi cadastrado para o autoban.",
+  "SUBCMD_ADD_CHANNEL_ERROR": "Não foi possível cadastrar este canal para o autoban.",
+
+  "SUBCMD_REMOVE_CHANNEL_NAME": "remover_canal",
+  "SUBCMD_REMOVE_CHANNEL_DESCRIPTION": "Remover este canal da lista do autoban",
+  "SUBCMD_REMOVE_CHANNEL_NOT_FOUND": "Este canal não está cadastrado para o autoban.",
+  "SUBCMD_REMOVE_CHANNEL_SUCCESS": "O canal <#{0}> foi removido da lista do autoban.",
+
+  "LOG_TITLE": "Autoban: tentativa em canal proibido",
+  "LOG_DESCRIPTION": "<@{0}> enviou uma mensagem em <#{1}>.",
+  "LOG_MEMBER": "Membro",
+  "LOG_CHANNEL": "Canal",
+  "LOG_MESSAGE": "Mensagem",
+  "LOG_EMPTY_MESSAGE": "(mensagem sem texto)",
+  "LOG_ACTIONS": "Ações",
+  "LOG_ACTIONS_RESULT": "Banido: {0} | Mensagem removida: {1}"
+}
