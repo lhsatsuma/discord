@@ -1,0 +1,46 @@
+{
+    "LOCALE_SET": "Idioma carregado: {0}",
+
+    "START_LOADING_DATABASE": "Testando conexão com o banco de dados...",
+    "START_LOADING_DATABASE_ERR": "Erro ao conectar no banco de dados!",
+    "START_LOADED_DATABASE": "Conectado com o banco de dados com sucesso!",
+
+    "START_TRY_CONNECT_API": "Conectando a API...",
+    "START_TRY_CONNECT_API_ERR": "Erro ao se conectar na API: {0}",
+    "START_CONNECTED_API": "Conectado na API do Discord como {0}",
+
+    "START_LOADING_COMMANDS": "Carregando comandos...",
+    "START_LOADING_COMMANDS_ERR": "Erro ao carregar os comandos!",
+    "START_LOADING_COMMAND_NAME": "Carregando comando: {0}",
+    "START_LOADING_SUBCOMMAND_NAME": "Carregando sub-comando: {0}",
+    "START_LOADING_COMMAND_JS": "Comando {0} não possui arquivo JS",
+    "START_LOADED_COMMAND_NAME": "Comando carregado: {0}",
+    "START_LOADED_SUBCOMMAND_NAME": "Sub comando carregado: {0}",
+    "START_COMMAND_INNACTIVE": "Comando {0} está inativo!",
+    "START_LOADED_COMMANDS": "Comandos carregados com sucesso! Total: {0}",
+
+
+    "START_LOADING_MODALS": "Carregando modais...",
+    "START_LOADING_MODALS_ERR": "Erro ao carregar os modais!",
+    "START_LOADED_MODALS": "Modais carregados com sucesso! Total: {0}",
+    "START_LOADING_MODAL_FOLDER": "Carregando pasta do modal: {0}",
+    "START_LOADED_MODAL_FOLDER": "Pasta do modal carregada: {0}",
+    "START_LOADING_MODAL_NAME": "Carregando modal: {0}",
+    "START_LOADED_MODAL_NAME": "Modal carregado: {0}",
+
+    "START_LOADING_EVENTS": "Carregando eventos...",
+    "START_LOADING_EVENTS_ERR": "Erro ao carregar os eventos!",
+    "START_LOADING_EVENT_NAME": "Carregando evento: {0}",
+    "START_LOADED_EVENT_NAME": "Evento carregado: {0}",
+    "START_LOADED_EVENTS": "Eventos carregados com sucesso! Total: {0}",
+
+    "START_SENDING_COMMANDS_API": "Enviando comandos para a API...",
+    "START_SENDING_COMMANDS_API_ERR": "Erro ao enviar comandos para a API: {0}",
+    "START_SENDED_COMMANDS_API": "Comandos enviados com sucesso!",
+
+    "BOT_RUNNING": "BOT iniciado com sucesso!",
+    "LOAD_TIME": "Tempo de inicialização: {0}ms | Mem. RAM: {1}",
+
+    "MODAL_NOT_FOUND": "Modal não encontrado: {0}",
+    "MODAL_EXECUTE_FAILED": "Falha na execução do modal: {0}"
+}

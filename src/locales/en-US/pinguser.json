@@ -1,0 +1,8 @@
+{
+  "CMD_PINGUSER_NAME": "pinguser",
+  "CMD_PINGUSER_DESCRIPTION": "[ADMIN] Ping a user several times",
+  "CMD_PINGUSER_OPTION_TARGET": "Member to ping",
+  "CMD_PINGUSER_OPTION_TIMES": "Number of times",
+  "CMD_PINGUSER_SUCCESS": "Pinging member...",
+  "CMD_PINGUSER_SUCCESS_USER": "<@{0}>, you have been pinged!"
+}

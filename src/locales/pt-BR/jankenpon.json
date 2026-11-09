@@ -1,0 +1,32 @@
+{
+  "CMD_JANKENPON_NAME": "jokenpo",
+  "CMD_JANKENPON_DESCRIPTION": "Jogue uma partida de Jokenpô",
+
+  "SUBCMD_PLAY_NAME": "jogar",
+  "SUBCMD_PLAY_DESCRIPTION": "Jogue uma partida de Jokenpô",
+  "SUBCMD_PLAY_OPTION_CHOOSE": "Escolha sua jogada",
+  "CMD_PLAY_SUCCESS": "{0} jogou uma partida de jokenpô",
+  "CMD_PLAY_PLAYED": "Você jogou",
+  "CMD_PLAY_BOT_PLAYED": "O bot jogou",
+  "CMD_PLAY_DRAW": "Foi um empate!",
+  "CMD_PLAY_WIN": "Você ganhou!",
+  "CMD_PLAY_LOSE": "Você perdeu!",
+
+  "PAPER": "Papel",
+  "SCISSORS": "Tesoura",
+  "ROCK": "Pedra",
+  "WINNED": "Vitórias",
+  "LOSE": "Derrotas",
+  "DRAW": "Empates",
+
+  "SUBCMD_RESET_NAME": "resetar",
+  "SUBCMD_RESET_DESCRIPTION": "Resetar seu status do Jokenpô",
+  "CMD_RESET_SUCCESS": "Status resetado com sucesso!",
+
+  "SUBCMD_STATUS_NAME": "status",
+  "SUBCMD_STATUS_DESCRIPTION": "Consultar seu status no Jokenpô",
+  "CMD_STATUS_MEMBER": "Status de Jokenpô de {0}",
+  "CMD_STATUS_AMOUNT": "Resultados por quantidade",
+  "CMD_STATUS_PERCS": "Resultados por porcentagem",
+  "CMD_STATUS_NO_GAME": "Você precisa jogar pelo menos uma vez para consultar seu status."
+}
