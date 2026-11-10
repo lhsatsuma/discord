@@ -34,8 +34,6 @@ class config
     REDDIT_PASSWORD: string | undefined;
     REDDIT_APP_ID: string | undefined;
     REDDIT_CLIENT_SECRET: string | undefined;
-    REDDIT_SUBREDDIT_MEMES: string[] = [];
-    REDDIT_MEMES_ODD: number = 0;
     constructor()
     {
         // Load environment variables from .env.override if it exists
@@ -82,11 +80,6 @@ class config
         this.REDDIT_PASSWORD = process.env.REDDIT_PASSWORD;
         this.REDDIT_APP_ID = process.env.REDDIT_APP_ID;
         this.REDDIT_CLIENT_SECRET = process.env.REDDIT_CLIENT_SECRET;
-        this.REDDIT_SUBREDDIT_MEMES = process.env.REDDIT_SUBREDDIT_MEMES
-            ?.split(',')
-            .map((subreddit) => subreddit.trim())
-            .filter(Boolean) ?? [];
-        this.REDDIT_MEMES_ODD = Number(process.env.REDDIT_MEMES_ODD ?? 0);
         return this;
     }
 

@@ -55,7 +55,7 @@ Available variables and example values are listed in `.env-example`. The main se
 | `DISCORD_BOT_HEARTBEAT` | Heartbeat interval in seconds; set to `0` to disable. |
 | `IMGUR_CLIENT_ID` | Credential used to host images submitted through the memes command. |
 | `REDDIT_USER`, `REDDIT_PASSWORD`, `REDDIT_APP_ID`, `REDDIT_CLIENT_SECRET` | Optional Reddit integration credentials. |
-| `REDDIT_SUBREDDIT_MEMES`, `REDDIT_MEMES_ODD` | Subreddits and configured frequency for fetching memes from Reddit. |
+| `servers.subreddits_memes`, `servers.reddit_odd_memes` | Per-server subreddit list (comma-separated) and Reddit meme odds (0-10); cached in Redis for five minutes. |
 
 ## Administration
 
@@ -158,4 +158,3 @@ Grant the bot only the permissions required for the features you enable. Autoban
 - The bot can only scan channels and threads it can access. Permission failures are logged, and not all of the member's messages are guaranteed to be deleted.
 - Slash command publishing depends on `DISCORD_BOT_SEND_COMMANDS_API` and the application credentials.
 - The scheduler must be started separately with `npm run scheduler`.
-

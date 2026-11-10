@@ -79,6 +79,23 @@ The bot also needs to be invited to the target server with the permissions requi
 
 5. Create the database schema by running `db_data/1.create_database.sql` against the configured database. Optionally, load sample or initial records with `db_data/2.records.sql` if appropriate for your setup.
 
+   For an existing database, add the Reddit meme settings columns if they are not present:
+
+   ```sql
+   ALTER TABLE servers ADD COLUMN IF NOT EXISTS reddit_odd_memes integer NOT NULL DEFAULT 5;
+   ALTER TABLE servers ADD COLUMN IF NOT EXISTS subreddits_memes text;
+   ```
+
+   Configure each server's subreddit list as comma-separated names and its Reddit selection odds from 0 to 10. For example:
+
+   ```sql
+   UPDATE servers
+   SET subreddits_memes = 'memes,me_irl', reddit_odd_memes = 5
+   WHERE server = 'your-discord-server-id';
+   ```
+
+   Reddit API credentials remain in `.env`; subreddit names and odds are read from `servers` and cached in Redis for up to five minutes.
+
 6. In the Discord Developer Portal, configure the bot's privileged intents as noted above and invite the bot to your server.
 
 7. Publish the slash commands. Set `DISCORD_BOT_SEND_COMMANDS_API=true` in `.env` so the app publishes them at startup, or publish them using your deployment process.

@@ -28,6 +28,6 @@
   "SUBCMD_GET_DESCRIPTION": "Find a meme by ID or name",
   "SUBCMD_GET_OPTION_SEARCH": "Meme ID or name",
 
-  "NO_SUBREDDIT_FOUND": "Subreddits is not defined!",
+  "NO_SUBREDDIT_FOUND": "Subreddits is not defined for server {0}!",
   "NO_CONFIG_REDDIT": "API for Reddit is not defined!"
 }

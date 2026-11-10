@@ -2,9 +2,7 @@ import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, Chat
 import lang from '#includes/lang.ts';
 import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import redditUtil from '#includes/redditUtil.ts';
-import utils from '#includes/utils.ts';
 import model_memes from '#models/memes.ts';
-import config from '#includes/config.ts';
 export default class memes_rand extends appSubCommandBase
 {
     cooldown = 3;
@@ -24,12 +22,10 @@ export default class memes_rand extends appSubCommandBase
     {
         let search_db = true;
         let embedMsg = null;
-        if(config.REDDIT_MEMES_ODD > 0){
-            let randInt = utils.randomInt(1, 10);
-            if(randInt <= config.REDDIT_MEMES_ODD){
-                search_db = false;
-                embedMsg = await redditUtil.random();
-            }
+        const serverId = interaction.guildId;
+        if (serverId) {
+            embedMsg = await redditUtil.random(serverId);
+            search_db = !embedMsg;
         }
         
 
@@ -57,7 +53,7 @@ export default class memes_rand extends appSubCommandBase
                 content: lang.translate(this.parentName, `NO_RECORDS`),
                 flags: [MessageFlags.Ephemeral]
             });
-            return false;
+            return true;
         }
         await interaction.reply(embedMsg);
         return true;

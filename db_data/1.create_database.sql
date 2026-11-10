@@ -153,6 +153,8 @@ CREATE TABLE public.servers (
 	"server" varchar(255) NOT NULL,
 	active bool DEFAULT true NULL,
 	"name" varchar(255) NULL,
+	reddit_odd_memes integer NOT NULL DEFAULT 5,
+	subreddits_memes TEXT NULL,
 	CONSTRAINT server_id UNIQUE (server),
 	CONSTRAINT servers_created_by_not_null NOT NULL created_by,
 	CONSTRAINT servers_id_not_null NOT NULL id,
