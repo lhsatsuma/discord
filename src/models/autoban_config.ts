@@ -1,5 +1,6 @@
 import log from '#includes/log.ts';
 import model_base from '#models/base.ts';
+import redisCache from '#includes/cache/redis_cache.ts';
 import { fieldTypeInterface } from '../interfaces/fieldInterface.ts';
 import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
@@ -42,6 +43,7 @@ const autobanConfigFields = {
 } as const satisfies Record<string, fieldInterface>;
 
 type autobanConfigFieldName = keyof typeof autobanConfigFields;
+const AUTOBAN_CONFIG_CACHE_TTL_SECONDS = 60;
 
 export default class model_autoban_config extends model_base
 {
@@ -57,15 +59,21 @@ export default class model_autoban_config extends model_base
     async getDeletePeriod(server: string): Promise<number | false>
     {
         try {
-            const result = await this.select(
-                'delete_period',
-                [],
-                `server = ${this.bind(server)}`,
-                'date_modified DESC',
-                1
+            return await redisCache.getOrSet(
+                `discord-bot:autoban-delete-period:${server}`,
+                AUTOBAN_CONFIG_CACHE_TTL_SECONDS,
+                async () => {
+                    const result = await this.select(
+                        'delete_period',
+                        [],
+                        `server = ${this.bind(server)}`,
+                        'date_modified DESC',
+                        1
+                    );
+                    const row = result.rows[0] as {delete_period: number | string} | undefined;
+                    return row ? Number(row.delete_period) : DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES;
+                }
             );
-            const row = result.rows[0] as {delete_period: number | string} | undefined;
-            return row ? Number(row.delete_period) : DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES;
         } catch (error) {
             log.warning(`Error loading autoban configuration for server ${server}: ${error}`);
             return false;
@@ -80,6 +88,7 @@ export default class model_autoban_config extends model_base
                 [server, periodMinutes, createdBy]
             );
             if ((result.rowCount ?? 0) > 0) {
+                await redisCache.delete(`discord-bot:autoban-delete-period:${server}`);
                 return true;
             }
 
@@ -88,6 +97,9 @@ export default class model_autoban_config extends model_base
                 delete_period: periodMinutes,
                 created_by: createdBy
             });
+            if (inserted !== false) {
+                await redisCache.delete(`discord-bot:autoban-delete-period:${server}`);
+            }
             return inserted !== false;
         } catch (error) {
             log.warning(`Error saving autoban configuration for server ${server}: ${error}`);

@@ -21,6 +21,8 @@ class config
     DB_PASSWORD: string = '';
     DB_NAME: string = '';
     DB_PORT: number = 0;
+    REDIS_URL: string = 'redis://127.0.0.1:6379';
+    REDIS_PASSWORD: string = '';
 
     LOG_DIR: string = 'logs/';
     LOG_LEVEL: string = 'debug';
@@ -67,6 +69,8 @@ class config
         this.DB_PASSWORD = process.env.DB_PASSWORD ?? '';
         this.DB_NAME = process.env.DB_NAME ?? '';
         this.DB_PORT = Number(process.env.DB_PORT ?? 0);
+        this.REDIS_URL = process.env.REDIS_URL ?? 'redis://127.0.0.1:6379';
+        this.REDIS_PASSWORD = process.env.REDIS_PASSWORD ?? '';
 
         this.LOG_DIR = process.env.LOG_DIR ?? 'logs/';
         this.LOG_LEVEL = process.env.LOG_LEVEL ?? 'debug';

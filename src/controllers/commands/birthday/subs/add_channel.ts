@@ -64,6 +64,7 @@ export default class birthday_add_channel extends appSubCommandBase
             return true;
         }
 
+        await birthdayChannel.invalidateCache(serverId);
         await interaction.reply({
             content: lang.translate(this.parentName, 'SUBCMD_ADD_CHANNEL_SUCCESS', [channelId]),
             flags: [MessageFlags.Ephemeral]

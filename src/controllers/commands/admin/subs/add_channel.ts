@@ -72,7 +72,7 @@ export default class admin_add_channel extends appSubCommandBase
             return true;
         }
 
-        adminChannel.invalidateCache(serverId);
+        await adminChannel.invalidateCache(serverId);
         await interaction.reply({
             content: lang.translate(this.parentName, 'SUBCMD_ADD_CHANNEL_SUCCESS', [channelId]),
             flags: [MessageFlags.Ephemeral]

@@ -72,7 +72,6 @@ export default class autoban_remove_channel extends appSubCommandBase
             return true;
         }
 
-        forbiddenChannel.invalidateCache(serverId);
         await interaction.reply({
             content: lang.translate(this.parentName, 'SUBCMD_REMOVE_CHANNEL_SUCCESS', [channelId]),
             flags: [MessageFlags.Ephemeral]
