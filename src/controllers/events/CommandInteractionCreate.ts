@@ -76,11 +76,19 @@ export default class InteractionCreate
                     }
                 } catch (err) {
                     log.warning('Error executing command: '+err);
-                    if(!interaction.replied) {
-                        await interaction.reply({
-                            content: lang.translate('globals', 'CMD_ERROR'),
-                            flags: [MessageFlags.Ephemeral]
-                        });
+                    try {
+                        if (interaction.deferred) {
+                            await interaction.editReply({
+                                content: lang.translate('globals', 'CMD_ERROR')
+                            });
+                        } else if (!interaction.replied) {
+                            await interaction.reply({
+                                content: lang.translate('globals', 'CMD_ERROR'),
+                                flags: [MessageFlags.Ephemeral]
+                            });
+                        }
+                    } catch (responseError) {
+                        log.warning(`Could not send command error response: ${responseError}`);
                     }
                 }
             }else{
