@@ -1,9 +1,10 @@
 import Reddit from 'reddit';
-import {Colors, EmbedBuilder} from 'discord.js';
+import {EmbedBuilder} from 'discord.js';
 import utils from '#includes/utils.ts';
 import log from '#includes/log.ts';
 import lang from '#includes/lang.ts';
 import config from '#includes/config.ts';
+import model_servers from '#models/server.ts';
 class redditUtil
 {
     lib()
@@ -21,14 +22,23 @@ class redditUtil
         });
     }
 
-    async random()
+    async random(serverId: string)
     {
-        if(!config.REDDIT_SUBREDDIT_MEMES.length){
-            log.info(lang.translate('memes', 'NO_SUBREDDIT_FOUND'));
+        const settings = await new model_servers().getRedditSettings(serverId);
+        if (settings === false) {
             return null;
         }
 
-        let subreddits = config.REDDIT_SUBREDDIT_MEMES;
+        if (!settings.subreddits_memes.length) {
+            log.info(lang.translate('memes', 'NO_SUBREDDIT_FOUND', [serverId]));
+            return null;
+        }
+
+        if (settings.reddit_odd_memes <= 0 || utils.randomInt(1, 10) > settings.reddit_odd_memes) {
+            return null;
+        }
+
+        const subreddits = settings.subreddits_memes;
         let rand_subreddit = subreddits[utils.randomInt(0, subreddits.length - 1)];
         let res = await this.lib().get(`/r/${rand_subreddit}/top`,{
             t: 'year',
@@ -37,6 +47,9 @@ class redditUtil
 
         if(res.data.children.length) {
             const childrens = res.data.children.filter((child: any) => !child.data.is_video);
+            if (!childrens.length) {
+                return null;
+            }
 
             let randInt = utils.randomInt(0, childrens.length - 1);
             return {
