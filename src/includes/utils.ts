@@ -33,7 +33,7 @@ class utils
 				let dateNow = new Date();
 				const exampleEmbed = new EmbedBuilder()
 					.setColor('#0099ff')
-					.setTitle('Sent a heartbeat!')
+					.setTitle(`Sent a heartbeat for ${global.entryMode}!`)
 					.setAuthor(client.author)
 					.setThumbnail(client.super_admin_channel.guild.iconURL())
 					.setDescription("Last Update: "+dateNow.toLocaleString(config.DISCORD_BOT_LOCALE))
