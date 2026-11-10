@@ -5,6 +5,18 @@
   "SUBCMD_RAND_NAME": "random",
   "SUBCMD_RAND_DESCRIPTION": "Get a random meme",
 
+  "SUBCMD_CONFIG_NAME": "config",
+  "SUBCMD_CONFIG_DESCRIPTION": "Configure Reddit meme subreddits and frequency",
+  "SUBCMD_CONFIG_LIST_TOO_LONG": "The current subreddit list exceeds the form limit. Reduce it in the database before editing.",
+  "MODAL_CONFIG_DESCRIPTION": "Configure Reddit memes",
+  "MODAL_CONFIG_ODDS_LABEL": "Reddit odds",
+  "MODAL_CONFIG_ODDS_DESCRIPTION": "A number from 0 to 10; 0 disables Reddit fetching",
+  "MODAL_CONFIG_SUBREDDITS_LABEL": "Subreddits",
+  "MODAL_CONFIG_SUBREDDITS_DESCRIPTION": "Separate with commas or new lines. r/ is optional; leave blank to clear.",
+  "MODAL_CONFIG_INVALID_ODDS": "Enter a whole number between 0 and 10.",
+  "MODAL_CONFIG_INVALID_SUBREDDITS": "Invalid subreddit names. Use 2-21 letters, numbers, or underscores (maximum 100).",
+  "MODAL_CONFIG_SUCCESS": "Settings saved: {0}/10 odds and {1} subreddit(s).",
+
   "NO_RECORDS": "No meme was found.",
 
   "SUBCMD_ADD_NAME": "add",

@@ -5,6 +5,18 @@
   "SUBCMD_RAND_NAME": "aleatorio",
   "SUBCMD_RAND_DESCRIPTION": "Meme Aleatório",
 
+  "SUBCMD_CONFIG_NAME": "config",
+  "SUBCMD_CONFIG_DESCRIPTION": "Configurar subreddits e frequência de memes do Reddit",
+  "SUBCMD_CONFIG_LIST_TOO_LONG": "A lista atual de subreddits excede o limite do formulário. Reduza-a no banco de dados antes de editar.",
+  "MODAL_CONFIG_DESCRIPTION": "Configurar memes do Reddit",
+  "MODAL_CONFIG_ODDS_LABEL": "Probabilidade do Reddit",
+  "MODAL_CONFIG_ODDS_DESCRIPTION": "Número de 0 a 10; 0 desativa a busca no Reddit",
+  "MODAL_CONFIG_SUBREDDITS_LABEL": "Subreddits",
+  "MODAL_CONFIG_SUBREDDITS_DESCRIPTION": "Separe por vírgula ou linha. Use r/ opcionalmente; deixe vazio para limpar.",
+  "MODAL_CONFIG_INVALID_ODDS": "Informe um número inteiro entre 0 e 10.",
+  "MODAL_CONFIG_INVALID_SUBREDDITS": "Subreddits inválidos. Use nomes de 2 a 21 letras, números ou underscores (máximo 100).",
+  "MODAL_CONFIG_SUCCESS": "Configuração salva: probabilidade {0}/10 e {1} subreddit(s).",
+
   "NO_RECORDS": "Meme não encontrado",
 
   "SUBCMD_ADD_NAME": "adicionar",

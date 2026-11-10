@@ -128,6 +128,7 @@ The scheduler posts birthday announcements every day at **8:00 AM**, using the t
 ### Memes
 
 - `/memes random`: Posts a meme registered for the server and may fetch from Reddit when that integration is configured.
+- `/memes config`: Lets members with **Manage Server** configure Reddit selection odds and the server's subreddit list.
 - `/memes add`: Opens a modal for a description and image upload; the image is hosted on Imgur.
 - `/memes list`: Lists memes for the server.
 - `/memes get`: Searches for a meme by ID or name.

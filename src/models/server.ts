@@ -141,6 +141,32 @@ export default class model_servers extends model_base
         await redisCache.delete(`discord-bot:server-reddit-settings:${serverId}`);
     }
 
+    async saveRedditSettings(
+        serverId: string,
+        odds: number,
+        subreddits: string[],
+        createdBy: string
+    ): Promise<boolean>
+    {
+        try {
+            const result = await this.query(
+                `UPDATE ${this.table}
+                 SET reddit_odd_memes = $2, subreddits_memes = $3, date_modified = NOW(), created_by = $4
+                 WHERE server = $1`,
+                [serverId, odds, subreddits.join(','), createdBy]
+            );
+            if ((result.rowCount ?? 0) < 1) {
+                return false;
+            }
+
+            await this.invalidateCache(serverId);
+            return true;
+        } catch (error) {
+            log.warning(`Error saving Reddit settings for server ${serverId}: ${error}`);
+            return false;
+        }
+    }
+
     async save(fields: Record<string, unknown> = {}): Promise<any>
     {
         const saved = await super.save(fields);
