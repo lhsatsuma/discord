@@ -146,7 +146,7 @@ export default class entryPoint extends Client
 				let dateNow = new Date();
 				const exampleEmbed = new EmbedBuilder()
 					.setColor(Colors.Blue)
-					.setTitle('Sent a heartbeat!')
+					.setTitle(`Sent a heartbeat for ${global.entryMode}!`)
 					.setAuthor(this.author)
 					.setThumbnail(this.super_admin_channel.guild.iconURL())
 					.setDescription("Last Update: "+dateNow.toLocaleString(config.DISCORD_BOT_LOCALE))
