@@ -72,7 +72,7 @@ export default class autoban_add_channel extends appSubCommandBase
             return true;
         }
 
-        forbiddenChannel.invalidateCache(serverId);
+        await forbiddenChannel.invalidateCache(serverId);
         await interaction.reply({
             content: lang.translate(this.parentName, 'SUBCMD_ADD_CHANNEL_SUCCESS', [channelId]),
             flags: [MessageFlags.Ephemeral]
