@@ -4,6 +4,10 @@ DBIKE BOT is a Discord bot built with TypeScript. It provides server administrat
 
 > The command examples below use American English names. Set `DISCORD_BOT_LOCALE=pt-BR` to use Brazilian Portuguese command and message names.
 
+## Discord Server Official Support
+
+[https://discord.gg/mwvFcqPUmZ](https://discord.gg/mwvFcqPUmZ)
+
 ## Table of Contents
 
 - [Setup and Running](#setup-and-running)

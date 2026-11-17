@@ -25,9 +25,10 @@ Project tested and running with:
 [![@types/pg](https://img.shields.io/npm/v/@types/pg?color=success&label=%40types%2Fpg)](https://www.npmjs.com/package/@types/pg)
 [![TypeScript](https://img.shields.io/npm/v/typescript?color=success&label=TypeScript)](https://www.npmjs.com/package/typescript)
 
-## Author
+## Discord Server Official Support
 
-- [@lhsatsuma](https://www.github.com/lhsatsuma)
+[https://discord.gg/mwvFcqPUmZ](https://discord.gg/mwvFcqPUmZ)
+
 # BOT Discord with NodeJS and TypeScript
 
 ## Requirements
