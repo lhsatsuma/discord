@@ -109,6 +109,6 @@ npm run build
 
 If you wanna create commands and contribute with this project, you can fork this repository and create a issue to pull request.
 
-For an overview of the project and a step-by-step guide to adding slash commands, see [Architecture](./docs/technical/architecture.md) and [Adding commands](./docs/technical/adding-commands.md).
+For an overview of the project and a step-by-step guide to adding slash commands, see [Architecture](./docs/Architecture.md) and [Adding commands](./docs/Adding-Commands.md).
 
 All of the code it's free to use! Just be happy :)
