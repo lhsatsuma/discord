@@ -204,6 +204,8 @@ CREATE TABLE autoban_config (
 	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NULL,
 	"server" varchar(255) NOT NULL,
 	delete_period numeric(5) NOT NULL DEFAULT 60,
+	punishment varchar(10) NOT NULL DEFAULT 'ban',
+	mute_days integer NOT NULL DEFAULT 7,
 	CONSTRAINT autoban_config_id_not_null NOT NULL id,
 	CONSTRAINT autoban_config_pkey PRIMARY KEY (id),
 	CONSTRAINT autoban_config_server_not_null NOT NULL server,

@@ -69,7 +69,9 @@ The `/admin` commands below require the **Manage Server** permission. They confi
 |---|---|
 | `/admin add_channel` | Adds the current channel to the administration channel list. These channels receive voice join/leave notifications and autoban logs. |
 | `/admin remove_channel` | Removes the current channel from the administration channel list. |
-| `/admin config_autoban` | Opens a modal to configure the autoban message cleanup period in minutes. Accepts integers from `0` to `10080` (seven days). The database default is `60` minutes. |
+| `/admin config_autoban` | Choose whether autoban bans or mutes, then configure the message cleanup period (`0`-`10080` minutes) and Discord timeout duration (`1`-`28` days; default `7`). The cleanup period defaults to `60` minutes. |
+
+Existing installations retain the previous `ban` behavior until an administrator changes it.
 
 ### Superadmin
 
@@ -91,9 +93,9 @@ The `/autoban` command configures channels where the autoban rule applies. It is
 
 When a member without the **Administrator** permission sends a message in a forbidden channel, the bot attempts to:
 
-1. Ban the member.
-2. Start a background scan of the member's recent messages in accessible text channels and threads, using the period configured with `/admin config_autoban`.
-3. Send an embed to the administration channels with details of the incident and the scan result.
+1. Apply the configured punishment: ban the member or apply a Discord timeout for the configured number of days.
+2. Start a background scan of the member's recent messages in accessible text channels and threads, using the period configured with `/admin config_autoban`. This deletion scan runs regardless of whether applying the punishment succeeds.
+3. Send an embed to the administration channels with details of the incident, punishment result, and scan result.
 
 Bot and webhook messages are ignored. The scan runs asynchronously; the event handler does not wait for message deletion to finish. An initial log indicates that the scan started, and a later log reports how many messages were deleted and how many channels had failures.
 

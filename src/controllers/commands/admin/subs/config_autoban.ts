@@ -54,8 +54,8 @@ export default class admin_config_autoban extends appSubCommandBase
             return true;
         }
 
-        const currentPeriod = await new model_autoban_config().getDeletePeriod(serverId);
-        if (currentPeriod === false) {
+        const currentConfiguration = await new model_autoban_config().getConfiguration(serverId);
+        if (currentConfiguration === false) {
             await interaction.reply({
                 content: lang.translate('globals', 'DB_ERROR'),
                 flags: [MessageFlags.Ephemeral]
@@ -64,7 +64,9 @@ export default class admin_config_autoban extends appSubCommandBase
         }
 
         const modal = new modal_admin_config_autoban(this.main);
-        modal.currentPeriod = currentPeriod;
+        modal.currentPeriod = currentConfiguration.deletePeriodMinutes;
+        modal.muteDays = currentConfiguration.muteDays;
+        modal.punishment = currentConfiguration.punishment;
         await modal.init();
         if (!modal.builded) {
             throw new Error('Autoban configuration modal was not built.');

@@ -28,7 +28,7 @@ import entryPointApp from '#src/entryPointApp.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
 import model_admin_channels from '#models/admin_channels.ts';
-import model_autoban_config from '#models/autoban_config.ts';
+import model_autoban_config, {type autobanPunishment} from '#models/autoban_config.ts';
 import model_channels_forbidden from '#models/channels_forbidden.ts';
 
 type MessageDeletionSweep = {
@@ -89,23 +89,39 @@ export default class MessageCreate
             return;
         }
 
-        const deletePeriodMinutes = await new model_autoban_config().getDeletePeriod(guild.id);
-        if (deletePeriodMinutes === false) {
+        const autobanConfiguration = await new model_autoban_config().getConfiguration(guild.id);
+        if (autobanConfiguration === false) {
             log.warning(`Could not load autoban configuration for guild ${guild.id}; skipping ban.`);
             return;
         }
 
-        let memberBanned = false;
+        let punishmentApplied = false;
+        const punishmentReason = `Message sent in autoban channel ${message.channelId} (${message.id}).`;
         try {
-            await guild.members.ban(member, {
-                reason: `Message sent in autoban channel ${message.channelId} (${message.id}).`
-            });
-            memberBanned = true;
+            if (autobanConfiguration.punishment === 'ban') {
+                await guild.members.ban(member, {reason: punishmentReason});
+            } else {
+                await member.timeout(
+                    autobanConfiguration.muteDays * 24 * 60 * 60 * 1000,
+                    punishmentReason
+                );
+            }
+            punishmentApplied = true;
         } catch (error) {
-            log.warning(`Could not ban member ${member.id} for using forbidden channel ${message.channelId}: ${error}`);
+            log.warning(
+                `Could not ${autobanConfiguration.punishment} member ${member.id} `
+                + `for using forbidden channel ${message.channelId}: ${error}`
+            );
         }
 
-        void this.runMessageDeletionSweep(message, guild, member.id, deletePeriodMinutes, memberBanned)
+        void this.runMessageDeletionSweep(
+            message,
+            guild,
+            member.id,
+            autobanConfiguration.deletePeriodMinutes,
+            autobanConfiguration.punishment,
+            punishmentApplied
+        )
             .catch((error: unknown) => {
                 log.warning(`Could not complete autoban cleanup workflow for message ${message.id}: ${error}`);
             });
@@ -116,10 +132,11 @@ export default class MessageCreate
         guild: Guild,
         memberId: string,
         periodMinutes: number,
-        memberBanned: boolean
+        punishment: autobanPunishment,
+        punishmentApplied: boolean
     ): Promise<void>
     {
-        await this.sendAdminLog(message, memberBanned, null);
+        await this.sendAdminLog(message, punishment, punishmentApplied, null);
 
         try {
             const result = await this.deleteMemberMessages(guild, memberId, periodMinutes);
@@ -128,10 +145,10 @@ export default class MessageCreate
                 + `${result.deletedMessages} message(s) deleted across ${result.scannedChannels} channel(s), `
                 + `${result.failedChannels} channel(s) failed.`
             );
-            await this.sendAdminLog(message, memberBanned, result);
+            await this.sendAdminLog(message, punishment, punishmentApplied, result);
         } catch (error) {
             log.warning(`Autoban message sweep failed for member ${memberId} in guild ${message.guildId}: ${error}`);
-            await this.sendAdminLog(message, memberBanned, {
+            await this.sendAdminLog(message, punishment, punishmentApplied, {
                 deletedMessages: 0,
                 scannedChannels: 0,
                 failedChannels: 1
@@ -268,7 +285,8 @@ export default class MessageCreate
 
     private async sendAdminLog(
         message: Message,
-        memberBanned: boolean,
+        punishment: autobanPunishment,
+        punishmentApplied: boolean,
         sweep: MessageDeletionSweep | null
     ): Promise<void>
     {
@@ -285,7 +303,7 @@ export default class MessageCreate
         }
 
         const embed = new EmbedBuilder()
-            .setColor(memberBanned ? Colors.Red : Colors.Orange)
+            .setColor(punishmentApplied ? Colors.Red : Colors.Orange)
             .setTitle(lang.translate('autoban', 'LOG_TITLE'))
             .setDescription(lang.translate('autoban', 'LOG_DESCRIPTION', [message.author.id, message.channelId]))
             .addFields(
@@ -307,7 +325,8 @@ export default class MessageCreate
                 {
                     name: lang.translate('autoban', 'LOG_ACTIONS'),
                     value: lang.translate('autoban', 'LOG_ACTIONS_RESULT', [
-                        lang.translate('globals', memberBanned ? 'YES' : 'NO'),
+                        lang.translate('autoban', `ACTION_${punishment.toUpperCase()}`),
+                        lang.translate('globals', punishmentApplied ? 'YES' : 'NO'),
                         sweep
                             ? lang.translate('autoban', 'LOG_SWEEP_RESULT', [
                                 sweep.deletedMessages,

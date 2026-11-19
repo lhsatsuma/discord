@@ -10,7 +10,7 @@ This policy explains how DBIKE BOT (the "Bot") handles data when it is added to 
 
 Depending on the features enabled and used in each server, the Bot may receive or store:
 
-- **Server data:** Server IDs and names, channel IDs, and Bot settings, including administration and birthday channels, channels subject to autoban, message deletion periods, subreddit lists, and Reddit meme selection odds.
+- **Server data:** Server IDs and names, channel IDs, and Bot settings, including administration and birthday channels, channels subject to autoban, punishment type and timeout duration, message deletion periods, subreddit lists, and Reddit meme selection odds.
 - **Member data:** Discord user IDs, usernames, and birthdays voluntarily provided by members. The Bot may also retrieve member information from Discord to run commands, announce birthdays, and apply moderation rules.
 - **Command usage data:** Information submitted through commands and forms, such as selected user IDs, birthdays, text, and settings. Technical logs may record usernames, server names, channel IDs, commands, and submitted option values.
 - **Messages for moderation:** The Bot receives message events from servers where it is installed to check channels configured for autoban. When a message triggers that rule, its content may be included in a moderation log embed sent to configured administration channels. The Bot may also search for and delete the member's recent messages within the configured period and in channels and message histories it can access.
@@ -44,7 +44,7 @@ The project does not define a general retention period and does not automaticall
 
 The Bot does not sell personal data. Data may be processed or transmitted in these circumstances:
 
-- **Discord:** Interactions pass through Discord and its APIs. The Bot may send replies, announcements, moderation embeds, and ban or message-deletion actions to Discord. Discord use is also subject to the [Discord Privacy Policy](https://discord.com/privacy).
+- **Discord:** Interactions pass through Discord and its APIs. The Bot may send replies, announcements, moderation embeds, bans, timeouts, or message-deletion actions to Discord. Discord use is also subject to the [Discord Privacy Policy](https://discord.com/privacy).
 - **AWS:** Hosting infrastructure and services used by the operator may process technical and stored data to run the Bot, subject to the services used and their policies.
 - **Reddit:** When the integration is configured and selected, the Bot queries Reddit's API for posts in configured subreddits. This query does not require members' private messages to be sent to Reddit. API use is subject to Reddit's policies.
 - **Imgur:** When a user submits an image through the memes command, the Bot may send it to Imgur for hosting. The image is then subject to Imgur's policies and availability settings.
