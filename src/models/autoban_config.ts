@@ -22,6 +22,17 @@ import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
 export const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
 export const MAX_AUTOBAN_DELETE_PERIOD_MINUTES = 10_080;
+export const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
+export const MAX_AUTOBAN_MUTE_DAYS = 28;
+
+export type autobanPunishment = 'ban' | 'mute';
+
+export interface autobanConfiguration
+{
+    deletePeriodMinutes: number;
+    punishment: autobanPunishment;
+    muteDays: number;
+}
 
 const autobanConfigFields = {
     id: {
@@ -55,10 +66,21 @@ const autobanConfigFields = {
         type: fieldTypeInterface.number,
         maxLength: 5,
         default: DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES
+    },
+    punishment: {
+        label: 'Punishment',
+        type: fieldTypeInterface.string,
+        maxLength: 10,
+        default: 'ban'
+    },
+    mute_days: {
+        label: 'Mute Period (days)',
+        type: fieldTypeInterface.number,
+        maxLength: 2,
+        default: DEFAULT_AUTOBAN_MUTE_DAYS
     }
 } as const satisfies Record<string, fieldInterface>;
 
-type autobanConfigFieldName = keyof typeof autobanConfigFields;
 const AUTOBAN_CONFIG_CACHE_TTL_SECONDS = 60;
 
 export default class model_autoban_config extends model_base
@@ -71,23 +93,33 @@ export default class model_autoban_config extends model_base
     created_by?: string;
     server?: string;
     delete_period?: number | string;
+    punishment?: autobanPunishment;
+    mute_days?: number | string;
 
-    async getDeletePeriod(server: string): Promise<number | false>
+    async getConfiguration(server: string): Promise<autobanConfiguration | false>
     {
         try {
             return await redisCache.getOrSet(
-                `discord-bot:autoban-delete-period:${server}`,
+                `discord-bot:autoban-config:${server}`,
                 AUTOBAN_CONFIG_CACHE_TTL_SECONDS,
                 async () => {
                     const result = await this.select(
-                        'delete_period',
+                        'delete_period, punishment, mute_days',
                         [],
                         `server = ${this.bind(server)}`,
                         'date_modified DESC',
                         1
                     );
-                    const row = result.rows[0] as {delete_period: number | string} | undefined;
-                    return row ? Number(row.delete_period) : DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES;
+                    const row = result.rows[0] as {
+                        delete_period: number | string | null;
+                        punishment: string | null;
+                        mute_days: number | string | null;
+                    } | undefined;
+                    return {
+                        deletePeriodMinutes: Number(row?.delete_period ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES),
+                        punishment: row?.punishment === 'mute' ? 'mute' : 'ban',
+                        muteDays: Number(row?.mute_days ?? DEFAULT_AUTOBAN_MUTE_DAYS)
+                    };
                 }
             );
         } catch (error) {
@@ -96,25 +128,40 @@ export default class model_autoban_config extends model_base
         }
     }
 
-    async saveDeletePeriod(server: string, periodMinutes: number, createdBy: string): Promise<boolean>
+    async saveConfiguration(
+        server: string,
+        configuration: autobanConfiguration,
+        createdBy: string
+    ): Promise<boolean>
     {
         try {
             const result = await this.query(
-                `UPDATE ${this.table} SET delete_period = $2, date_modified = NOW(), created_by = $3 WHERE server = $1`,
-                [server, periodMinutes, createdBy]
+                `UPDATE ${this.table}
+                 SET delete_period = $2, punishment = $3, mute_days = $4,
+                     date_modified = NOW(), created_by = $5
+                 WHERE server = $1`,
+                [
+                    server,
+                    configuration.deletePeriodMinutes,
+                    configuration.punishment,
+                    configuration.muteDays,
+                    createdBy
+                ]
             );
             if ((result.rowCount ?? 0) > 0) {
-                await redisCache.delete(`discord-bot:autoban-delete-period:${server}`);
+                await redisCache.delete(`discord-bot:autoban-config:${server}`);
                 return true;
             }
 
             const inserted = await this.insert({
                 server,
-                delete_period: periodMinutes,
+                delete_period: configuration.deletePeriodMinutes,
+                punishment: configuration.punishment,
+                mute_days: configuration.muteDays,
                 created_by: createdBy
             });
             if (inserted !== false) {
-                await redisCache.delete(`discord-bot:autoban-delete-period:${server}`);
+                await redisCache.delete(`discord-bot:autoban-config:${server}`);
             }
             return inserted !== false;
         } catch (error) {

@@ -14,10 +14,17 @@
   "SUBCMD_REMOVE_CHANNEL_SUCCESS": "O canal <#{0}> foi removido da lista de canais administrativos.",
 
   "SUBCMD_CONFIG_AUTOBAN_NAME": "config_autoban",
-  "SUBCMD_CONFIG_AUTOBAN_DESCRIPTION": "Configurar o período de exclusão de mensagens do autoban",
-  "MODAL_CONFIG_AUTOBAN_DESCRIPTION": "Configurar período do autoban",
+  "SUBCMD_CONFIG_AUTOBAN_DESCRIPTION": "Configurar ação e período de exclusão de mensagens do autoban",
+  "MODAL_CONFIG_AUTOBAN_DESCRIPTION": "Configurar o autoban",
+  "MODAL_CONFIG_AUTOBAN_PUNISHMENT_LABEL": "Ação ao detectar infração",
+  "MODAL_CONFIG_AUTOBAN_PUNISHMENT_DESCRIPTION": "Selecione ban ou mute",
+  "MODAL_CONFIG_AUTOBAN_PUNISHMENT_BAN": "banimento",
+  "MODAL_CONFIG_AUTOBAN_PUNISHMENT_MUTE": "mute",
+  "MODAL_CONFIG_AUTOBAN_INVALID_PUNISHMENT": "Selecione ban ou mute.",
   "MODAL_CONFIG_AUTOBAN_PERIOD_LABEL": "Período em minutos",
-  "MODAL_CONFIG_AUTOBAN_PERIOD_DESCRIPTION": "Minutos de mensagens anteriores a excluir no ban (0 a 10.080)",
-  "MODAL_CONFIG_AUTOBAN_INVALID": "Informe um número inteiro entre 0 e 10.080 minutos.",
-  "MODAL_CONFIG_AUTOBAN_SUCCESS": "Período do autoban atualizado para {0} minuto(s)."
+  "MODAL_CONFIG_AUTOBAN_PERIOD_DESCRIPTION": "Minutos de mensagens anteriores a excluir (0 a 10.080)",
+  "MODAL_CONFIG_AUTOBAN_MUTE_DAYS_LABEL": "Duração do mute em dias",
+  "MODAL_CONFIG_AUTOBAN_MUTE_DAYS_DESCRIPTION": "Timeout do Discord de 1 a 28 dias (padrão: 7 dias)",
+  "MODAL_CONFIG_AUTOBAN_INVALID": "Informe um período de exclusão entre 0 e 10.080 minutos e um timeout entre 1 e 28 dias.",
+  "MODAL_CONFIG_AUTOBAN_SUCCESS": "Ação do autoban: {0}; mensagens dos últimos {1} minuto(s) serão excluídas; duração do mute: {2} dia(s)."
 }

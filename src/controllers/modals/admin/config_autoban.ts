@@ -14,16 +14,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { LabelBuilder, MessageFlags, ModalSubmitInteraction, TextInputBuilder, TextInputStyle } from 'discord.js';
+import {
+    LabelBuilder,
+    MessageFlags,
+    ModalSubmitInteraction,
+    PermissionFlagsBits,
+    StringSelectMenuBuilder,
+    TextInputBuilder,
+    TextInputStyle
+} from 'discord.js';
 import lang from '#includes/lang.ts';
 import appModalBase from '#includes/commands/appModalBase.ts';
-import model_autoban_config, { MAX_AUTOBAN_DELETE_PERIOD_MINUTES } from '#models/autoban_config.ts';
+import model_autoban_config, {
+    MAX_AUTOBAN_DELETE_PERIOD_MINUTES,
+    MAX_AUTOBAN_MUTE_DAYS,
+    type autobanPunishment
+} from '#models/autoban_config.ts';
 
 export default class modal_admin_config_autoban extends appModalBase
 {
     parentName = 'admin';
     name = 'config_autoban';
     currentPeriod = 60;
+    muteDays = 7;
+    punishment: autobanPunishment = 'ban';
 
     async buildComponents()
     {
@@ -34,6 +48,27 @@ export default class modal_admin_config_autoban extends appModalBase
 
         modal.addLabelComponents(
             new LabelBuilder()
+                .setLabel(lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_PUNISHMENT_LABEL'))
+                .setDescription(lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_PUNISHMENT_DESCRIPTION'))
+                .setStringSelectMenuComponent(
+                    new StringSelectMenuBuilder()
+                        .setCustomId('punishment')
+                        .setMinValues(1)
+                        .setMaxValues(1)
+                        .addOptions(
+                            {
+                                label: 'ban',
+                                value: 'ban',
+                                default: this.punishment === 'ban'
+                            },
+                            {
+                                label: 'mute',
+                                value: 'mute',
+                                default: this.punishment === 'mute'
+                            }
+                        )
+                ),
+            new LabelBuilder()
                 .setLabel(lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_PERIOD_LABEL'))
                 .setDescription(lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_PERIOD_DESCRIPTION'))
                 .setTextInputComponent(
@@ -43,6 +78,17 @@ export default class modal_admin_config_autoban extends appModalBase
                         .setMinLength(1)
                         .setMaxLength(5)
                         .setValue(String(this.currentPeriod))
+                ),
+            new LabelBuilder()
+                .setLabel(lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_MUTE_DAYS_LABEL'))
+                .setDescription(lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_MUTE_DAYS_DESCRIPTION'))
+                .setTextInputComponent(
+                    new TextInputBuilder()
+                        .setCustomId('mute_days')
+                        .setStyle(TextInputStyle.Short)
+                        .setMinLength(1)
+                        .setMaxLength(2)
+                        .setValue(String(this.muteDays))
                 )
         );
         return this;
@@ -50,14 +96,38 @@ export default class modal_admin_config_autoban extends appModalBase
 
     async execute(interaction: ModalSubmitInteraction)
     {
+        if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) {
+            await interaction.reply({
+                content: lang.translate('globals', 'CHANNEL_NOT_ALLOWED'),
+                flags: [MessageFlags.Ephemeral]
+            });
+            return true;
+        }
+
         const serverId = interaction.guildId;
+        const punishmentValues = interaction.fields.getStringSelectValues('punishment');
+        const punishmentValue = punishmentValues[0];
+        if (punishmentValue !== 'ban' && punishmentValue !== 'mute') {
+            await interaction.reply({
+                content: lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_INVALID_PUNISHMENT'),
+                flags: [MessageFlags.Ephemeral]
+            });
+            return true;
+        }
+        const punishment: autobanPunishment = punishmentValue;
         const periodValue = interaction.fields.getTextInputValue('delete_period');
         const periodMinutes = Number(periodValue);
+        const muteDaysValue = interaction.fields.getTextInputValue('mute_days');
+        const muteDays = Number(muteDaysValue);
 
         if (!serverId || !/^[0-9]{1,5}$/.test(periodValue)
             || !Number.isSafeInteger(periodMinutes)
             || periodMinutes < 0
-            || periodMinutes > MAX_AUTOBAN_DELETE_PERIOD_MINUTES) {
+            || periodMinutes > MAX_AUTOBAN_DELETE_PERIOD_MINUTES
+            || !/^[0-9]{1,2}$/.test(muteDaysValue)
+            || !Number.isSafeInteger(muteDays)
+            || muteDays < 1
+            || muteDays > MAX_AUTOBAN_MUTE_DAYS) {
             await interaction.reply({
                 content: lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_INVALID'),
                 flags: [MessageFlags.Ephemeral]
@@ -65,9 +135,13 @@ export default class modal_admin_config_autoban extends appModalBase
             return true;
         }
 
-        const saved = await new model_autoban_config().saveDeletePeriod(
+        const saved = await new model_autoban_config().saveConfiguration(
             serverId,
-            periodMinutes,
+            {
+                deletePeriodMinutes: periodMinutes,
+                punishment,
+                muteDays
+            },
             interaction.user.id
         );
         if (!saved) {
@@ -79,7 +153,11 @@ export default class modal_admin_config_autoban extends appModalBase
         }
 
         await interaction.reply({
-            content: lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_SUCCESS', [periodMinutes]),
+            content: lang.translate(this.parentName, 'MODAL_CONFIG_AUTOBAN_SUCCESS', [
+                lang.translate(this.parentName, `MODAL_CONFIG_AUTOBAN_PUNISHMENT_${punishment.toUpperCase()}`),
+                periodMinutes,
+                muteDays
+            ]),
             flags: [MessageFlags.Ephemeral]
         });
         return true;

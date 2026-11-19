@@ -18,13 +18,13 @@ The Bot is operated by its maintainer on infrastructure hosted on Amazon Web Ser
 
 The Bot may provide commands, games, birthday registration, community content, optional Reddit and Imgur integrations, scheduled announcements, and administration tools. Features may change or become unavailable.
 
-The Bot may need Discord permissions such as viewing channel history, sending messages and embeds, managing messages, or banning members. Grant only the permissions needed. Functionality also depends on the Bot's effective permissions, role hierarchy, Discord security settings, and external API availability.
+The Bot may need Discord permissions such as viewing channel history, sending messages and embeds, managing messages, moderating members, or banning members. Grant only the permissions needed. Functionality also depends on the Bot's effective permissions, role hierarchy, Discord security settings, and external API availability.
 
 ## 3. Automated Moderation
 
-Administrators may configure channels subject to autoban. When a member without the Administrator permission sends a message in one of those channels, the Bot may attempt to ban the member, scan accessible channels and threads to delete recent messages within the configured period, and send a report to administration channels.
+Administrators may configure channels subject to autoban and choose whether the Bot attempts to ban the member or apply a Discord timeout. A timeout blocks communication for the configured duration, which may be up to 28 days. When a member without the Administrator permission sends a message in one of those channels, the Bot also scans accessible channels and threads to delete recent messages within the configured period and sends a report to administration channels.
 
-These actions are automated and may fail because of permission limits, role hierarchy, Discord rules, service availability, or lack of message-history access. Administrators should carefully test and review settings, inform their members, and maintain their own processes for reviewing incidents or contesting actions. The Bot does not guarantee that all messages will be found or deleted or that a ban will succeed.
+These actions are automated and may fail because of permission limits, role hierarchy, Discord rules, service availability, or lack of message-history access. Message deletion is attempted even if applying the configured punishment fails. Administrators should carefully test and review settings, inform their members, and maintain their own processes for reviewing incidents or contesting actions. The Bot does not guarantee that all messages will be found or deleted or that a ban or timeout will succeed.
 
 ## 4. User and Administrator Responsibilities
 
