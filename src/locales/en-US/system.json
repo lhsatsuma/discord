@@ -40,6 +40,15 @@
   "BOT_RUNNING": "Bot started successfully.",
   "LOAD_TIME": "Startup time: {0} ms | RAM: {1}",
 
+  "GUILD_CREATE_SUPERADMIN_TITLE": "Bot added to a server",
+  "GUILD_CREATE_SUPERADMIN_DESCRIPTION": "The bot has joined a new Discord server.",
+  "GUILD_CREATE_SERVER_NAME": "Server",
+  "GUILD_CREATE_SERVER_ID": "Server ID",
+  "GUILD_CREATE_SERVER_OWNER": "Owner",
+  "GUILD_CREATE_MEMBER_COUNT": "Members",
+  "GUILD_CREATE_CREATED_AT": "Server created",
+  "GUILD_CREATE_JOINED_AT": "Bot joined",
+
   "MODAL_NOT_FOUND": "Modal not found: {0}",
   "MODAL_EXECUTE_FAILED": "Fail on executing modal: {0}"
 }

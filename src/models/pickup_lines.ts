@@ -27,12 +27,12 @@ const pickupLineFields = {
         maxLength: 36,
         pk: true
     },
-    date_entered: {
-        label: 'Date Entered',
+    created_at: {
+        label: 'Created At',
         type: fieldTypeInterface.datetime,
     },
-    date_modified: {
-        label: 'Date Modified',
+    updated_at: {
+        label: 'Updated At',
         type: fieldTypeInterface.datetime,
     },
     created_by: {

@@ -64,7 +64,7 @@ export default class memes_rand extends appSubCommandBase
                         .setFooter({
                             text: `#${meme.order_id} | ${meme.description}`
                         })
-                        .setTimestamp(meme.date_entered)
+                        .setTimestamp(meme.created_at)
                     ]
                 };
             }

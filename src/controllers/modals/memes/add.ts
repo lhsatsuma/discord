@@ -107,7 +107,7 @@ export default class modal_memes_add extends appModalBase
                     .setFooter({
                         text: `#${result.order_id} | ${result.description}`
                     })
-                    .setTimestamp(result.date_entered)
+                    .setTimestamp(result.created_at)
             ]
         });
         return true;
