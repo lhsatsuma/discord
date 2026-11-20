@@ -1,6 +1,6 @@
-# Superadministrator Wiki
+# Installation and Configuration
 
-This guide is for the bot operator and developers. It covers self-hosting DBIKE BOT, configuring its services, and finding its technical documentation. For server commands, see the [Server User Wiki](Server-User-Wiki).
+This guide covers installing and operating DBIKE BOT. For the application design, see [Architecture](Superadministrator-Architecture). For commands used inside Discord servers, see [Server administration](Server-Administration) and [Server commands](Server-Commands).
 
 ## Requirements
 
@@ -22,7 +22,12 @@ Enable the **Server Members Intent** and **Message Content Intent** in the Disco
    npm install
    ```
 
-2. Create a PostgreSQL database and user. See the [README installation guide](https://github.com/lhsatsuma/discord#installation) for a sample `psql` setup.
+2. Create a PostgreSQL database and user. For example, from `psql` as a PostgreSQL administrator:
+
+   ```sql
+   CREATE USER discord WITH PASSWORD 'replace-with-a-secure-password';
+   CREATE DATABASE discord OWNER discord;
+   ```
 
 3. Copy `.env-example` to `.env` and configure the Discord credentials, database connection, locale, time zone, and other settings. Keep the bot token and service credentials private; do not commit `.env`.
 
@@ -63,21 +68,4 @@ The complete list of supported settings and example values is in `.env-example`.
 
 Reddit subreddits and selection odds are configured per server with `/admin config`; they are not environment variables. Reddit credentials are still required to fetch Reddit content. Redis caches selected settings temporarily; PostgreSQL remains the persistent store.
 
-## Operator commands
-
-The `/superadmin` command is restricted to the channel configured by `DISCORD_BOT_ADMIN_CHANNEL`.
-
-| Command | Description |
-|---|---|
-| `/superadmin status` | Displays app and scheduler status. |
-| `/superadmin logs` | Posts recent process log lines to the operator channel. |
-
-## Technical documentation
-
-- [Architecture](Architecture) — application startup, folders, command loading, and persistence.
-- [Adding Commands](Adding-Commands) — command and subcommand structure, translations, and verification.
-- [README installation and contribution guide](https://github.com/lhsatsuma/discord#installation)
-
-## Community support
-
-Join the [official Discord server](https://discord.gg/mwvFcqPUmZ) for community support.
+See [Superadministrator commands](Superadministrator-Commands) for operator-only commands and [Adding commands](Superadministrator-Adding-Commands) for developer documentation.

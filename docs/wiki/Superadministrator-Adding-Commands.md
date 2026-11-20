@@ -1,4 +1,6 @@
-# Adding commands
+# Adding Commands
+
+This guide is for developers extending DBIKE BOT. For an overview of its structure, see [Architecture](Superadministrator-Architecture).
 
 Commands are discovered automatically from `src/controllers/commands/`. Follow the folder and class conventions so the loader can import and dispatch the command.
 

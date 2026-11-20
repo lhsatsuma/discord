@@ -44,4 +44,4 @@ The bot sends the command definitions to Discord on startup only when `DISCORD_B
 - Models extend `model_base`, which provides common database operations. Model-specific query methods and field definitions belong in their model files.
 - Add user-facing strings to the relevant JSON module in each configured locale. `lang.translate(module, key)` reads from the file named after `module`.
 
-See [Adding commands](Adding-Commands) for the step-by-step workflow and examples.
+See [Adding commands](Superadministrator-Adding-Commands) for the step-by-step workflow and examples.

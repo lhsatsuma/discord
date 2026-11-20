@@ -1,20 +1,8 @@
-# Server User Wiki
+# Server Commands
 
-This guide is for Discord server administrators and members using DBIKE BOT. The command names below use American English. The bot's configured locale (for example, `pt-BR`) may use different command names and messages.
+This guide is for Discord server administrators and members using DBIKE BOT. Command names and bot responses follow the language configured for the server.
 
-For self-hosting and technical documentation, see the [Superadministrator Wiki](Superadministrator-Wiki).
-
-## Administration
-
-These commands require the **Manage Server** permission and configure the channel where they are used.
-
-| Command | Description |
-|---|---|
-| `/admin add_channel` | Adds the current channel to the administration channel list. These channels receive voice join/leave notifications and autoban reports. |
-| `/admin remove_channel` | Removes the current channel from the administration channel list. |
-| `/admin config` | Opens a menu with separate forms for Autoban, Memes, and voice notifications. Autoban cleanup defaults to 60 minutes and timeout to 7 days; Reddit odds range from `0` to `10`. |
-
-Existing servers retain the previous ban behavior until an administrator changes it.
+For server settings and moderation configuration, see [Server administration](Server-Administration). Bot operators and developers can start from [Home](Home).
 
 ## Autoban
 
@@ -89,7 +77,7 @@ Grant the bot only the permissions required for the features you enable. Moderat
 - Message deletion is limited to channels and threads the bot can access; deletion is not guaranteed.
 - Slash-command availability depends on the bot operator publishing command definitions.
 
-For privacy and service terms, see the [Privacy Policy](PRIVACY_POLICY) and [Terms of Service](TERMS_OF_SERVICE).
+For privacy and service terms, see the [Privacy Policy](https://github.com/lhsatsuma/discord/blob/main/PRIVACY_POLICY.md) and [Terms of Service](https://github.com/lhsatsuma/discord/blob/main/TERMS_OF_SERVICE.md).
 
 ## Support
 

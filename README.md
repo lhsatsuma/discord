@@ -35,80 +35,14 @@ Project tested and running with:
 
 - **Node.js 22.18 or newer** (Node.js 22 LTS or newer is recommended). The application runs TypeScript files directly using Node.js built-in type stripping.
 - **npm 10 or newer**. npm is included with Node.js.
+- **redis 7.0 or newer** (recommended).
 - **PostgreSQL 15 or newer** (recommended).
 - A Discord application and bot token created in the [Discord Developer Portal](https://discord.com/developers/applications).
 
 The bot also needs to be invited to the target server with the permissions required for the features you intend to use. Enable the **Server Members Intent** and **Message Content Intent** in the application's Bot settings for member and message features.
 
-## Installation
-
-1. Clone or download the repository:
-
-   ```bash
-   git clone https://github.com/lhsatsuma/discord.git
-   cd discord
-   ```
-
-2. Install project dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Create a PostgreSQL database and user (or use existing credentials). For example, from `psql` as a PostgreSQL administrator:
-
-   ```sql
-   CREATE USER discord WITH PASSWORD 'replace-with-a-secure-password';
-   CREATE DATABASE discord OWNER discord;
-   ```
-
-4. Copy `.env-example` to `.env` and set at least the following values:
-
-   ```dotenv
-   DISCORD_BOT_ID=your-discord-application-id
-   DISCORD_BOT_TOKEN=your-discord-bot-token
-   DISCORD_BOT_ADMIN_CHANNEL=your-superadmin-channel-id
-   DB_HOST=127.0.0.1
-   DB_USER=discord
-   DB_PASSWORD=replace-with-a-secure-password
-   DB_NAME=discord
-   DB_PORT=5432
-   TZ=America/Sao_Paulo
-   ```
-
-   Review the remaining values in `.env-example` to configure the bot's name, locale, heartbeat, logging, Imgur, and optional Reddit integration. Do not commit `.env` or share the bot token.
-
-5. Create the database schema by running `db_data/1.create_database.sql` against the configured database. Optionally, load sample or initial records with `db_data/2.records.sql` if appropriate for your setup.
-
-6. In the Discord Developer Portal, configure the bot's privileged intents as noted above and invite the bot to your server.
-
-7. Publish the slash commands. Set `DISCORD_BOT_SEND_COMMANDS_API=true` in `.env` so the app publishes them at startup, or publish them using your deployment process.
-
-## Running the application
-
-Start the app and scheduler in separate terminals or as separate services. Both need to remain running:
-
-```bash
-npm run app
-```
-
-```bash
-npm run scheduler
-```
-
-The app handles Discord commands and events. The scheduler sends birthday announcements daily at 08:00 in the configured `TZ` time zone.
-
-To check the TypeScript project without starting the bot:
-
-```bash
-npm run build
-```
-
-
 ## Contribute
 
-If you wanna create commands and contribute with this project, you can fork this repository and create a issue to pull request.
+You can contribute with this project if you want to.
 
-For an overview of the project and a step-by-step guide to adding slash commands, see [Architecture](./docs/Architecture.md) and [Adding commands](./docs/Adding-Commands.md).
-
-All of the code it's free to use! Just be happy :)
+For an overview of the project and a step-by-step guide to install, adding slash commands, see the [Wiki Page](https://github.com/lhsatsuma/discord/wiki).
