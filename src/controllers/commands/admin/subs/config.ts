@@ -14,16 +14,23 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { MessageFlags, PermissionFlagsBits, SlashCommandSubcommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    MessageFlags,
+    PermissionFlagsBits,
+    SlashCommandSubcommandBuilder,
+    type ChatInputCommandInteraction
+} from 'discord.js';
 import lang from '#includes/lang.ts';
 import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import model_servers from '#models/server.ts';
-import modal_memes_config from '#modals/memes/config.ts';
 
-export default class memes_config extends appSubCommandBase
+export default class admin_config extends appSubCommandBase
 {
     cooldown = 3;
-    parentName = 'memes';
+    parentName = 'admin';
     name = 'config';
 
     build()
@@ -54,8 +61,7 @@ export default class memes_config extends appSubCommandBase
             return true;
         }
 
-        const settings = await new model_servers().getRedditSettings(serverId);
-        if (settings === false) {
+        if (await new model_servers().getServerSettings(serverId) === false) {
             await interaction.reply({
                 content: lang.translate('globals', 'DB_ERROR'),
                 flags: [MessageFlags.Ephemeral]
@@ -63,24 +69,25 @@ export default class memes_config extends appSubCommandBase
             return true;
         }
 
-        const subredditList = settings.subreddits_memes.join(', ');
-        if (subredditList.length > 4000) {
-            await interaction.reply({
-                content: lang.translate(this.parentName, 'SUBCMD_CONFIG_LIST_TOO_LONG'),
-                flags: [MessageFlags.Ephemeral]
-            });
-            return true;
-        }
-
-        const modal = new modal_memes_config(this.main);
-        modal.odds = settings.reddit_odd_memes;
-        modal.subreddits = subredditList;
-        await modal.init();
-        if (!modal.builded) {
-            throw new Error('Memes configuration modal was not built.');
-        }
-
-        await interaction.showModal(modal.builded);
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            new ButtonBuilder()
+                .setCustomId('admin_config_autoban')
+                .setLabel(lang.translate(this.parentName, 'SUBCMD_CONFIG_MENU_AUTOBAN'))
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('admin_config_memes')
+                .setLabel(lang.translate(this.parentName, 'SUBCMD_CONFIG_MENU_MEMES'))
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('admin_config_voice')
+                .setLabel(lang.translate(this.parentName, 'SUBCMD_CONFIG_MENU_VOICE'))
+                .setStyle(ButtonStyle.Primary)
+        );
+        await interaction.reply({
+            content: lang.translate(this.parentName, 'SUBCMD_CONFIG_MENU_DESCRIPTION'),
+            components: [row],
+            flags: [MessageFlags.Ephemeral]
+        });
         return true;
     }
 }

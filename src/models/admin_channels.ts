@@ -16,7 +16,7 @@
 
 import model_base from '#models/base.ts';
 import log from '#includes/log.ts';
-import redisCache from '#includes/cache/redis_cache.ts';
+import model_servers from '#models/server.ts';
 import { fieldTypeInterface } from '../interfaces/fieldInterface.ts';
 import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
@@ -57,8 +57,6 @@ const adminChannelFields = {
 
 type adminChannelFieldName = keyof typeof adminChannelFields;
 type adminChannelFilter = Pick<Record<adminChannelFieldName, string | undefined>, 'server' | 'channel_id'>;
-
-const ADMIN_CHANNEL_CACHE_TTL_SECONDS = 5 * 60;
 
 export default class model_admin_channels extends model_base
 {
@@ -107,29 +105,13 @@ export default class model_admin_channels extends model_base
             return false;
         }
 
-        return redisCache.getOrSet(
-            `discord-bot:admin-channels:${serverId}`,
-            ADMIN_CHANNEL_CACHE_TTL_SECONDS,
-            async () => {
-                try {
-                    const result = await this.select(
-                        'channel_id',
-                        [],
-                        `server = ${this.bind(serverId)}`,
-                        'channel_id'
-                    );
-                    return result.rows.map((row: {channel_id: string}) => row.channel_id);
-                } catch (error) {
-                    log.warning(`Error listing admin channels: ${error}`);
-                    return false;
-                }
-            }
-        );
+        const settings = await new model_servers().getServerSettings(serverId);
+        return settings === false ? false : settings.admin_channels;
     }
 
     async invalidateCache(serverId: string): Promise<void>
     {
-        await redisCache.delete(`discord-bot:admin-channels:${serverId}`);
+        await new model_servers().invalidateSettingsCache(serverId);
     }
 
     async removeActive(fields: adminChannelFilter): Promise<boolean>

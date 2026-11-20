@@ -19,6 +19,7 @@ import entryPointApp from '#src/entryPointApp.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
 import model_admin_channels from '#models/admin_channels.ts';
+import model_servers from '#models/server.ts';
 
 export default class VoiceStateUpdate
 {
@@ -44,6 +45,15 @@ export default class VoiceStateUpdate
 
             const channelId = newState.channelId ?? oldState.channelId;
             if (!channelId) {
+                return;
+            }
+
+            const settings = await new model_servers().getServerSettings(newState.guild.id);
+            if (settings === false) {
+                log.warning(`Could not load voice update setting for guild ${newState.guild.id}.`);
+                return;
+            }
+            if (!settings.send_voice_update) {
                 return;
             }
 

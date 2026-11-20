@@ -40,7 +40,7 @@ class redditUtil
 
     async random(serverId: string)
     {
-        const settings = await new model_servers().getRedditSettings(serverId);
+        const settings = await new model_servers().getServerSettings(serverId);
         if (settings === false) {
             return null;
         }

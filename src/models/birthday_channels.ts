@@ -16,7 +16,7 @@
 
 import model_base from '#models/base.ts';
 import log from '#includes/log.ts';
-import redisCache from '#includes/cache/redis_cache.ts';
+import model_servers from '#models/server.ts';
 import { fieldTypeInterface } from '../interfaces/fieldInterface.ts';
 import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
@@ -56,7 +56,6 @@ const birthdayChannelFields = {
 } as const satisfies Record<string, fieldInterface>;
 
 type birthdayChannelFieldName = keyof typeof birthdayChannelFields;
-const BIRTHDAY_CHANNEL_CACHE_TTL_SECONDS = 5 * 60;
 
 export default class model_birthday_channels extends model_base
 {
@@ -99,29 +98,17 @@ export default class model_birthday_channels extends model_base
 
     async listByServer(fields: Pick<Record<birthdayChannelFieldName, string | undefined>, 'server'>): Promise<string[] | false>
     {
-        return redisCache.getOrSet(
-            `discord-bot:birthday-channels:${fields.server}`,
-            BIRTHDAY_CHANNEL_CACHE_TTL_SECONDS,
-            async () => {
-                try {
-                    const result = await this.select(
-                        'channel_id',
-                        [],
-                        `server = ${this.bind(fields.server)}`,
-                        'channel_id'
-                    );
-                    return result.rows.map((row: {channel_id: string}) => row.channel_id);
-                } catch (error) {
-                    log.warning(`Error listing birthday channels: ${error}`);
-                    return false;
-                }
-            }
-        );
+        if (!fields.server) {
+            return false;
+        }
+
+        const settings = await new model_servers().getServerSettings(fields.server);
+        return settings === false ? false : settings.birthday_channels;
     }
 
     async invalidateCache(serverId: string): Promise<void>
     {
-        await redisCache.delete(`discord-bot:birthday-channels:${serverId}`);
+        await new model_servers().invalidateSettingsCache(serverId);
     }
 
     async removeActive(fields: Pick<Record<birthdayChannelFieldName, string | undefined>, 'server' | 'channel_id'>): Promise<boolean | false>

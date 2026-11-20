@@ -91,9 +91,11 @@ export default class entryPoint extends Client
             this.once('clientReady', async () => {
                 this.super_admin_channel = this.channels.cache.find(channel => channel.id === config.DISCORD_BOT_ADMIN_CHANNEL);
 
-                this.user?.setActivity({
-                    name: config.DISCORD_BOT_DESCRIPTION,
-                });
+                if(!!config.DISCORD_BOT_DESCRIPTION){
+                    this.user?.setActivity({
+                        name: config.DISCORD_BOT_DESCRIPTION,
+                    });
+                }
 
                 resolve(true);
             });

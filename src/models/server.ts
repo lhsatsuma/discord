@@ -20,12 +20,37 @@ import log from '#includes/log.ts';
 import { fieldTypeInterface } from '../interfaces/fieldInterface.ts';
 import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
-const REDDIT_SETTINGS_CACHE_TTL_SECONDS = 5 * 60;
+const SERVER_SETTINGS_CACHE_TTL_SECONDS = 360;
+const SERVER_SETTINGS_CACHE_KEY_PREFIX = 'discord-bot:server-settings:v2:';
 
-export interface serverRedditSettings
+const serverSettingsCacheKey = (serverId: string): string =>
+    `${SERVER_SETTINGS_CACHE_KEY_PREFIX}${serverId}`;
+
+export const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
+export const MAX_AUTOBAN_DELETE_PERIOD_MINUTES = 10_080;
+export const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
+export const MAX_AUTOBAN_MUTE_DAYS = 28;
+
+export type autobanPunishment = 'ban' | 'mute';
+
+export interface serverSettings
 {
     reddit_odd_memes: number;
     subreddits_memes: string[];
+    autoban_del_period: number;
+    autoban_punishment: autobanPunishment;
+    autoban_mute_days: number;
+    send_voice_update: boolean;
+    admin_channels: string[];
+    birthday_channels: string[];
+    forbidden_channels: string[];
+}
+
+export interface serverAutobanConfiguration
+{
+    deletePeriodMinutes: number;
+    punishment: autobanPunishment;
+    muteDays: number;
 }
 
 const serverFields = {
@@ -72,6 +97,23 @@ const serverFields = {
         label: 'Meme subreddits',
         type: fieldTypeInterface.string,
     },
+    autoban_del_period: {
+        label: 'Autoban delete period (minutes)',
+        type: fieldTypeInterface.number,
+    },
+    autoban_punishment: {
+        label: 'Autoban punishment',
+        type: fieldTypeInterface.string,
+        maxLength: 10,
+    },
+    autoban_mute_days: {
+        label: 'Autoban timeout (days)',
+        type: fieldTypeInterface.number,
+    },
+    send_voice_update: {
+        label: 'Send voice updates on Admin Channel',
+        type: fieldTypeInterface.boolean,
+    },
 } as const satisfies Record<string, fieldInterface>;
 
 type serverFieldName = keyof typeof serverFields;
@@ -89,6 +131,10 @@ export default class model_servers extends model_base
     name?: string;
     reddit_odd_memes?: number;
     subreddits_memes?: string | null;
+    autoban_del_period?: number | string;
+    autoban_punishment?: autobanPunishment;
+    autoban_mute_days?: number | string;
+    send_voice_update?: boolean;
 
     async selectActive(fields: Pick<Record<serverFieldName, string>, 'server'>): Promise<this | false>
     {
@@ -113,48 +159,113 @@ export default class model_servers extends model_base
         }
     }
 
-    async getRedditSettings(serverId: string): Promise<serverRedditSettings | false>
+    async getServerSettings(serverId: string): Promise<serverSettings | false>
     {
         return redisCache.getOrSet(
-            `discord-bot:server-reddit-settings:${serverId}`,
-            REDDIT_SETTINGS_CACHE_TTL_SECONDS,
+            serverSettingsCacheKey(serverId),
+            SERVER_SETTINGS_CACHE_TTL_SECONDS,
             async () => {
                 try {
-                    const result = await this.select(
-                        'reddit_odd_memes, subreddits_memes',
-                        [],
-                        `server = ${this.bind(serverId)}`,
-                        '',
-                        1
+                    const result = await this.query(
+                        `SELECT reddit_odd_memes, subreddits_memes,
+                                autoban_del_period, autoban_punishment, autoban_mute_days, send_voice_update,
+                                ARRAY(
+                                    SELECT channel_id FROM admin_channels
+                                    WHERE admin_channels.server = servers.server
+                                    ORDER BY channel_id
+                                ) AS admin_channels,
+                                ARRAY(
+                                    SELECT channel_id FROM birthday_channels
+                                    WHERE birthday_channels.server = servers.server
+                                    ORDER BY channel_id
+                                ) AS birthday_channels,
+                                ARRAY(
+                                    SELECT channel_id FROM channels_forbidden
+                                    WHERE channels_forbidden.server = servers.server
+                                    ORDER BY channel_id
+                                ) AS forbidden_channels
+                         FROM ${this.table}
+                         WHERE server = $1
+                         LIMIT 1`,
+                        [serverId]
                     );
                     const row = result.rows[0] as {
                         reddit_odd_memes: number | string | null;
                         subreddits_memes: string | null;
+                        autoban_del_period: number | string | null;
+                        autoban_punishment: string | null;
+                        autoban_mute_days: number | string | null;
+                        send_voice_update: boolean | null;
+                        admin_channels: string[] | null;
+                        birthday_channels: string[] | null;
+                        forbidden_channels: string[] | null;
                     } | undefined;
-
-                    if (!row) {
-                        return {reddit_odd_memes: 0, subreddits_memes: []};
-                    }
-
-                    const parsedOdds = Number(row.reddit_odd_memes ?? 0);
+                    const redditOdds = Number(row?.reddit_odd_memes ?? 0);
+                    const deletePeriodMinutes = Number(
+                        row?.autoban_del_period ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES
+                    );
+                    const muteDays = Number(row?.autoban_mute_days ?? DEFAULT_AUTOBAN_MUTE_DAYS);
                     return {
-                        reddit_odd_memes: Number.isFinite(parsedOdds) ? parsedOdds : 0,
-                        subreddits_memes: (row.subreddits_memes ?? '')
+                        reddit_odd_memes: Number.isFinite(redditOdds) ? redditOdds : 0,
+                        subreddits_memes: (row?.subreddits_memes ?? '')
                             .split(/[,\r\n]/)
                             .map((subreddit) => subreddit.trim())
-                            .filter(Boolean)
+                            .filter(Boolean),
+                        autoban_del_period: Number.isFinite(deletePeriodMinutes)
+                            ? deletePeriodMinutes
+                            : DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES,
+                        autoban_punishment: row?.autoban_punishment === 'mute' ? 'mute' : 'ban',
+                        autoban_mute_days: Number.isFinite(muteDays)
+                            ? muteDays
+                            : DEFAULT_AUTOBAN_MUTE_DAYS,
+                        send_voice_update: row?.send_voice_update === true,
+                        admin_channels: row?.admin_channels ?? [],
+                        birthday_channels: row?.birthday_channels ?? [],
+                        forbidden_channels: row?.forbidden_channels ?? []
                     };
                 } catch (error) {
-                    log.warning(`Error loading Reddit settings for server ${serverId}: ${error}`);
+                    log.warning(`Error loading settings for server ${serverId}: ${error}`);
                     return false;
                 }
             }
         );
     }
 
-    async invalidateCache(serverId: string): Promise<void>
+    async saveAutobanConfiguration(
+        serverId: string,
+        configuration: serverAutobanConfiguration,
+        createdBy: string
+    ): Promise<boolean>
     {
-        await redisCache.delete(`discord-bot:server-reddit-settings:${serverId}`);
+        try {
+            const result = await this.query(
+                `UPDATE ${this.table}
+                 SET autoban_del_period = $2, autoban_punishment = $3, autoban_mute_days = $4,
+                     date_modified = NOW(), created_by = $5
+                 WHERE server = $1`,
+                [
+                    serverId,
+                    configuration.deletePeriodMinutes,
+                    configuration.punishment,
+                    configuration.muteDays,
+                    createdBy
+                ]
+            );
+            if ((result.rowCount ?? 0) < 1) {
+                return false;
+            }
+
+            await this.invalidateSettingsCache(serverId);
+            return true;
+        } catch (error) {
+            log.warning(`Error saving autoban configuration for server ${serverId}: ${error}`);
+            return false;
+        }
+    }
+
+    async invalidateSettingsCache(serverId: string): Promise<void>
+    {
+        await redisCache.delete(serverSettingsCacheKey(serverId));
     }
 
     async saveRedditSettings(
@@ -175,10 +286,35 @@ export default class model_servers extends model_base
                 return false;
             }
 
-            await this.invalidateCache(serverId);
+            await this.invalidateSettingsCache(serverId);
             return true;
         } catch (error) {
             log.warning(`Error saving Reddit settings for server ${serverId}: ${error}`);
+            return false;
+        }
+    }
+
+    async saveVoiceUpdateSetting(
+        serverId: string,
+        enabled: boolean,
+        createdBy: string
+    ): Promise<boolean>
+    {
+        try {
+            const result = await this.query(
+                `UPDATE ${this.table}
+                 SET send_voice_update = $2, date_modified = NOW(), created_by = $3
+                 WHERE server = $1`,
+                [serverId, enabled, createdBy]
+            );
+            if ((result.rowCount ?? 0) < 1) {
+                return false;
+            }
+
+            await this.invalidateSettingsCache(serverId);
+            return true;
+        } catch (error) {
+            log.warning(`Error saving voice update setting for server ${serverId}: ${error}`);
             return false;
         }
     }
@@ -188,7 +324,7 @@ export default class model_servers extends model_base
         const saved = await super.save(fields);
         const serverId = typeof fields.server === 'string' ? fields.server : this.server;
         if (saved !== false && serverId) {
-            await this.invalidateCache(serverId);
+            await this.invalidateSettingsCache(serverId);
         }
         return saved;
     }
