@@ -17,11 +17,13 @@
 import model_base from '#models/base.ts';
 import redisCache from '#includes/cache/redis_cache.ts';
 import log from '#includes/log.ts';
+import config from '#includes/config.ts';
 import { fieldTypeInterface } from '../interfaces/fieldInterface.ts';
 import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
 const SERVER_SETTINGS_CACHE_TTL_SECONDS = 360;
-const SERVER_SETTINGS_CACHE_KEY_PREFIX = 'discord-bot:server-settings:v2:';
+const SERVER_SETTINGS_CACHE_KEY_PREFIX =
+    `discord-bot:server-settings:v3:${config.DISCORD_BOT_ID}:${config.DISCORD_BOT_LOCALE}:`;
 
 const serverSettingsCacheKey = (serverId: string): string =>
     `${SERVER_SETTINGS_CACHE_KEY_PREFIX}${serverId}`;
