@@ -81,6 +81,10 @@ export default class admin_config extends appSubCommandBase
             new ButtonBuilder()
                 .setCustomId('admin_config_voice')
                 .setLabel(lang.translate(this.parentName, 'SUBCMD_CONFIG_MENU_VOICE'))
+                .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+                .setCustomId('admin_config_welcome')
+                .setLabel(lang.translate(this.parentName, 'SUBCMD_CONFIG_MENU_WELCOME'))
                 .setStyle(ButtonStyle.Primary)
         );
         await interaction.reply({

@@ -17,7 +17,7 @@
 import { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, MessageFlags} from 'discord.js';
 import lang from '#includes/lang.ts';
 import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
-import model_birthday from '#models/birthday.ts';
+import model_server_members from '#models/server_members.ts';
 export default class birthday_lsit extends appSubCommandBase
 {
     cooldown = 3;
@@ -34,7 +34,7 @@ export default class birthday_lsit extends appSubCommandBase
 
     async execute(interaction: ChatInputCommandInteraction)
     {
-        let birthdayClass = new model_birthday();
+        let birthdayClass = new model_server_members();
         
         let birthdays = await birthdayClass.getMembersBirthdays({server: interaction.guild?.id});
 

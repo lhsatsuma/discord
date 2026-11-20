@@ -17,7 +17,7 @@
 import { MessageFlags, SlashCommandSubcommandBuilder, type ChatInputCommandInteraction } from 'discord.js';
 import lang from '#includes/lang.ts';
 import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
-import model_birthday from '#models/birthday.ts';
+import model_server_members from '#models/server_members.ts';
 
 export default class birthday_remove extends appSubCommandBase
 {
@@ -51,7 +51,7 @@ export default class birthday_remove extends appSubCommandBase
         }
 
         const userId = interaction.options.getUser('user')?.id ?? interaction.user.id;
-        const birthday = new model_birthday();
+        const birthday = new model_server_members();
         const registeredBirthday = await birthday.selectActive({
             server: serverId,
             user_id: userId

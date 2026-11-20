@@ -22,7 +22,7 @@ import config from '#includes/config.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
 import model_birthday_channels from '#models/birthday_channels.ts';
-import model_birthday, { type birthdayRecord } from '#models/birthday.ts';
+import model_server_members, { type birthdayRecord } from '#models/server_members.ts';
 
 type LocalDateParts = {
     year: number;
@@ -98,7 +98,7 @@ class BirthdaySchedule
 
         try {
             const today = this.getLocalDateParts(new Date());
-            const birthdays = await new model_birthday().getBirthdaysForDate(today.month, today.day);
+            const birthdays = await new model_server_members().getBirthdaysForDate(today.month, today.day);
             if (birthdays === false) {
                 log.err('Could not load birthdays for today.');
                 return false;
