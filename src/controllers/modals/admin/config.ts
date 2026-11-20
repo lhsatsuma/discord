@@ -25,13 +25,13 @@ import {
 } from 'discord.js';
 import lang from '#includes/lang.ts';
 import appModalBase from '#includes/commands/appModalBase.ts';
-import model_autoban_config, {
+import model_servers, {
     MAX_AUTOBAN_DELETE_PERIOD_MINUTES,
     MAX_AUTOBAN_MUTE_DAYS,
     type autobanPunishment
-} from '#models/autoban_config.ts';
+} from '#models/server.ts';
 
-export default class modal_admin_config_autoban extends appModalBase
+export default class modal_admin_config extends appModalBase
 {
     parentName = 'admin';
     name = 'config_autoban';
@@ -43,7 +43,7 @@ export default class modal_admin_config_autoban extends appModalBase
     {
         const modal = this.builded;
         if (!modal) {
-            throw new Error('Autoban configuration modal must be initialized before building components.');
+            throw new Error('Admin configuration modal must be initialized before building components.');
         }
 
         modal.addLabelComponents(
@@ -119,7 +119,6 @@ export default class modal_admin_config_autoban extends appModalBase
         const periodMinutes = Number(periodValue);
         const muteDaysValue = interaction.fields.getTextInputValue('mute_days');
         const muteDays = Number(muteDaysValue);
-
         if (!serverId || !/^[0-9]{1,5}$/.test(periodValue)
             || !Number.isSafeInteger(periodMinutes)
             || periodMinutes < 0
@@ -135,7 +134,8 @@ export default class modal_admin_config_autoban extends appModalBase
             return true;
         }
 
-        const saved = await new model_autoban_config().saveConfiguration(
+        const serverModel = new model_servers();
+        const saved = await serverModel.saveAutobanConfiguration(
             serverId,
             {
                 deletePeriodMinutes: periodMinutes,

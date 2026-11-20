@@ -169,6 +169,10 @@ CREATE TABLE public.servers (
 	"name" varchar(255) NULL,
 	reddit_odd_memes integer NOT NULL DEFAULT 5,
 	subreddits_memes TEXT NULL,
+	autoban_del_period numeric(5) NOT NULL DEFAULT 60,
+	autoban_punishment varchar(10) NOT NULL DEFAULT 'ban',
+	autoban_mute_days integer NOT NULL DEFAULT 7,
+	send_voice_update boolean NOT NULL default true,
 	CONSTRAINT server_id UNIQUE (server),
 	CONSTRAINT servers_created_by_not_null NOT NULL created_by,
 	CONSTRAINT servers_id_not_null NOT NULL id,
@@ -193,23 +197,6 @@ CREATE TABLE public.tic_tac_toe (
 	CONSTRAINT tic_tac_toe_id_not_null NOT NULL id,
 	CONSTRAINT tic_tac_toe_pkey PRIMARY KEY (id),
 	CONSTRAINT fk_tic_tac_toe_server_members FOREIGN KEY ("server",user_id) REFERENCES public.server_members("server",user_id)
-);
-
-
-
-CREATE TABLE autoban_config (
-	id varchar(36) NOT NULL,
-	date_entered timestamp DEFAULT now() NULL,
-	date_modified timestamp DEFAULT now() NULL,
-	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NULL,
-	"server" varchar(255) NOT NULL,
-	delete_period numeric(5) NOT NULL DEFAULT 60,
-	punishment varchar(10) NOT NULL DEFAULT 'ban',
-	mute_days integer NOT NULL DEFAULT 7,
-	CONSTRAINT autoban_config_id_not_null NOT NULL id,
-	CONSTRAINT autoban_config_pkey PRIMARY KEY (id),
-	CONSTRAINT autoban_config_server_not_null NOT NULL server,
-	CONSTRAINT fk_autoban_config_server FOREIGN KEY ("server") REFERENCES servers("server")
 );
 
 

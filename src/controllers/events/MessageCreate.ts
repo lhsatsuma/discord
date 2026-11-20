@@ -28,8 +28,8 @@ import entryPointApp from '#src/entryPointApp.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
 import model_admin_channels from '#models/admin_channels.ts';
-import model_autoban_config, {type autobanPunishment} from '#models/autoban_config.ts';
 import model_channels_forbidden from '#models/channels_forbidden.ts';
+import model_servers, {type autobanPunishment} from '#models/server.ts';
 
 type MessageDeletionSweep = {
     deletedMessages: number;
@@ -89,8 +89,8 @@ export default class MessageCreate
             return;
         }
 
-        const autobanConfiguration = await new model_autoban_config().getConfiguration(guild.id);
-        if (autobanConfiguration === false) {
+        const settings = await new model_servers().getServerSettings(guild.id);
+        if (settings === false) {
             log.warning(`Could not load autoban configuration for guild ${guild.id}; skipping ban.`);
             return;
         }
@@ -98,18 +98,18 @@ export default class MessageCreate
         let punishmentApplied = false;
         const punishmentReason = `Message sent in autoban channel ${message.channelId} (${message.id}).`;
         try {
-            if (autobanConfiguration.punishment === 'ban') {
+            if (settings.autoban_punishment === 'ban') {
                 await guild.members.ban(member, {reason: punishmentReason});
             } else {
                 await member.timeout(
-                    autobanConfiguration.muteDays * 24 * 60 * 60 * 1000,
+                    settings.autoban_mute_days * 24 * 60 * 60 * 1000,
                     punishmentReason
                 );
             }
             punishmentApplied = true;
         } catch (error) {
             log.warning(
-                `Could not ${autobanConfiguration.punishment} member ${member.id} `
+                `Could not ${settings.autoban_punishment} member ${member.id} `
                 + `for using forbidden channel ${message.channelId}: ${error}`
             );
         }
@@ -118,8 +118,8 @@ export default class MessageCreate
             message,
             guild,
             member.id,
-            autobanConfiguration.deletePeriodMinutes,
-            autobanConfiguration.punishment,
+            settings.autoban_del_period,
+            settings.autoban_punishment,
             punishmentApplied
         )
             .catch((error: unknown) => {

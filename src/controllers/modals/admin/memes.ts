@@ -28,10 +28,10 @@ import model_servers from '#models/server.ts';
 
 const MAX_SUBREDDIT_COUNT = 100;
 
-export default class modal_memes_config extends appModalBase
+export default class modal_admin_config_memes extends appModalBase
 {
-    parentName = 'memes';
-    name = 'config';
+    parentName = 'admin';
+    name = 'config_memes';
     odds = 0;
     subreddits = '';
 
@@ -53,8 +53,8 @@ export default class modal_memes_config extends appModalBase
 
         modal.addLabelComponents(
             new LabelBuilder()
-                .setLabel(lang.translate(this.parentName, 'MODAL_CONFIG_ODDS_LABEL'))
-                .setDescription(lang.translate(this.parentName, 'MODAL_CONFIG_ODDS_DESCRIPTION'))
+                .setLabel(lang.translate(this.parentName, 'MODAL_CONFIG_MEMES_ODDS_LABEL'))
+                .setDescription(lang.translate(this.parentName, 'MODAL_CONFIG_MEMES_ODDS_DESCRIPTION'))
                 .setTextInputComponent(
                     new TextInputBuilder()
                         .setCustomId('reddit_odds')
@@ -64,8 +64,8 @@ export default class modal_memes_config extends appModalBase
                         .setValue(String(this.odds))
                 ),
             new LabelBuilder()
-                .setLabel(lang.translate(this.parentName, 'MODAL_CONFIG_SUBREDDITS_LABEL'))
-                .setDescription(lang.translate(this.parentName, 'MODAL_CONFIG_SUBREDDITS_DESCRIPTION'))
+                .setLabel(lang.translate(this.parentName, 'MODAL_CONFIG_MEMES_SUBREDDITS_LABEL'))
+                .setDescription(lang.translate(this.parentName, 'MODAL_CONFIG_MEMES_SUBREDDITS_DESCRIPTION'))
                 .setTextInputComponent(subredditInput)
         );
         return this;
@@ -91,7 +91,7 @@ export default class modal_memes_config extends appModalBase
 
         if (!serverId || !/^[0-9]{1,2}$/.test(oddsValue) || !Number.isInteger(odds) || odds < 0 || odds > 10) {
             await interaction.reply({
-                content: lang.translate(this.parentName, 'MODAL_CONFIG_INVALID_ODDS'),
+                content: lang.translate(this.parentName, 'MODAL_CONFIG_MEMES_INVALID_ODDS'),
                 flags: [MessageFlags.Ephemeral]
             });
             return true;
@@ -107,7 +107,7 @@ export default class modal_memes_config extends appModalBase
         const invalidSubreddits = uniqueSubreddits.filter((subreddit) => !/^[A-Za-z0-9_]{2,21}$/.test(subreddit));
         if (invalidSubreddits.length || uniqueSubreddits.length > MAX_SUBREDDIT_COUNT) {
             await interaction.reply({
-                content: lang.translate(this.parentName, 'MODAL_CONFIG_INVALID_SUBREDDITS'),
+                content: lang.translate(this.parentName, 'MODAL_CONFIG_MEMES_INVALID_SUBREDDITS'),
                 flags: [MessageFlags.Ephemeral]
             });
             return true;
@@ -128,7 +128,7 @@ export default class modal_memes_config extends appModalBase
         }
 
         await interaction.reply({
-            content: lang.translate(this.parentName, 'MODAL_CONFIG_SUCCESS', [
+            content: lang.translate(this.parentName, 'MODAL_CONFIG_MEMES_SUCCESS', [
                 odds,
                 uniqueSubreddits.length
             ]),
