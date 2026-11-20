@@ -61,28 +61,23 @@ export interface serverAutobanConfiguration
 const serverFields = {
     id: {
         label: 'ID',
-        type: fieldTypeInterface.uuid,
-        minLength: 36,
-        maxLength: 36,
+        type: fieldTypeInterface.string,
+        minLength: 1,
+        maxLength: 255,
         pk: true
     },
-    date_entered: {
-        label: 'Date Entered',
+    created_at: {
+        label: 'Created At',
         type: fieldTypeInterface.datetime,
     },
-    date_modified: {
-        label: 'Date Modified',
+    updated_at: {
+        label: 'Updated At',
         type: fieldTypeInterface.datetime,
     },
     created_by: {
         label: 'Created By',
         type: fieldTypeInterface.string,
         minLength: 1,
-        maxLength: 255,
-    },
-    server: {
-        label: 'Server',
-        type: fieldTypeInterface.string,
         maxLength: 255,
     },
     active: {
@@ -141,10 +136,9 @@ export default class model_servers extends model_base
     table = 'servers';
     fields = serverFields;
     id?: string;
-    date_entered?: Date | string;
-    date_modified?: Date | string;
+    created_at?: Date | string;
+    updated_at?: Date | string;
     created_by?: string;
-    server?: string;
     active?: boolean;
     name?: string;
     reddit_odd_memes?: number;
@@ -157,19 +151,19 @@ export default class model_servers extends model_base
     welcome_channel_id?: string | null;
     welcome_message?: string | null;
 
-    async selectActive(fields: Pick<Record<serverFieldName, string>, 'server'>): Promise<this | false>
+    async selectActive(fields: Pick<Record<serverFieldName, string>, 'id'>): Promise<this | null | false>
     {
         try{
             const res = await this.select(
                 Object.keys(this.fields).join(', '),
                 [],
-                `server = ${this.bind(fields.server)}`,
+                `id = ${this.bind(fields.id)}`,
                 '',
                 1
             );
             const record = res.rows[0];
             if(!record){
-                return false;
+                return null;
             }
 
             Object.assign(this, record);
@@ -193,21 +187,21 @@ export default class model_servers extends model_base
                                 welcome_message_active, welcome_channel_id, welcome_message,
                                 ARRAY(
                                     SELECT channel_id FROM admin_channels
-                                    WHERE admin_channels.server = servers.server
+                                    WHERE admin_channels.server = servers.id
                                     ORDER BY channel_id
                                 ) AS admin_channels,
                                 ARRAY(
                                     SELECT channel_id FROM birthday_channels
-                                    WHERE birthday_channels.server = servers.server
+                                    WHERE birthday_channels.server = servers.id
                                     ORDER BY channel_id
                                 ) AS birthday_channels,
                                 ARRAY(
                                     SELECT channel_id FROM channels_forbidden
-                                    WHERE channels_forbidden.server = servers.server
+                                    WHERE channels_forbidden.server = servers.id
                                     ORDER BY channel_id
                                 ) AS forbidden_channels
                          FROM ${this.table}
-                         WHERE server = $1
+                         WHERE id = $1
                          LIMIT 1`,
                         [serverId]
                     );
@@ -269,8 +263,8 @@ export default class model_servers extends model_base
             const result = await this.query(
                 `UPDATE ${this.table}
                  SET autoban_del_period = $2, autoban_punishment = $3, autoban_mute_days = $4,
-                     date_modified = NOW(), created_by = $5
-                 WHERE server = $1`,
+                     updated_at = NOW(), created_by = $5
+                 WHERE id = $1`,
                 [
                     serverId,
                     configuration.deletePeriodMinutes,
@@ -306,8 +300,8 @@ export default class model_servers extends model_base
         try {
             const result = await this.query(
                 `UPDATE ${this.table}
-                 SET reddit_odd_memes = $2, subreddits_memes = $3, date_modified = NOW(), created_by = $4
-                 WHERE server = $1`,
+                 SET reddit_odd_memes = $2, subreddits_memes = $3, updated_at = NOW(), created_by = $4
+                 WHERE id = $1`,
                 [serverId, odds, subreddits.join(','), createdBy]
             );
             if ((result.rowCount ?? 0) < 1) {
@@ -331,8 +325,8 @@ export default class model_servers extends model_base
         try {
             const result = await this.query(
                 `UPDATE ${this.table}
-                 SET send_voice_update = $2, date_modified = NOW(), created_by = $3
-                 WHERE server = $1`,
+                 SET send_voice_update = $2, updated_at = NOW(), created_by = $3
+                 WHERE id = $1`,
                 [serverId, enabled, createdBy]
             );
             if ((result.rowCount ?? 0) < 1) {
@@ -359,8 +353,8 @@ export default class model_servers extends model_base
             const result = await this.query(
                 `UPDATE ${this.table}
                  SET welcome_message_active = $2, welcome_channel_id = $3, welcome_message = $4,
-                     date_modified = NOW(), created_by = $5
-                 WHERE server = $1`,
+                     updated_at = NOW(), created_by = $5
+                 WHERE id = $1`,
                 [serverId, active, channelId, message, createdBy]
             );
             if ((result.rowCount ?? 0) < 1) {
@@ -378,7 +372,7 @@ export default class model_servers extends model_base
     async save(fields: Record<string, unknown> = {}): Promise<any>
     {
         const saved = await super.save(fields);
-        const serverId = typeof fields.server === 'string' ? fields.server : this.server;
+        const serverId = typeof fields.id === 'string' ? fields.id : this.id;
         if (saved !== false && serverId) {
             await this.invalidateSettingsCache(serverId);
         }

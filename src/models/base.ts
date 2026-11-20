@@ -65,12 +65,12 @@ export default class model_base
 	async beforeInsert(fields: Record<string, any>)
 	{
 
-		if(!fields.date_entered){
-			fields.date_entered = new Date().toUTCString();
+		if(!fields.created_at){
+			fields.created_at = new Date().toUTCString();
 		}
 
-		if(!fields.date_modified){
-			fields.date_modified = new Date().toUTCString();
+		if(!fields.updated_at){
+			fields.updated_at = new Date().toUTCString();
 		}
 
 		if(!fields.created_by){
@@ -111,7 +111,7 @@ export default class model_base
 			}
 
 			const updateFields = Object.entries(fields).filter(
-				([column]) => column !== primaryKey && column !== 'date_modified' && column !== 'created_by'
+				([column]) => column !== primaryKey && column !== 'updated_at' && column !== 'created_by'
 			);
 			if(!updateFields.length){
 				log.warning(`Cannot update ${this.table}: no fields to update.`);
@@ -119,7 +119,11 @@ export default class model_base
 			}
 
 			const params = updateFields.map(([, value]) => value);
-			const setClause = updateFields.map(([column], index) => `${column} = $${index + 1}`).join(', ');
+			params.push(new Date().toUTCString());
+			const setClause = [
+				...updateFields.map(([column], index) => `${column} = $${index + 1}`),
+				`updated_at = $${params.length}`
+			].join(', ');
 			params.push(fields[primaryKey]);
 			await database_pg.query(
 				`UPDATE ${this.table} SET ${setClause} WHERE ${primaryKey} = $${params.length}`,

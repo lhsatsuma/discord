@@ -27,12 +27,12 @@ const memeFields = {
         maxLength: 36,
         pk: true
     },
-    date_entered: {
-        label: 'Date Entered',
+    created_at: {
+        label: 'Created At',
         type: fieldTypeInterface.datetime,
     },
-    date_modified: {
-        label: 'Date Modified',
+    updated_at: {
+        label: 'Updated At',
         type: fieldTypeInterface.datetime,
     },
     created_by: {
@@ -73,7 +73,7 @@ class model_memes extends model_base
     async getRandom(fields: memeServerFilter): Promise<any>
     {
         try{
-            const res = await this.select('date_entered, order_id, description, content', [], `server = ${this.bind(fields.server)}`, "RANDOM()", 1);
+            const res = await this.select('created_at, order_id, description, content', [], `server = ${this.bind(fields.server)}`, "RANDOM()", 1);
             return res.rows[0];
         }catch(e){
             return false;
@@ -120,7 +120,7 @@ class model_memes extends model_base
             where += ` AND description LIKE ${this.bind(`%${search}%`)}`;
         }
         try{
-            const res = await this.select('date_entered, order_id, description, content', [], where, 'RANDOM()', 1);
+            const res = await this.select('created_at, order_id, description, content', [], where, 'RANDOM()', 1);
             return res.rows[0];
         }catch(e){
             return false;

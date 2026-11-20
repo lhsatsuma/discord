@@ -28,12 +28,12 @@ const birthdayChannelFields = {
         maxLength: 36,
         pk: true
     },
-    date_entered: {
-        label: 'Date Entered',
+    created_at: {
+        label: 'Created At',
         type: fieldTypeInterface.datetime,
     },
-    date_modified: {
-        label: 'Date Modified',
+    updated_at: {
+        label: 'Updated At',
         type: fieldTypeInterface.datetime,
     },
     created_by: {
@@ -62,8 +62,8 @@ export default class model_birthday_channels extends model_base
     table = 'birthday_channels';
     fields = birthdayChannelFields;
     id?: string;
-    date_entered?: Date | string;
-    date_modified?: Date | string;
+    created_at?: Date | string;
+    updated_at?: Date | string;
     created_by?: string;
     server?: string;
     channel_id?: string;

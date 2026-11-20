@@ -73,7 +73,7 @@ export default class memes_get extends appSubCommandBase
                 .setFooter({
                     text: `#${meme.order_id} | ${meme.description}`
                 })
-                .setTimestamp(meme.date_entered)
+                .setTimestamp(meme.created_at)
             ]
         };
         await interaction.reply(embedMsg);
