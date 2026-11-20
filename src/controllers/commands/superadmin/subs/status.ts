@@ -18,6 +18,7 @@ import { SlashCommandSubcommandBuilder, EmbedBuilder, MessageFlags, Colors, Chat
 import lang from '#includes/lang.ts';
 import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
 import config from '#includes/config.ts';
+import log from '#includes/log.ts';
 import processRunning from '#includes/processRunning.ts';
 export default class superadmin_status extends appSubCommandBase
 {
@@ -46,18 +47,25 @@ export default class superadmin_status extends appSubCommandBase
 
         const uptime = await this.main.runningPid.getUptime();
         const file_info = this.main.runningPid.getFileInfo();
-        const date = new Date().toLocaleDateString(config.DISCORD_BOT_LOCALE);
+        const date = new Date().toLocaleDateString(lang.locale);
 
         const runningPidScheduler = new processRunning(this.main, 'scheduler').init();
         const uptime_scheduler = await runningPidScheduler.getUptime();
         const file_info_scheduler = runningPidScheduler.getFileInfo();
 
+        const thumbnailUrl = this.getThumbnailUrl();
+        const appEmbed = new EmbedBuilder()
+            .setTitle(lang.translate('superadmin', `SUBCMD_${this.name.toUpperCase()}_APP`));
+        const schedulerEmbed = new EmbedBuilder()
+            .setTitle(lang.translate('superadmin', `SUBCMD_${this.name.toUpperCase()}_SCHEDULER`));
+        if (thumbnailUrl) {
+            appEmbed.setThumbnail(thumbnailUrl);
+            schedulerEmbed.setThumbnail(thumbnailUrl);
+        }
 
         const pagEmbed = this.buildPagination(interaction, {limit: 1});
         pagEmbed.addEmbeds([
-            new EmbedBuilder()
-                .setTitle(lang.translate('superadmin', `SUBCMD_${this.name.toUpperCase()}_APP`))
-                .setThumbnail(config.DISCORD_BOT_ICON)
+            appEmbed
                 .setDescription(`**${date}**\n\nUptime: ${uptime}`)
                 .addFields([
                     { name: 'OS', value: String(file_info.platform ?? 'N/A'), inline: true},
@@ -67,9 +75,7 @@ export default class superadmin_status extends appSubCommandBase
                     { name: 'App Version', value: String(file_info.appVersion ?? 'N/A'), inline: true},
                 ])
                 .setColor(Colors.Blue),
-            new EmbedBuilder()
-                .setTitle(lang.translate('superadmin', `SUBCMD_${this.name.toUpperCase()}_SCHEDULER`))
-                .setThumbnail(config.DISCORD_BOT_ICON)
+            schedulerEmbed
                 .setDescription(`**${date}**\n\nUptime: ${uptime_scheduler}`)
                 .addFields([
                     { name: 'OS', value: String(file_info_scheduler.platform ?? 'N/A'), inline: true},
@@ -83,5 +89,24 @@ export default class superadmin_status extends appSubCommandBase
     );
         pagEmbed.render();
         return true;
+    }
+
+    private getThumbnailUrl(): string | null
+    {
+        const configuredUrl = config.DISCORD_BOT_ICON.trim();
+        if (!configuredUrl) {
+            return null;
+        }
+
+        try {
+            const url = new URL(configuredUrl);
+            if (url.protocol !== 'https:' && url.protocol !== 'http:') {
+                throw new TypeError('Expected an HTTP or HTTPS URL.');
+            }
+            return url.toString();
+        } catch (error) {
+            log.warning(`Ignoring invalid DISCORD_BOT_ICON URL in superadmin status: ${error}`);
+            return null;
+        }
     }
 }

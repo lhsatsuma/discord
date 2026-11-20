@@ -17,6 +17,27 @@ SQL to create all tables to database
 PostgreSQL
  */
 
+CREATE TABLE servers (
+	id varchar(36) NOT NULL,
+	date_entered timestamp DEFAULT now() NULL,
+	date_modified timestamp DEFAULT now() NULL,
+	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NOT NULL,
+	"server" varchar(255) NOT NULL,
+	active bool DEFAULT true NULL,
+	"name" varchar(255) NULL,
+	reddit_odd_memes integer NOT NULL DEFAULT 5,
+	subreddits_memes TEXT NULL,
+	autoban_del_period numeric(5) NOT NULL DEFAULT 60,
+	autoban_punishment varchar(10) NOT NULL DEFAULT 'ban',
+	autoban_mute_days integer NOT NULL DEFAULT 7,
+	send_voice_update boolean NOT NULL default true,
+	CONSTRAINT server_id UNIQUE (server),
+	CONSTRAINT servers_created_by_not_null NOT NULL created_by,
+	CONSTRAINT servers_id_not_null NOT NULL id,
+	CONSTRAINT servers_pkey PRIMARY KEY (id),
+	CONSTRAINT servers_server_not_null NOT NULL server
+);
+
 CREATE TABLE admin_channels (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
@@ -32,7 +53,41 @@ CREATE TABLE admin_channels (
 	CONSTRAINT fk_admin_channels_server FOREIGN KEY ("server") REFERENCES servers("server")
 );
 
-CREATE TABLE public.birthday_channels (
+CREATE TABLE server_members (
+	id varchar(36) NOT NULL,
+	date_entered timestamp DEFAULT now() NULL,
+	date_modified timestamp DEFAULT now() NULL,
+	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NOT NULL,
+	"server" varchar(255) NULL,
+	user_id varchar(255) NULL,
+	username varchar(255) NULL,
+	birthdate date NULL,
+	CONSTRAINT server_members_created_by_not_null NOT NULL created_by,
+	CONSTRAINT server_members_id_not_null NOT NULL id,
+	CONSTRAINT server_members_pkey PRIMARY KEY (id),
+	CONSTRAINT server_members_unique UNIQUE (server, user_id),
+	CONSTRAINT unq_server_members UNIQUE (server, user_id),
+	CONSTRAINT fk_server_members_server FOREIGN KEY ("server") REFERENCES servers("server")
+);
+
+
+
+CREATE TABLE channels_forbidden (
+	id varchar(36) NOT NULL,
+	date_entered timestamp DEFAULT now() NULL,
+	date_modified timestamp DEFAULT now() NULL,
+	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NULL,
+	"server" varchar(255) NOT NULL,
+	channel_id varchar(255) NOT NULL,
+	CONSTRAINT channels_forbidden_channel_id_not_null NOT NULL channel_id,
+	CONSTRAINT channels_forbidden_id_not_null NOT NULL id,
+	CONSTRAINT channels_forbidden_pkey PRIMARY KEY (id),
+	CONSTRAINT channels_forbidden_server_not_null NOT NULL server,
+	CONSTRAINT channels_forbidden_unique UNIQUE (server, channel_id),
+	CONSTRAINT fk_channels_forbidden_server FOREIGN KEY ("server") REFERENCES servers("server")
+);
+
+CREATE TABLE birthday_channels (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
 	date_modified timestamp DEFAULT now() NULL,
@@ -44,10 +99,10 @@ CREATE TABLE public.birthday_channels (
 	CONSTRAINT birthday_channels_pkey PRIMARY KEY (id),
 	CONSTRAINT birthday_channels_server_not_null NOT NULL server,
 	CONSTRAINT birthday_channels_unique UNIQUE (server, channel_id),
-	CONSTRAINT fk_birthday_channels_server FOREIGN KEY ("server") REFERENCES public.servers("server")
+	CONSTRAINT fk_birthday_channels_server FOREIGN KEY ("server") REFERENCES servers("server")
 );
 
-CREATE TABLE public.hangman (
+CREATE TABLE hangman (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
 	date_modified timestamp DEFAULT now() NULL,
@@ -66,10 +121,10 @@ CREATE TABLE public.hangman (
 	CONSTRAINT hangman_id_not_null NOT NULL id,
 	CONSTRAINT hangman_pkey PRIMARY KEY (id),
 	CONSTRAINT hangman_unique UNIQUE (server, user_id),
-	CONSTRAINT fk_hangman_server_members FOREIGN KEY ("server",user_id) REFERENCES public.server_members("server",user_id)
+	CONSTRAINT fk_hangman_server_members FOREIGN KEY ("server",user_id) REFERENCES server_members("server",user_id)
 );
 
-CREATE TABLE public.jankenpon (
+CREATE TABLE jankenpon (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
 	date_modified timestamp DEFAULT now() NULL,
@@ -93,10 +148,10 @@ CREATE TABLE public.jankenpon (
 	CONSTRAINT jankenpon_pkey PRIMARY KEY (id),
 	CONSTRAINT jankenpon_unique UNIQUE (server, user_id),
 	CONSTRAINT jankenpon_user_id_not_null NOT NULL user_id,
-	CONSTRAINT fk_jankenpon_server FOREIGN KEY ("server") REFERENCES public.servers("server")
+	CONSTRAINT fk_jankenpon_server FOREIGN KEY ("server") REFERENCES servers("server")
 );
 
-CREATE TABLE public.jokes (
+CREATE TABLE jokes (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
 	date_modified timestamp DEFAULT now() NULL,
@@ -107,11 +162,11 @@ CREATE TABLE public.jokes (
 	CONSTRAINT jokes_id_not_null NOT NULL id,
 	CONSTRAINT jokes_locale_not_null NOT NULL locale,
 	CONSTRAINT jokes_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_jokes_server FOREIGN KEY ("server") REFERENCES public.servers("server")
+	CONSTRAINT fk_jokes_server FOREIGN KEY ("server") REFERENCES servers("server")
 );
-CREATE INDEX jokes_locale_idx ON public.jokes USING btree (locale, server);
+CREATE INDEX jokes_locale_idx ON jokes USING btree (locale, server);
 
-CREATE TABLE public.memes (
+CREATE TABLE memes (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
 	date_modified timestamp DEFAULT now() NULL,
@@ -124,10 +179,10 @@ CREATE TABLE public.memes (
 	CONSTRAINT memes_id_not_null NOT NULL id,
 	CONSTRAINT memes_pkey PRIMARY KEY (id),
 	CONSTRAINT memes_unique UNIQUE (server, order_id),
-	CONSTRAINT fk_memes_server FOREIGN KEY ("server") REFERENCES public.servers("server")
+	CONSTRAINT fk_memes_server FOREIGN KEY ("server") REFERENCES servers("server")
 );
 
-CREATE TABLE public.pickup_lines (
+CREATE TABLE pickup_lines (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
 	date_modified timestamp DEFAULT now() NULL,
@@ -138,49 +193,11 @@ CREATE TABLE public.pickup_lines (
 	CONSTRAINT pickup_lines_id_not_null NOT NULL id,
 	CONSTRAINT pickup_lines_locale_not_null NOT NULL locale,
 	CONSTRAINT pickup_lines_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_pickup_lines_server FOREIGN KEY ("server") REFERENCES public.servers("server")
+	CONSTRAINT fk_pickup_lines_server FOREIGN KEY ("server") REFERENCES servers("server")
 );
-CREATE INDEX pickup_lines_locale_idx ON public.pickup_lines USING btree (locale, server);
+CREATE INDEX pickup_lines_locale_idx ON pickup_lines USING btree (locale, server);
 
-CREATE TABLE public.server_members (
-	id varchar(36) NOT NULL,
-	date_entered timestamp DEFAULT now() NULL,
-	date_modified timestamp DEFAULT now() NULL,
-	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NOT NULL,
-	"server" varchar(255) NULL,
-	user_id varchar(255) NULL,
-	username varchar(255) NULL,
-	birthdate date NULL,
-	CONSTRAINT server_members_created_by_not_null NOT NULL created_by,
-	CONSTRAINT server_members_id_not_null NOT NULL id,
-	CONSTRAINT server_members_pkey PRIMARY KEY (id),
-	CONSTRAINT server_members_unique UNIQUE (server, user_id),
-	CONSTRAINT unq_server_members UNIQUE (server, user_id),
-	CONSTRAINT fk_server_members_server FOREIGN KEY ("server") REFERENCES public.servers("server")
-);
-
-CREATE TABLE public.servers (
-	id varchar(36) NOT NULL,
-	date_entered timestamp DEFAULT now() NULL,
-	date_modified timestamp DEFAULT now() NULL,
-	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NOT NULL,
-	"server" varchar(255) NOT NULL,
-	active bool DEFAULT true NULL,
-	"name" varchar(255) NULL,
-	reddit_odd_memes integer NOT NULL DEFAULT 5,
-	subreddits_memes TEXT NULL,
-	autoban_del_period numeric(5) NOT NULL DEFAULT 60,
-	autoban_punishment varchar(10) NOT NULL DEFAULT 'ban',
-	autoban_mute_days integer NOT NULL DEFAULT 7,
-	send_voice_update boolean NOT NULL default true,
-	CONSTRAINT server_id UNIQUE (server),
-	CONSTRAINT servers_created_by_not_null NOT NULL created_by,
-	CONSTRAINT servers_id_not_null NOT NULL id,
-	CONSTRAINT servers_pkey PRIMARY KEY (id),
-	CONSTRAINT servers_server_not_null NOT NULL server
-);
-
-CREATE TABLE public.tic_tac_toe (
+CREATE TABLE tic_tac_toe (
 	id varchar(36) NOT NULL,
 	date_entered timestamp DEFAULT now() NULL,
 	date_modified timestamp DEFAULT now() NULL,
@@ -196,22 +213,5 @@ CREATE TABLE public.tic_tac_toe (
 	CONSTRAINT tic_tac_toe_created_by_not_null NOT NULL created_by,
 	CONSTRAINT tic_tac_toe_id_not_null NOT NULL id,
 	CONSTRAINT tic_tac_toe_pkey PRIMARY KEY (id),
-	CONSTRAINT fk_tic_tac_toe_server_members FOREIGN KEY ("server",user_id) REFERENCES public.server_members("server",user_id)
-);
-
-
-
-CREATE TABLE channels_forbidden (
-	id varchar(36) NOT NULL,
-	date_entered timestamp DEFAULT now() NULL,
-	date_modified timestamp DEFAULT now() NULL,
-	created_by varchar(255) DEFAULT 'SYSTEM'::character varying NULL,
-	"server" varchar(255) NOT NULL,
-	channel_id varchar(255) NOT NULL,
-	CONSTRAINT channels_forbidden_channel_id_not_null NOT NULL channel_id,
-	CONSTRAINT channels_forbidden_id_not_null NOT NULL id,
-	CONSTRAINT channels_forbidden_pkey PRIMARY KEY (id),
-	CONSTRAINT channels_forbidden_server_not_null NOT NULL server,
-	CONSTRAINT channels_forbidden_unique UNIQUE (server, channel_id),
-	CONSTRAINT fk_channels_forbidden_server FOREIGN KEY ("server") REFERENCES servers("server")
+	CONSTRAINT fk_tic_tac_toe_server_members FOREIGN KEY ("server",user_id) REFERENCES server_members("server",user_id)
 );
