@@ -24,7 +24,7 @@ import {Client, GatewayIntentBits,  Partials, EmbedBuilder, Colors} from 'discor
 
 export default class entryPoint extends Client
 {
-	author: {name: string; iconURL: string};
+	author: {name: string; iconURL?: string};
 	super_admin_channel: any;
     heartbeatInterval: NodeJS.Timeout  | null = null;
     msgHeartbeat: Record<string,any> | null = null;
@@ -48,7 +48,19 @@ export default class entryPoint extends Client
 			]
 		});
 
-		this.author = {name: config.DISCORD_BOT_NAME, iconURL: config.DISCORD_BOT_ICON};
+		this.author = {name: config.DISCORD_BOT_NAME};
+		const configuredIconUrl = config.DISCORD_BOT_ICON.trim();
+		if (configuredIconUrl) {
+			try {
+				const iconUrl = new URL(configuredIconUrl);
+				if (iconUrl.protocol !== 'https:' && iconUrl.protocol !== 'http:') {
+					throw new TypeError('Expected an HTTP or HTTPS URL.');
+				}
+				this.author.iconURL = iconUrl.toString();
+			} catch (error) {
+				log.warning(`Ignoring invalid DISCORD_BOT_ICON URL: ${error}`);
+			}
+		}
         this.runningPid = new processRunning(this, global.entryMode).init();
     }
     init()
