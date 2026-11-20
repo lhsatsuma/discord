@@ -45,6 +45,8 @@ export default class superadmin_status extends appSubCommandBase
             return false;
         }
 
+        await interaction.deferReply();
+
         const uptime = await this.main.runningPid.getUptime();
         const file_info = this.main.runningPid.getFileInfo();
         const date = new Date().toLocaleDateString(lang.locale);
@@ -87,7 +89,7 @@ export default class superadmin_status extends appSubCommandBase
                 .setColor(Colors.Blue)
         ],
     );
-        pagEmbed.render();
+        await pagEmbed.render();
         return true;
     }
 
