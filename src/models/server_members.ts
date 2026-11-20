@@ -19,7 +19,7 @@ import model_base from '#models/base.ts';
 import { fieldTypeInterface } from '../interfaces/fieldInterface.ts';
 import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
-const birthdayFields = {
+const serverMemberFields = {
     id: {
         label: 'ID',
         type: fieldTypeInterface.uuid,
@@ -62,7 +62,8 @@ const birthdayFields = {
     }
 } as const satisfies Record<string, fieldInterface>;
 
-type birthdayFieldName = keyof typeof birthdayFields;
+type serverMemberFieldName = keyof typeof serverMemberFields;
+type serverMemberFilter = Pick<Record<serverMemberFieldName, string | undefined>, 'server' | 'user_id'>;
 
 export interface birthdayRecord
 {
@@ -73,52 +74,60 @@ export interface birthdayRecord
     birthdate: Date | string;
 }
 
-export default class model_birthday extends model_base
+export default class model_server_members extends model_base
 {
     table = 'server_members';
-    fields = birthdayFields;
+    fields = serverMemberFields;
     id?: string;
     date_entered?: Date | string;
     date_modified?: Date | string;
     created_by?: string;
-    server?: string;
-    user_id?: string;
+    server?: string | null;
+    user_id?: string | null;
     username?: string | null;
     birthdate?: Date | string | null;
 
-    async selectActive(fields: Pick<Record<birthdayFieldName, string | undefined>, 'server' | 'user_id'>): Promise<this | null | false>
+    async selectActive(fields: serverMemberFilter): Promise<this | null | false>
     {
         this.resetFields();
 
-        try{
-            const res = await this.select(Object.keys(this.fields).join(', '), [], `server = ${this.bind(fields.server)} AND user_id = ${this.bind(fields.user_id)}`, '', 1);
-            if(res.rowCount < 1){
+        try {
+            const result = await this.select(
+                Object.keys(this.fields).join(', '),
+                [],
+                `server = ${this.bind(fields.server)} AND user_id = ${this.bind(fields.user_id)}`,
+                '',
+                1
+            );
+            if (result.rowCount < 1) {
                 return null;
             }
 
-            const record = res.rows[0];
+            const record = result.rows[0];
             if (!record) {
                 return false;
             }
 
             Object.assign(this, record);
             return this;
-        }catch(e){
+        } catch (error) {
+            log.warning(`Error selecting server member: ${error}`);
             return false;
         }
     }
 
-    async getMembersBirthdays(fields: Pick<Record<birthdayFieldName, string | undefined>, 'server'>): Promise<any[] | false>
+    async getMembersBirthdays(fields: Pick<serverMemberFilter, 'server'>): Promise<birthdayRecord[] | false>
     {
-        try{
-            const res = await this.select(Object.keys(this.fields).join(', '), [], `server = ${this.bind(fields.server)}`, 'EXTRACT(MONTH FROM birthdate), EXTRACT(DAY FROM birthdate)');
-            const records = res.rows;
-            if (!records) {
-                return [];
-            }
-
-            return records;
-        }catch(e){
+        try {
+            const result = await this.select(
+                'id, server, user_id, username, birthdate',
+                [],
+                `server = ${this.bind(fields.server)} AND birthdate IS NOT NULL`,
+                'EXTRACT(MONTH FROM birthdate), EXTRACT(DAY FROM birthdate)'
+            );
+            return result.rows as birthdayRecord[];
+        } catch (error) {
+            log.warning(`Error selecting server member birthdays: ${error}`);
             return false;
         }
     }

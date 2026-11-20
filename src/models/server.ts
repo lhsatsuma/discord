@@ -43,6 +43,9 @@ export interface serverSettings
     autoban_punishment: autobanPunishment;
     autoban_mute_days: number;
     send_voice_update: boolean;
+    welcome_message_active: boolean;
+    welcome_channel_id: string | null;
+    welcome_message: string;
     admin_channels: string[];
     birthday_channels: string[];
     forbidden_channels: string[];
@@ -116,6 +119,19 @@ const serverFields = {
         label: 'Send voice updates on Admin Channel',
         type: fieldTypeInterface.boolean,
     },
+    welcome_message_active: {
+        label: 'Welcome message active',
+        type: fieldTypeInterface.boolean,
+    },
+    welcome_channel_id: {
+        label: 'Welcome message channel ID',
+        type: fieldTypeInterface.string,
+        maxLength: 255,
+    },
+    welcome_message: {
+        label: 'Welcome message',
+        type: fieldTypeInterface.text,
+    },
 } as const satisfies Record<string, fieldInterface>;
 
 type serverFieldName = keyof typeof serverFields;
@@ -137,6 +153,9 @@ export default class model_servers extends model_base
     autoban_punishment?: autobanPunishment;
     autoban_mute_days?: number | string;
     send_voice_update?: boolean;
+    welcome_message_active?: boolean;
+    welcome_channel_id?: string | null;
+    welcome_message?: string | null;
 
     async selectActive(fields: Pick<Record<serverFieldName, string>, 'server'>): Promise<this | false>
     {
@@ -171,6 +190,7 @@ export default class model_servers extends model_base
                     const result = await this.query(
                         `SELECT reddit_odd_memes, subreddits_memes,
                                 autoban_del_period, autoban_punishment, autoban_mute_days, send_voice_update,
+                                welcome_message_active, welcome_channel_id, welcome_message,
                                 ARRAY(
                                     SELECT channel_id FROM admin_channels
                                     WHERE admin_channels.server = servers.server
@@ -198,6 +218,9 @@ export default class model_servers extends model_base
                         autoban_punishment: string | null;
                         autoban_mute_days: number | string | null;
                         send_voice_update: boolean | null;
+                        welcome_message_active: boolean | null;
+                        welcome_channel_id: string | null;
+                        welcome_message: string | null;
                         admin_channels: string[] | null;
                         birthday_channels: string[] | null;
                         forbidden_channels: string[] | null;
@@ -221,6 +244,9 @@ export default class model_servers extends model_base
                             ? muteDays
                             : DEFAULT_AUTOBAN_MUTE_DAYS,
                         send_voice_update: row?.send_voice_update === true,
+                        welcome_message_active: row?.welcome_message_active === true,
+                        welcome_channel_id: row?.welcome_channel_id ?? null,
+                        welcome_message: row?.welcome_message ?? '',
                         admin_channels: row?.admin_channels ?? [],
                         birthday_channels: row?.birthday_channels ?? [],
                         forbidden_channels: row?.forbidden_channels ?? []
@@ -317,6 +343,34 @@ export default class model_servers extends model_base
             return true;
         } catch (error) {
             log.warning(`Error saving voice update setting for server ${serverId}: ${error}`);
+            return false;
+        }
+    }
+
+    async saveWelcomeSettings(
+        serverId: string,
+        active: boolean,
+        channelId: string | null,
+        message: string | null,
+        createdBy: string
+    ): Promise<boolean>
+    {
+        try {
+            const result = await this.query(
+                `UPDATE ${this.table}
+                 SET welcome_message_active = $2, welcome_channel_id = $3, welcome_message = $4,
+                     date_modified = NOW(), created_by = $5
+                 WHERE server = $1`,
+                [serverId, active, channelId, message, createdBy]
+            );
+            if ((result.rowCount ?? 0) < 1) {
+                return false;
+            }
+
+            await this.invalidateSettingsCache(serverId);
+            return true;
+        } catch (error) {
+            log.warning(`Error saving welcome message settings for server ${serverId}: ${error}`);
             return false;
         }
     }

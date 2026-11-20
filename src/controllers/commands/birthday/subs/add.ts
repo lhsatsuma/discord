@@ -17,7 +17,7 @@
 import { SlashCommandSubcommandBuilder, ChatInputCommandInteraction, MessageFlags} from 'discord.js';
 import lang from '#includes/lang.ts';
 import appSubCommandBase from '#includes/commands/appSubCommandBase.ts';
-import model_birthday from '#models/birthday.ts';
+import model_server_members from '#models/server_members.ts';
 export default class birthday_add extends appSubCommandBase
 {
     cooldown = 3;
@@ -72,7 +72,7 @@ export default class birthday_add extends appSubCommandBase
             return true;
         }
 
-        let birthdayClass = new model_birthday();
+        let birthdayClass = new model_server_members();
         
         const activeBirthday = await birthdayClass.selectActive({server: interaction.guild?.id, user_id: user.id});
         if(activeBirthday === false){

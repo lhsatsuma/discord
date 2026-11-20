@@ -25,11 +25,13 @@ import model_servers, {
 import modal_admin_config from '#modals/admin/config.ts';
 import modal_admin_config_memes from '#modals/admin/memes.ts';
 import modal_admin_config_voice from '#modals/admin/voice.ts';
+import modal_admin_config_welcome from '#modals/admin/welcome.ts';
 
 const configButtonIds = new Set([
     'admin_config_autoban',
     'admin_config_memes',
-    'admin_config_voice'
+    'admin_config_voice',
+    'admin_config_welcome'
 ]);
 
 export default class AdminConfigButtonInteractionCreate
@@ -75,7 +77,11 @@ export default class AdminConfigButtonInteractionCreate
                     return;
                 }
 
-                let modal: modal_admin_config | modal_admin_config_memes | modal_admin_config_voice;
+                let modal:
+                    | modal_admin_config
+                    | modal_admin_config_memes
+                    | modal_admin_config_voice
+                    | modal_admin_config_welcome;
                 if (interaction.customId === 'admin_config_autoban') {
                     if (!Number.isSafeInteger(settings.autoban_del_period)
                         || settings.autoban_del_period < 0
@@ -117,10 +123,16 @@ export default class AdminConfigButtonInteractionCreate
                     memesModal.odds = settings.reddit_odd_memes;
                     memesModal.subreddits = subredditList;
                     modal = memesModal;
-                } else {
+                } else if (interaction.customId === 'admin_config_voice') {
                     const voiceModal = new modal_admin_config_voice(this.main);
                     voiceModal.enabled = settings.send_voice_update;
                     modal = voiceModal;
+                } else {
+                    const welcomeModal = new modal_admin_config_welcome(this.main);
+                    welcomeModal.enabled = settings.welcome_message_active;
+                    welcomeModal.channelId = settings.welcome_channel_id;
+                    welcomeModal.message = settings.welcome_message;
+                    modal = welcomeModal;
                 }
 
                 await modal.init();
