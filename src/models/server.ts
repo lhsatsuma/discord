@@ -23,7 +23,7 @@ import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
 const SERVER_SETTINGS_CACHE_TTL_SECONDS = 360;
 const SERVER_SETTINGS_CACHE_KEY_PREFIX =
-    `discord-bot:server-settings:v3:${config.DISCORD_BOT_ID}:${config.DISCORD_BOT_LOCALE}:`;
+    `discord-bot:server-settings:v3:${config.DISCORD_BOT_ID}:`;
 
 const serverSettingsCacheKey = (serverId: string): string =>
     `${SERVER_SETTINGS_CACHE_KEY_PREFIX}${serverId}`;
