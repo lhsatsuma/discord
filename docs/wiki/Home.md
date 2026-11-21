@@ -11,7 +11,8 @@ DBIKE BOT is a Discord bot for community administration, moderation, birthdays, 
 
 ## Discord server administrators and members
 
-- [Server administration](Server-Administration) — configure moderation, channels, and server settings.
+- [Server administration](Server-Administration) — configure moderation and administration channels.
+- [Dashboard guide](../../../dashboard/docs/wiki/README) — sign in and manage server settings in the web dashboard.
 - [Server commands](Server-Commands) — commands and features available to server members.
 - [Privacy Policy](https://github.com/lhsatsuma/discord/blob/main/PRIVACY_POLICY.md)
 - [Terms of Service](https://github.com/lhsatsuma/discord/blob/main/TERMS_OF_SERVICE.md)

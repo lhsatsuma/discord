@@ -11,7 +11,7 @@ This guide is for administrators configuring DBIKE BOT in a Discord server. Thes
 
 ## Configuration
 
-Use the dashboard's server configuration page to manage these settings. Sign in with Discord and select a server where you have **Manage Server** permission.
+Use the [dashboard](../../../dashboard/docs/wiki/README) to manage these settings without opening Discord. Sign in with Discord and select a server where you have **Manage Server** or **Administrator** permission. The bot must also be configured for that server.
 
 - **Autoban:** choose whether violations result in a ban or timeout, set the timeout duration, and configure the period of messages to delete. Existing servers retain the previous ban behavior until an administrator changes it.
 - **Memes:** set Reddit selection odds (`0` to `10`) and the subreddit list. An odds value of `0` disables Reddit fetching.
