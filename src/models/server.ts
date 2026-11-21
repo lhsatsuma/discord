@@ -29,9 +29,7 @@ const serverSettingsCacheKey = (serverId: string): string =>
     `${SERVER_SETTINGS_CACHE_KEY_PREFIX}${serverId}`;
 
 export const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
-export const MAX_AUTOBAN_DELETE_PERIOD_MINUTES = 10_080;
 export const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
-export const MAX_AUTOBAN_MUTE_DAYS = 28;
 
 export type autobanPunishment = 'ban' | 'mute';
 
@@ -49,13 +47,6 @@ export interface serverSettings
     admin_channels: string[];
     birthday_channels: string[];
     forbidden_channels: string[];
-}
-
-export interface serverAutobanConfiguration
-{
-    deletePeriodMinutes: number;
-    punishment: autobanPunishment;
-    muteDays: number;
 }
 
 const serverFields = {
@@ -253,120 +244,9 @@ export default class model_servers extends model_base
         );
     }
 
-    async saveAutobanConfiguration(
-        serverId: string,
-        configuration: serverAutobanConfiguration,
-        createdBy: string
-    ): Promise<boolean>
-    {
-        try {
-            const result = await this.query(
-                `UPDATE ${this.table}
-                 SET autoban_del_period = $2, autoban_punishment = $3, autoban_mute_days = $4,
-                     updated_at = NOW(), created_by = $5
-                 WHERE id = $1`,
-                [
-                    serverId,
-                    configuration.deletePeriodMinutes,
-                    configuration.punishment,
-                    configuration.muteDays,
-                    createdBy
-                ]
-            );
-            if ((result.rowCount ?? 0) < 1) {
-                return false;
-            }
-
-            await this.invalidateSettingsCache(serverId);
-            return true;
-        } catch (error) {
-            log.warning(`Error saving autoban configuration for server ${serverId}: ${error}`);
-            return false;
-        }
-    }
-
     async invalidateSettingsCache(serverId: string): Promise<void>
     {
         await redisCache.delete(serverSettingsCacheKey(serverId));
-    }
-
-    async saveRedditSettings(
-        serverId: string,
-        odds: number,
-        subreddits: string[],
-        createdBy: string
-    ): Promise<boolean>
-    {
-        try {
-            const result = await this.query(
-                `UPDATE ${this.table}
-                 SET reddit_odd_memes = $2, subreddits_memes = $3, updated_at = NOW(), created_by = $4
-                 WHERE id = $1`,
-                [serverId, odds, subreddits.join(','), createdBy]
-            );
-            if ((result.rowCount ?? 0) < 1) {
-                return false;
-            }
-
-            await this.invalidateSettingsCache(serverId);
-            return true;
-        } catch (error) {
-            log.warning(`Error saving Reddit settings for server ${serverId}: ${error}`);
-            return false;
-        }
-    }
-
-    async saveVoiceUpdateSetting(
-        serverId: string,
-        enabled: boolean,
-        createdBy: string
-    ): Promise<boolean>
-    {
-        try {
-            const result = await this.query(
-                `UPDATE ${this.table}
-                 SET send_voice_update = $2, updated_at = NOW(), created_by = $3
-                 WHERE id = $1`,
-                [serverId, enabled, createdBy]
-            );
-            if ((result.rowCount ?? 0) < 1) {
-                return false;
-            }
-
-            await this.invalidateSettingsCache(serverId);
-            return true;
-        } catch (error) {
-            log.warning(`Error saving voice update setting for server ${serverId}: ${error}`);
-            return false;
-        }
-    }
-
-    async saveWelcomeSettings(
-        serverId: string,
-        active: boolean,
-        channelId: string | null,
-        message: string | null,
-        createdBy: string
-    ): Promise<boolean>
-    {
-        try {
-            const result = await this.query(
-                `UPDATE ${this.table}
-                 SET welcome_message_active = $2, welcome_channel_id = $3, welcome_message = $4,
-                     updated_at = NOW(), created_by = $5
-                 WHERE id = $1`,
-                [serverId, active, channelId, message, createdBy]
-            );
-            if ((result.rowCount ?? 0) < 1) {
-                return false;
-            }
-
-            await this.invalidateSettingsCache(serverId);
-            return true;
-        } catch (error) {
-            log.warning(`Error saving welcome message settings for server ${serverId}: ${error}`);
-            return false;
-        }
     }
 
     async save(fields: Record<string, unknown> = {}): Promise<any>

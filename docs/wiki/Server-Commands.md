@@ -8,7 +8,7 @@ For server settings and moderation configuration, see [Server administration](Se
 
 Use `/autoban add_channel` or `/autoban remove_channel` in the channel to configure whether it is forbidden. These commands require **Manage Server**.
 
-When a member without the **Administrator** permission sends a message in a configured channel, the bot attempts the selected punishment (ban or timeout) and starts a background scan to delete that member's recent messages from accessible text channels and threads. The scan uses the cleanup period configured with `/admin config` and runs even if applying the punishment fails. An incident report is sent to administration channels. Bot and webhook messages are ignored.
+When a member without the **Administrator** permission sends a message in a configured channel, the bot attempts the selected punishment (ban or timeout) and starts a background scan to delete that member's recent messages from accessible text channels and threads. The scan uses the cleanup period configured in the dashboard and runs even if applying the punishment fails. An incident report is sent to administration channels. Bot and webhook messages are ignored.
 
 The scan is asynchronous and only covers channels and message history the bot can access. Permission or API failures may prevent some messages from being deleted.
 
@@ -45,8 +45,8 @@ The scheduler posts announcements daily at **8:00 AM** in the bot operator's con
 ### Memes
 
 - `/memes random` posts a meme saved for the server and may fetch from Reddit if the operator configured Reddit credentials and the server has meme settings.
-- Reddit selection odds (`0` to `10`; `0` disables Reddit fetching) and the subreddit list are configured in the Memes form opened from `/admin config`. Requires **Manage Server**.
-- Voice join/leave notifications to administration channels can be enabled or disabled in the Voice notifications form opened from `/admin config`.
+- Reddit selection odds (`0` to `10`; `0` disables Reddit fetching) and the subreddit list are configured in the dashboard. Requires **Manage Server**.
+- Voice join/leave notifications to administration channels can be enabled or disabled in the dashboard.
 - `/memes add` opens a form for a description and image upload. The image is hosted by Imgur.
 - `/memes list` lists memes saved for the server.
 - `/memes get` searches for a meme by ID or name.

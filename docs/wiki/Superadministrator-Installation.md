@@ -66,6 +66,6 @@ The complete list of supported settings and example values is in `.env-example`.
 | `REDDIT_USER`, `REDDIT_PASSWORD`, `REDDIT_APP_ID`, `REDDIT_CLIENT_SECRET` | Reddit API integration for server-configured meme sources |
 | `LOG_DIR`, `LOG_LEVEL` | Log destination and verbosity |
 
-Reddit subreddits and selection odds are configured per server with `/admin config`; they are not environment variables. Reddit credentials are still required to fetch Reddit content. Redis caches selected settings temporarily; PostgreSQL remains the persistent store.
+Reddit subreddits and selection odds are configured per server in the dashboard; they are not environment variables. Reddit credentials are still required to fetch Reddit content. Redis caches selected settings temporarily; PostgreSQL remains the persistent store.
 
 See [Superadministrator commands](Superadministrator-Commands) for operator-only commands and [Adding commands](Superadministrator-Adding-Commands) for developer documentation.
