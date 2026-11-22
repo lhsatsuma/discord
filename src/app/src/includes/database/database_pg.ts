@@ -14,7 +14,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Pool, type QueryResult, type QueryResultRow} from 'pg';
+import { Pool, type QueryResult, type QueryResultRow} from '../../../node_modules/@types/pg/index.js';
 import log from '#includes/log.ts';
 import config from '#includes/config.ts';
 

@@ -1,47 +1,25 @@
 # Architecture
 
-The application is a TypeScript Discord bot built with discord.js. Its main code lives under `src/`.
+The monorepo contains a Discord bot and a separate web dashboard:
 
-## Startup and runtime
+| Path | Component |
+|---|---|
+| `src/app/` | TypeScript/discord.js bot and scheduler |
+| `src/dashboard/backend/` | Laravel JSON API, Discord OAuth, PostgreSQL and Redis integration |
+| `src/dashboard/frontend/` | React/Vite dashboard, which calls the API through same-origin `/api` routes |
 
-1. `src/run.ts` creates `entryPointApp` and starts initialization.
-2. `src/entryPoint.ts` initializes configuration, locale files, the database connection, and the Discord client.
-3. `src/entryPointApp.ts` loads commands, modals, and event handlers before the bot is considered ready.
-4. The event handlers in `src/controllers/events/` route slash-command and modal interactions to their implementations.
+## Bot startup and runtime
 
-The application uses aliases such as `#commands/*`, `#events/*`, `#models/*`, and `#includes/*`. Their mappings are configured in `package.json` and `tsconfig.json`.
+The bot package is `src/app/package.json`. `src/app/src/run.ts` starts the event-driven application; `src/app/src/runScheduler.ts` starts the birthday scheduler. The application initializes configuration, locale files, the database connection, and the Discord client, then loads commands, modals, and event handlers.
 
-## Main folders
+Inside `src/app/`, commands are under `src/controllers/commands/`, modals under `src/controllers/modals/`, events under `src/controllers/events/`, models under `src/models/`, and shared helpers under `src/includes/`. Locale JSON files are under `src/locales/<locale>/`.
 
-| Path | Purpose |
-| --- | --- |
-| `src/controllers/commands/` | Slash commands and subcommands |
-| `src/controllers/modals/` | Modal definitions and submit handlers |
-| `src/controllers/events/` | Discord event listeners |
-| `src/interfaces/` | TypeScript contracts and shared command/subcommand base classes |
-| `src/models/` | Database models and shared persistence behavior |
-| `src/includes/` | Shared configuration, logging, localization, database, and utilities |
-| `src/locales/<locale>/` | JSON translation modules, for example `pt-BR/jokes.json` |
+Command aliases are configured in `src/app/package.json` and `src/app/tsconfig.json`. For command implementation details, see [Adding bot commands](Superadministrator-Adding-Commands).
 
-## Command loading and dispatch
+## Dashboard request flow
 
-Each directory immediately inside `src/controllers/commands/` represents one root slash command. The loader expects a same-named TypeScript file inside that directory, for example:
+The frontend starts Discord OAuth through Laravel, receives the authorization callback on `/auth/callback`, then exchanges the code with the backend API. Laravel issues a dashboard JWT; the frontend sends it in the `Authorization: Bearer` header on API requests. The API checks current Discord guild permissions before returning or saving server settings.
 
-```text
-src/controllers/commands/hello/hello.ts
-```
+The backend and bot use the same PostgreSQL server configuration records. On a successful settings save, Laravel invalidates the corresponding Redis cache key so the bot reloads the new settings.
 
-Commands extend `appCommandInterface`. Commands with subcommands set `hasSubcommands = true`; the loader then discovers files in the command's `subs/` directory. Each subcommand extends `appSubCommandInterface`.
-
-The command interaction event uses the names produced by localization when registering commands and dispatching their subcommands. Keep the command's `name`, subcommand's `name`/`parentName`, and locale keys consistent.
-
-The bot sends the command definitions to Discord on startup only when `DISCORD_BOT_SEND_COMMANDS_API=true`. Otherwise, command registration must be handled separately.
-
-## Interactions and persistence
-
-- Slash commands and subcommands implement `execute(interaction)`, build a Discord reply, and may use a model from `src/models/`.
-- A subcommand can create and show a modal. Modal submit handlers are loaded from `src/controllers/modals/` and are dispatched by their custom ID.
-- Models extend `model_base`, which provides common database operations. Model-specific query methods and field definitions belong in their model files.
-- Add user-facing strings to the relevant JSON module in each configured locale. `lang.translate(module, key)` reads from the file named after `module`.
-
-See [Adding commands](Superadministrator-Adding-Commands) for the step-by-step workflow and examples.
+See [Installation](Installation) for setup and [Administrator commands](Admin-Commands) for dashboard use.
