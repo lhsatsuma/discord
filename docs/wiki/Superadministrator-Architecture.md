@@ -22,4 +22,6 @@ The frontend starts Discord OAuth through Laravel, receives the authorization ca
 
 The backend and bot use the same PostgreSQL server configuration records. On a successful settings save, Laravel invalidates the corresponding Redis cache key so the bot reloads the new settings.
 
+The dashboard stores each server's bot locale in `server_config`. The bot applies that locale to command responses and scheduled announcements per server, and registers each guild's slash commands using the same locale. When command API publishing is enabled, locale changes trigger command re-registration. English (`en-US`) is the default, with Brazilian Portuguese (`pt-BR`) also available.
+
 See [Installation](Installation) for setup and [Administrator commands](Admin-Commands) for dashboard use.

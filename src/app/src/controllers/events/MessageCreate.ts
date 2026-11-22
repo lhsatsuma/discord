@@ -27,7 +27,7 @@ import {
 import entryPointApp from '#src/entryPointApp.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
-import model_servers, {type autobanPunishment} from '#models/server.ts';
+import model_servers, {type autobanPunishment, type serverSettings} from '#models/server.ts';
 
 type MessageDeletionSweep = {
     deletedMessages: number;
@@ -71,6 +71,18 @@ export default class MessageCreate
             return;
         }
 
+        await lang.runWithLocale(
+            settings.locale,
+            () => this.handleForbiddenMessage(message, guild, settings)
+        );
+    }
+
+    private async handleForbiddenMessage(
+        message: Message,
+        guild: Guild,
+        settings: serverSettings
+    ): Promise<void>
+    {
         let member = message.member;
         if (!member) {
             try {

@@ -14,87 +14,105 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import fs from 'fs';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import fs from 'node:fs';
+import path from 'node:path';
 import log from '#includes/log.ts';
 import config from '#includes/config.ts';
+
+export const availableLocales = [
+    {name: 'English', value: 'en-US'},
+    {name: 'Português Brasileiro', value: 'pt-BR'}
+] as const;
+
+export type LocaleCode = typeof availableLocales[number]['value'];
+export const DEFAULT_LOCALE: LocaleCode = 'en-US';
+type LocaleTranslations = Record<string, Record<string, string>>;
+
+export const isLocaleCode = (locale: string | null | undefined): locale is LocaleCode =>
+    availableLocales.some((available) => available.value === locale);
+
 class lang
 {
-    availableLocales = [
-        {
-            name: 'Português Brasileiro',
-            value: 'pt_BR'
-        },
-        {
-            name: 'English',
-            value: 'en_US',
-        }
-    ];
-    locale;
-    translates: Record<string, Record<string, string>> = {};
+    readonly availableLocales = availableLocales;
+    private readonly localeContext = new AsyncLocalStorage<LocaleCode>();
+    private readonly translations: Partial<Record<LocaleCode, LocaleTranslations>> = {};
+    private readonly defaultLocale: LocaleCode;
+
     constructor(locale: string)
     {
-        this.locale = locale;
+        this.defaultLocale = isLocaleCode(locale) ? locale : DEFAULT_LOCALE;
     }
 
-    validateLocale(locale: string)
+    get locale(): LocaleCode
     {
-        return this.availableLocales.filter((available) => available.value === locale).length;
+        return this.localeContext.getStore() ?? this.defaultLocale;
     }
 
-    translate(module: string, label: string, params: any[] = [])
+    validateLocale(locale: string | null | undefined): locale is LocaleCode
     {
-        //Check if label exists
-        if (!this.translates[module]) {
-            log.err(`Translate for module ${module} not found!`);
+        return isLocaleCode(locale);
+    }
+
+    runWithLocale<T>(locale: string | null | undefined, callback: () => T): T
+    {
+        const selectedLocale = isLocaleCode(locale) ? locale : DEFAULT_LOCALE;
+        return this.localeContext.run(selectedLocale, callback);
+    }
+
+    translate(module: string, label: string, params: unknown[] = []): string
+    {
+        const translated = this.translations[this.locale]?.[module]?.[label]
+            ?? this.translations['en-US']?.[module]?.[label];
+        if (translated === undefined) {
+            log.err(`Translate ${label} in ${module} not found for locale ${this.locale}!`);
             return label;
         }
-        if (typeof this.translates[module][label] == "undefined") {
-            log.err(`Translate ${label} in ${module} not found!`);
-            return label;
-        }
 
-        let translated = this.translates[module][label];
-        if (params.length) {
-            translated = this.overrideParams(translated, params);
-        }
-
-        return translated;
+        return params.length ? this.overrideParams(translated, params) : translated;
     }
 
-    overrideParams(label: string, params: any[])
+    overrideParams(label: string, params: unknown[]): string
     {
-        for (let i = 0; i < params.length; i++) {
-            label = label.replaceAll('{' + i + '}', params[i]);
+        for (let index = 0; index < params.length; index++) {
+            label = label.replaceAll(`{${index}}`, String(params[index]));
         }
         return label;
     }
 
-    async importLocales()
+    async importLocales(): Promise<boolean>
     {
-        const basePath = process.cwd() + '/src/locales/' + this.locale + '/';
-        if (!fs.existsSync(basePath)) {
-            log.fatal(`Locale ${this.locale} not found on folder /src/locales/`);
+        const localesPath = path.join(process.cwd(), 'src', 'locales');
+
+        for (const locale of this.availableLocales) {
+            const localePath = path.join(localesPath, locale.value);
+            if (!fs.existsSync(localePath)) {
+                log.warning(`Locale ${locale.value} was not found in ${localePath}.`);
+                continue;
+            }
+
+            const localeTranslations: LocaleTranslations = {};
+            for (const filename of fs.readdirSync(localePath).filter((file) => file.endsWith('.json'))) {
+                const filePath = path.join(localePath, filename);
+                try {
+                    localeTranslations[filename.slice(0, -5)] = JSON.parse(
+                        fs.readFileSync(filePath, 'utf8')
+                    ) as Record<string, string>;
+                } catch (error) {
+                    log.fatal(`Error on locale file: ${filePath} :: ${error}`);
+                    return false;
+                }
+            }
+            this.translations[locale.value] = localeTranslations;
+        }
+
+        if (!this.translations['en-US']) {
+            log.fatal(`Required fallback locale ${DEFAULT_LOCALE} was not found in ${localesPath}.`);
             return false;
         }
-        const localesPath = fs.readdirSync(basePath);
-        let absolutPath, module;
-
-        for (const localeName of localesPath) {
-            let localeContent;
-            absolutPath = basePath + localeName;
-            module = localeName.replace('.json', '');
-            try {
-                localeContent = JSON.parse(fs.readFileSync(absolutPath, 'utf8'));
-                if (localeContent !== null) {
-                    this.translates[module] = localeContent;
-                }
-            } catch (e) {
-                log.fatal('Error on locale file: ' + absolutPath + ' :: ' + e);
-            }
-        }
-
         return true;
     }
 }
+
 const instance = new lang(config.DISCORD_BOT_LOCALE);
 export default instance;

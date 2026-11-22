@@ -4,6 +4,7 @@ import { PageHeading } from '../components/PageHeading'
 import { ErrorAlert } from '../components/ErrorAlert'
 
 const groups: { id: SettingGroup; title: string; description: string; icon: 'shield' | 'spark' | 'lock' | 'voice' | 'hello' }[] = [
+  { id: 'locale', title: 'Bot language', description: 'Choose the language used for messages in this server.', icon: 'spark' },
   { id: 'autoban', title: 'Auto moderation', description: 'Set the autoban punishment, message cleanup, and timeout duration.', icon: 'shield' },
   { id: 'memes', title: 'Meme settings', description: 'Adjust meme odds and choose subreddit sources.', icon: 'spark' },
   { id: 'channels', title: 'Channel Rules', description: 'Choose admin notification channels and autoban exclusions.', icon: 'lock' },

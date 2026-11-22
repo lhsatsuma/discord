@@ -22,6 +22,8 @@ class AdminConfigController extends Controller
     private const MAX_WELCOME_MESSAGE = 2000;
     private const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
     private const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
+    private const DEFAULT_LOCALE = 'en-US';
+    private const SUPPORTED_LOCALES = ['en-US', 'pt-BR'];
 
     public function servers(Request $request, DashboardGuilds $dashboardGuilds): JsonResponse
     {
@@ -51,6 +53,7 @@ class AdminConfigController extends Controller
                     'reddit_odd_memes', 'subreddits_memes',
                     'autoban_del_period', 'autoban_punishment', 'autoban_mute_days',
                     'send_voice_update', 'welcome_message_active', 'welcome_channel_id', 'welcome_message',
+                    'locale',
                 ])
                 ->get()
                 ->keyBy('config_code');
@@ -58,11 +61,13 @@ class AdminConfigController extends Controller
                 $config = $serverConfig->get($code);
                 return $config?->long_value ?? $config?->value;
             };
+            $locale = $configValue('locale');
             $channels = $discordApi->botGuildChannels($serverId);
 
             return response()->json([
                 'server' => $guild,
                 'config' => [
+                    'locale' => in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE,
                     'reddit_odd_memes' => (int) ($configValue('reddit_odd_memes') ?? 5),
                     'subreddits_memes' => preg_split('/[,\r\n]/', $configValue('subreddits_memes') ?? '', -1, PREG_SPLIT_NO_EMPTY) ?: [],
                     'autoban_del_period' => (int) ($configValue('autoban_del_period') ?? self::DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES),
@@ -95,6 +100,7 @@ class AdminConfigController extends Controller
 
         try {
             $data = $request->validate([
+                'locale' => ['required', 'in:'.implode(',', self::SUPPORTED_LOCALES)],
                 'reddit_odd_memes' => ['required', 'integer', 'between:0,10'],
                 'subreddits_memes' => ['sometimes', 'array', 'max:100'],
                 'subreddits_memes.*' => ['string', 'regex:/^[A-Za-z0-9_]{2,21}$/'],
@@ -150,6 +156,7 @@ class AdminConfigController extends Controller
                     $now = now();
                     $subredditsValue = implode(',', $subreddits);
                     $configValues = [
+                        'locale' => ['string', $data['locale']],
                         'reddit_odd_memes' => ['integer', (string) $data['reddit_odd_memes']],
                         'subreddits_memes' => ['text', $subredditsValue],
                         'autoban_del_period' => ['integer', (string) $data['autoban_del_period']],
@@ -192,8 +199,9 @@ class AdminConfigController extends Controller
             });
             if (! $updated) return response()->json(['message' => 'Could not save configuration for this server.'], 404);
 
-            $key = 'discord-bot:server-settings:v3:'.$botId.':'.$serverId;
+            $key = 'discord-bot:server-settings:v4:'.$botId.':'.$serverId;
             Redis::connection('bot_cache')->del($key);
+            Redis::connection('bot_cache')->publish('discord-bot:server-locale-updated', $serverId);
             return response()->json(['ok' => true]);
         } catch (ValidationException $error) {
             throw $error;

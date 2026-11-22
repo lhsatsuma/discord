@@ -21,7 +21,7 @@ import type entryPoint from '#src/entryPoint.ts';
 import config from '#includes/config.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
-import model_birthday_channels from '#models/birthday_channels.ts';
+import model_servers from '#models/server.ts';
 import model_server_members, { type birthdayRecord } from '#models/server_members.ts';
 
 type LocalDateParts = {
@@ -129,6 +129,30 @@ class BirthdaySchedule
 
     private async sendServerBirthdays(serverId: string, birthdays: birthdayRecord[], currentYear: number): Promise<void>
     {
+        const settings = await new model_servers().getServerSettings(serverId);
+        if (settings === false) {
+            log.warning(`Could not load birthday settings for guild ${serverId}.`);
+            return;
+        }
+
+        await lang.runWithLocale(
+            settings.locale,
+            () => this.sendServerBirthdaysInLocale(
+                serverId,
+                birthdays,
+                currentYear,
+                settings.birthday_channels
+            )
+        );
+    }
+
+    private async sendServerBirthdaysInLocale(
+        serverId: string,
+        birthdays: birthdayRecord[],
+        currentYear: number,
+        channels: string[]
+    ): Promise<void>
+    {
         let guild: Guild;
         try {
             guild = await this.main.guilds.fetch(serverId);
@@ -137,11 +161,6 @@ class BirthdaySchedule
             return;
         }
 
-        const channels = await new model_birthday_channels().listByServer({server: serverId});
-        if (channels === false) {
-            log.warning(`Could not load birthday announcement channels for guild ${serverId}.`);
-            return;
-        }
         if (!channels.length) {
             log.info(`No birthday announcement channels configured for guild ${serverId}.`);
             return;

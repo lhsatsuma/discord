@@ -15,6 +15,7 @@
  */
 
 import model_base from '#models/base.ts';
+import { DEFAULT_LOCALE, isLocaleCode, type LocaleCode } from '#includes/lang.ts';
 import redisCache from '#includes/cache/redis_cache.ts';
 import log from '#includes/log.ts';
 import config from '#includes/config.ts';
@@ -23,7 +24,7 @@ import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
 const SERVER_SETTINGS_CACHE_TTL_SECONDS = 360;
 const SERVER_SETTINGS_CACHE_KEY_PREFIX =
-    `discord-bot:server-settings:v3:${config.DISCORD_BOT_ID}:`;
+    `discord-bot:server-settings:v4:${config.DISCORD_BOT_ID}:`;
 
 const serverSettingsCacheKey = (serverId: string): string =>
     `${SERVER_SETTINGS_CACHE_KEY_PREFIX}${serverId}`;
@@ -35,6 +36,7 @@ export type autobanPunishment = 'ban' | 'mute';
 
 export interface serverSettings
 {
+    locale: LocaleCode;
     reddit_odd_memes: number;
     subreddits_memes: string[];
     autoban_del_period: number;
@@ -156,7 +158,8 @@ export default class model_servers extends model_base
                                               'send_voice_update',
                                               'welcome_message_active',
                                               'welcome_channel_id',
-                                              'welcome_message'
+                                              'welcome_message',
+                                              'locale'
                                           )
                                     ),
                                     '{}'::json
@@ -170,6 +173,7 @@ export default class model_servers extends model_base
                         server_configs: Record<string, string | null>;
                     } | undefined;
                     const configValue = (code: string): string | null => row?.server_configs?.[code] ?? null;
+                    const configuredLocale = configValue('locale');
                     const redditOdds = Number(configValue('reddit_odd_memes') ?? 5);
                     const deletePeriodMinutes = Number(
                         configValue('autoban_del_period') ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES
@@ -178,6 +182,7 @@ export default class model_servers extends model_base
                     const isEnabled = (value: string | null): boolean =>
                         value === 'true' || value === '1';
                     return {
+                        locale: isLocaleCode(configuredLocale) ? configuredLocale : DEFAULT_LOCALE,
                         reddit_odd_memes: Number.isFinite(redditOdds) ? redditOdds : 5,
                         subreddits_memes: (configValue('subreddits_memes') ?? '')
                             .split(/[,\r\n]/)

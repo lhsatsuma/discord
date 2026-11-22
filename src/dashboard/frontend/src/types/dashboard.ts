@@ -1,10 +1,19 @@
 export type User = { id: string; username: string; avatar: string | null }
 export type Server = { id: string; name: string; icon: string | null }
 export type Channel = { id: string; name: string }
-export type SettingGroup = 'autoban' | 'memes' | 'channels' | 'voice' | 'welcome'
+export const localeOptions = [
+  { value: 'en-US', label: 'English (United States)' },
+  { value: 'pt-BR', label: 'Português (Brasil)' },
+] as const
+export type LocaleCode = typeof localeOptions[number]['value']
+export const isLocaleCode = (value: string): value is LocaleCode =>
+  localeOptions.some(locale => locale.value === value)
+
+export type SettingGroup = 'autoban' | 'memes' | 'channels' | 'voice' | 'welcome' | 'locale'
 export type Page = 'login' | 'home' | 'server' | SettingGroup | 'callback'
 
 export type Config = {
+  locale: LocaleCode
   reddit_odd_memes: number
   subreddits_memes: string[]
   autoban_del_period: number
@@ -19,6 +28,7 @@ export type Config = {
 }
 
 export const blankConfig: Config = {
+  locale: 'en-US',
   reddit_odd_memes: 5,
   subreddits_memes: [],
   autoban_del_period: 60,
