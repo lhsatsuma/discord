@@ -22,6 +22,6 @@ export function DashboardTemplate({ user, active, children, onHome, onLogout, sh
       <div className="profile-area">{user ? <><span className="profile-name">{user.username}</span><span className="avatar">{user.avatar ? <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`} alt=""/> : user.username.slice(0, 1).toUpperCase()}</span><button className="quiet-button" onClick={onLogout}>Sign out</button></> : <span className="secure-label"><Icon name="lock" size={14}/> Secure login</span>}</div>
     </header>}
     <main className="page-content">{children}</main>
-    <footer className="footer"><span>Guilddesk <span className="footer-dot">·</span> Server management</span><span className="footer-status"><i/> All systems operational</span><span className="footer-right">Your server, your settings.</span></footer>
+    <footer className="footer"><span>Guilddesk <span className="footer-dot">·</span> Server management <span className="footer-dot">·</span> v{__DASHBOARD_VERSION__}</span><span className="footer-status"><i/> All systems operational</span><span className="footer-right">Your server, your settings.</span></footer>
   </div>
 }
