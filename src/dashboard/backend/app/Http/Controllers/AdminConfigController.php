@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Lib\DiscordApi;
 use App\Lib\DiscordRateLimitException;
 use App\Lib\DiscordUnauthorizedException;
+use App\Services\DashboardGuilds;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -20,25 +21,17 @@ class AdminConfigController extends Controller
     private const MAX_MUTE_DAYS = 28;
     private const MAX_WELCOME_MESSAGE = 2000;
 
-    public function servers(Request $request, DiscordApi $discordApi): JsonResponse
+    public function servers(Request $request, DashboardGuilds $dashboardGuilds): JsonResponse
     {
-        [$guilds, $error] = $this->verifiedGuilds($request, $discordApi);
+        [$guilds, $error] = $this->verifiedGuilds($request, $dashboardGuilds);
         if ($error) return $error;
 
-        $ids = array_column($guilds, 'id');
-        if ($ids === []) return response()->json(['servers' => []]);
-
-        $configured = DB::table('servers')->whereIn('id', $ids)->where('active', true)->pluck('id')->all();
-        $configuredIds = array_fill_keys($configured, true);
-        return response()->json(['servers' => array_values(array_filter(
-            $guilds,
-            fn (array $guild): bool => isset($configuredIds[$guild['id']])
-        ))]);
+        return response()->json(['servers' => $guilds]);
     }
 
-    public function show(Request $request, string $serverId, DiscordApi $discordApi): JsonResponse
+    public function show(Request $request, string $serverId, DiscordApi $discordApi, DashboardGuilds $dashboardGuilds): JsonResponse
     {
-        [$guilds, $error] = $this->verifiedGuilds($request, $discordApi);
+        [$guilds, $error] = $this->verifiedGuilds($request, $dashboardGuilds);
         if ($error) return $error;
         $guild = collect($guilds)->firstWhere('id', $serverId);
         if (! $guild) return response()->json(['message' => 'You no longer have permission to manage this server.'], 403);
@@ -64,6 +57,8 @@ class AdminConfigController extends Controller
                     'welcome_message_active' => (bool) $settings->welcome_message_active,
                     'welcome_channel_id' => $settings->welcome_channel_id,
                     'welcome_message' => (string) ($settings->welcome_message ?? ''),
+                    'admin_channels' => DB::table('admin_channels')->where('server', $serverId)->orderBy('channel_id')->pluck('channel_id')->map(static fn ($id): string => (string) $id)->all(),
+                    'forbidden_channels' => DB::table('channels_forbidden')->where('server', $serverId)->orderBy('channel_id')->pluck('channel_id')->map(static fn ($id): string => (string) $id)->all(),
                 ],
                 'channels' => array_values(array_map(static fn (array $channel): array => [
                     'id' => (string) $channel['id'], 'name' => (string) $channel['name'],
@@ -75,9 +70,9 @@ class AdminConfigController extends Controller
         }
     }
 
-    public function update(Request $request, string $serverId, DiscordApi $discordApi): JsonResponse
+    public function update(Request $request, string $serverId, DiscordApi $discordApi, DashboardGuilds $dashboardGuilds): JsonResponse
     {
-        [$guilds, $error] = $this->verifiedGuilds($request, $discordApi);
+        [$guilds, $error] = $this->verifiedGuilds($request, $dashboardGuilds);
         if ($error) return $error;
         if (! collect($guilds)->contains('id', $serverId)) {
             return response()->json(['message' => 'You no longer have permission to manage this server.'], 403);
@@ -95,6 +90,10 @@ class AdminConfigController extends Controller
                 'welcome_message_active' => ['required', 'boolean'],
                 'welcome_channel_id' => ['nullable', 'string', 'regex:/^[0-9]{17,20}$/'],
                 'welcome_message' => ['nullable', 'string', 'max:'.self::MAX_WELCOME_MESSAGE],
+                'admin_channels' => ['sometimes', 'array', 'max:500'],
+                'admin_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
+                'forbidden_channels' => ['sometimes', 'array', 'max:500'],
+                'forbidden_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
             ]);
             $subreddits = array_values(array_unique(array_map('trim', $data['subreddits_memes'])));
             $message = (string) ($data['welcome_message'] ?? '');
@@ -110,26 +109,48 @@ class AdminConfigController extends Controller
                 throw ValidationException::withMessages(['welcome_message' => 'The rendered welcome message is too long.']);
             }
 
-            $validChannel = ! empty($data['welcome_channel_id']) && collect($discordApi->botGuildChannels($serverId))
-                ->contains(fn ($channel) => (string) ($channel['id'] ?? '') === $data['welcome_channel_id'] && ($channel['type'] ?? null) === 0);
+            $availableChannelIds = collect($discordApi->botGuildChannels($serverId))
+                ->filter(static fn ($channel): bool => is_array($channel) && ($channel['type'] ?? null) === 0)
+                ->pluck('id')
+                ->map(static fn ($id): string => (string) $id);
+            $validChannel = ! empty($data['welcome_channel_id']) && $availableChannelIds->contains((string) $data['welcome_channel_id']);
             if (! empty($data['welcome_channel_id']) && ! $validChannel) {
                 throw ValidationException::withMessages(['welcome_channel_id' => 'Choose a text channel from this server.']);
             }
 
+            foreach (['admin_channels', 'forbidden_channels'] as $field) {
+                if (array_key_exists($field, $data) && collect($data[$field])->diff($availableChannelIds)->isNotEmpty()) {
+                    throw ValidationException::withMessages([$field => 'Choose text channels from this server.']);
+                }
+            }
+
             $identity = $request->attributes->get('dashboard.session')['identity'];
-            $updated = DB::table('servers')->where('id', $serverId)->where('active', true)->update([
-                'reddit_odd_memes' => $data['reddit_odd_memes'],
-                'subreddits_memes' => implode(',', $subreddits),
-                'autoban_del_period' => $data['autoban_del_period'],
-                'autoban_punishment' => $data['autoban_punishment'],
-                'autoban_mute_days' => $data['autoban_mute_days'],
-                'send_voice_update' => $data['send_voice_update'],
-                'welcome_message_active' => $data['welcome_message_active'],
-                'welcome_channel_id' => $data['welcome_channel_id'] ?: null,
-                'welcome_message' => $message !== '' ? $message : null,
-                'updated_at' => now(),
-                'created_by' => $identity['id'],
-            ]);
+            $updated = DB::transaction(function () use ($serverId, $data, $subreddits, $message, $identity): int {
+                $updated = DB::table('servers')->where('id', $serverId)->where('active', true)->update([
+                    'reddit_odd_memes' => $data['reddit_odd_memes'],
+                    'subreddits_memes' => implode(',', $subreddits),
+                    'autoban_del_period' => $data['autoban_del_period'],
+                    'autoban_punishment' => $data['autoban_punishment'],
+                    'autoban_mute_days' => $data['autoban_mute_days'],
+                    'send_voice_update' => $data['send_voice_update'],
+                    'welcome_message_active' => $data['welcome_message_active'],
+                    'welcome_channel_id' => $data['welcome_channel_id'] ?: null,
+                    'welcome_message' => $message !== '' ? $message : null,
+                    'updated_at' => now(),
+                    'created_by' => $identity['id'],
+                ]);
+
+                if ($updated > 0) {
+                    if (array_key_exists('admin_channels', $data)) {
+                        $this->syncChannelRules('admin_channels', $serverId, $data['admin_channels'], (string) $identity['id']);
+                    }
+                    if (array_key_exists('forbidden_channels', $data)) {
+                        $this->syncChannelRules('channels_forbidden', $serverId, $data['forbidden_channels'], (string) $identity['id']);
+                    }
+                }
+
+                return $updated;
+            });
             if (! $updated) return response()->json(['message' => 'Could not save configuration for this server.'], 404);
 
             $key = 'discord-bot:server-settings:v3:'.$botId.':'.$serverId;
@@ -143,16 +164,36 @@ class AdminConfigController extends Controller
         }
     }
 
-    private function verifiedGuilds(Request $request, DiscordApi $discordApi): array
+    /** @param list<string> $channelIds */
+    private function syncChannelRules(string $table, string $serverId, array $channelIds, string $userId): void
+    {
+        // The table name is selected only from this fixed allowlist.
+        if (! in_array($table, ['admin_channels', 'channels_forbidden'], true)) {
+            throw new \InvalidArgumentException('Unsupported channel rule table.');
+        }
+
+        DB::table($table)->where('server', $serverId)->delete();
+        if ($channelIds === []) return;
+
+        $now = now();
+        DB::table($table)->insert(array_map(static fn (string $channelId): array => [
+            'id' => (string) Str::uuid(),
+            'created_at' => $now,
+            'updated_at' => $now,
+            'created_by' => $userId,
+            'server' => $serverId,
+            'channel_id' => $channelId,
+        ], $channelIds));
+    }
+
+    private function verifiedGuilds(Request $request, DashboardGuilds $dashboardGuilds): array
     {
         try {
             $session = $request->attributes->get('dashboard.session');
-            $cacheKey = 'dashboard:discord-guilds:'.$session['identity']['id'];
-            $guilds = Cache::get($cacheKey);
-            if (! is_array($guilds)) {
-                $guilds = $this->manageableGuilds($discordApi->currentUserGuilds((string) $session['access_token']));
-                Cache::put($cacheKey, $guilds, now()->addSeconds(60));
-            }
+            $guilds = $dashboardGuilds->configuredForUser(
+                (string) $session['identity']['id'],
+                (string) $session['access_token']
+            );
 
             return [$guilds, null];
         } catch (DiscordRateLimitException $error) {
@@ -169,16 +210,4 @@ class AdminConfigController extends Controller
         }
     }
 
-    private function manageableGuilds(array $guilds): array
-    {
-        return array_values(array_map(static fn (array $guild): array => [
-            'id' => (string) $guild['id'],
-            'name' => (string) $guild['name'],
-            'icon' => isset($guild['icon']) ? (string) $guild['icon'] : null,
-        ], array_filter($guilds, static function ($guild): bool {
-            if (! is_array($guild) || ! isset($guild['id'], $guild['name'], $guild['permissions'])) return false;
-            $permissions = (int) $guild['permissions'];
-            return ($permissions & 8) !== 0 || ($permissions & 32) !== 0;
-        })));
-    }
 }

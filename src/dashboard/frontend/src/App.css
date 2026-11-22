@@ -260,3 +260,24 @@
 .callback-screen { background:#111318; }
 .callback-loading-card h1 { color:#edf0f7; }
 .callback-spinner { border-color:#3b355c; border-top-color:#a99aff; }
+
+.channel-rules-grid { overflow:hidden; border:1px solid #30343f; border-radius:8px; }
+.channel-rules-header,.channel-rule-row { display:grid; grid-template-columns:minmax(160px,1fr) 145px 145px; align-items:center; }
+.channel-rules-header { min-height:42px; background:#171920; border-bottom:1px solid #30343f; }
+.channel-rules-header span { padding:0 12px; color:#a0a5b4; font-size:11px; font-weight:700; }
+.channel-rules-header span:not(:first-child) { text-align:center; }
+.channel-rule-row { min-height:43px; border-bottom:1px solid #2b2e37; }
+.channel-rule-row:last-child { border-bottom:0; }
+.channel-rule-name { overflow:hidden; padding:0 12px; color:#e0e3ec; font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
+.channel-rule-check { display:grid; min-height:43px; place-items:center; cursor:pointer; }
+.channel-rule-check input { width:17px; height:17px; margin:0; accent-color:#9585ff; cursor:pointer; }
+.channel-rule-check:focus-within input { outline:2px solid #a99aff; outline-offset:3px; }
+.channel-rules-hint,.channel-rules-empty { color:#a0a5b4; font-size:12px; line-height:1.5; }
+.channel-rules-empty { margin:0; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+
+@media (max-width: 640px) {
+  .channel-rules-header,.channel-rule-row { grid-template-columns:minmax(100px,1fr) 94px 94px; }
+  .channel-rules-header span { padding:0 6px; font-size:10px; }
+  .channel-rule-name { padding:0 8px; font-size:12px; }
+}
