@@ -12,13 +12,15 @@ class DashboardGuilds
     private const CACHE_TTL_SECONDS = 60;
     private const SUPERADMIN_ICON_CACHE_TTL_SECONDS = 180;
 
-    public function __construct(private readonly DiscordApi $discordApi) {}
+    public function __construct(
+        private readonly DiscordApi $discordApi,
+        private readonly DashboardSuperadmin $dashboardSuperadmin,
+    ) {}
 
     /** @return list<array{id: string, name: string, icon: ?string}> */
     public function configuredForUser(string $userId, string $accessToken): array
     {
-        $superadminId = trim((string) config('services.discord.superadmin_id', ''));
-        if ($superadminId !== '' && hash_equals($superadminId, $userId)) {
+        if ($this->dashboardSuperadmin->isUser($userId)) {
             Log::debug('Discord system superadmin bypassed server permission checks.', [
                 'discord_user_id' => $userId,
             ]);

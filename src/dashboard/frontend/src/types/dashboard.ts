@@ -1,4 +1,4 @@
-export type User = { id: string; username: string; avatar: string | null }
+export type User = { id: string; username: string; avatar: string | null; is_superadmin: boolean }
 export type Server = { id: string; name: string; icon: string | null }
 export type Channel = { id: string; name: string }
 export const localeOptions = [
@@ -10,7 +10,7 @@ export const isLocaleCode = (value: string): value is LocaleCode =>
   localeOptions.some(locale => locale.value === value)
 
 export type SettingGroup = 'autoban' | 'memes' | 'channels' | 'voice' | 'welcome' | 'locale'
-export type Page = 'login' | 'home' | 'server' | SettingGroup | 'callback'
+export type Page = 'login' | 'home' | 'server' | SettingGroup | 'superadmin-status' | 'superadmin-logs' | 'callback'
 
 export type Config = {
   locale: LocaleCode

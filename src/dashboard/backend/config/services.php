@@ -12,6 +12,8 @@ return [
         'ca_bundle' => env('DISCORD_CA_BUNDLE'),
         'superadmin_id' => env('DISCORD_SUPERADMIN_ID', ''),
     ],
+    'bot_app_path' => env('BOT_APP_PATH', dirname(base_path(), 2).DIRECTORY_SEPARATOR.'app'),
+    'bot_log_dir' => env('BOT_LOG_DIR', 'logs'),
 
     /*
     |--------------------------------------------------------------------------

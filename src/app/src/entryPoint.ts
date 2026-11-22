@@ -71,6 +71,7 @@ export default class entryPoint extends Client
         }
 
         await this.runningPid.saveInfo();
+        this.runningPid.startHeartbeat();
 
         log.info("=".repeat(40));
         log.info(`Starting ${processInfo.entryMode}`);
