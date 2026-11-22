@@ -288,10 +288,14 @@ function App() {
     setNotice('')
     try {
       const subreddits = subredditText.split(/[\r\n,]/).map(value => value.trim().replace(/^\/?r\//i, '')).filter(Boolean)
+      const availableChannelIds = new Set(channels.map(channel => channel.id))
+      const adminChannels = config.admin_channels.filter(id => availableChannelIds.has(id))
+      const forbiddenChannels = config.forbidden_channels.filter(id => availableChannelIds.has(id))
       await api(`/servers/${serverId}/config`, token, {
         method: 'PUT',
-        body: JSON.stringify({ ...config, subreddits_memes: subreddits }),
+        body: JSON.stringify({ ...config, subreddits_memes: subreddits, admin_channels: adminChannels, forbidden_channels: forbiddenChannels }),
       })
+      setConfig(current => ({ ...current, admin_channels: adminChannels, forbidden_channels: forbiddenChannels }))
       setNotice('Your server settings have been saved.')
     } catch (reason) {
       console.warn('Could not save server settings.', reason)
