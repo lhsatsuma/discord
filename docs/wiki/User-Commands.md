@@ -41,4 +41,4 @@ Although they configure server-wide destinations, `/birthday add_channel`, `/bir
 
 ## Commands requiring administrator access
 
-`/pinguser` and `/admin` are restricted to administrators. There is no `/autoban` slash command; administrators configure auto moderation and its channels through the dashboard. See [Administrator commands](Admin-Commands) for the dashboard guide and admin channel commands.
+`/pinguser` is restricted to administrators. The `/admin` and `/autoban` channel configuration commands have been removed; administrators configure server channels and auto moderation through the dashboard. See [Administrator commands](Admin-Commands) for the dashboard guide.
