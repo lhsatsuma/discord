@@ -30,7 +30,7 @@ export default class entryPointScheduler extends entryPoint
 {
     private scheduledTasks: ScheduledTask[] = [];
 
-    async init(): Promise<boolean | void>
+    async init(): Promise<boolean>
     {
         const initialized = await super.init();
         if (!initialized) {

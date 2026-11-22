@@ -30,8 +30,17 @@ function readStoredUser(): User | null {
   }
 }
 
+function normalizeRoute(path: string): string {
+  const legacyServerRoute = path.match(/^\/servers\/config\/(\d+)\/?$/)
+  if (!legacyServerRoute) return path
+
+  const normalizedPath = `/servers/${legacyServerRoute[1]}`
+  window.history.replaceState({}, '', normalizedPath)
+  return normalizedPath
+}
+
 function App() {
-  const [path, setPath] = useState(window.location.pathname)
+  const [path, setPath] = useState(() => normalizeRoute(window.location.pathname))
   const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '')
   const [user, setUser] = useState<User | null>(() => readStoredUser())
   const [servers, setServers] = useState<Server[]>([])
@@ -48,8 +57,8 @@ function App() {
   const loadedServersToken = useRef('')
   const loadedConfigServerId = useRef('')
   const serverRoute = path.match(/^\/servers\/(\d+)(?:\/(autoban|memes|channels|voice|welcome))?\/?$/)
-  const legacyServerRoute = path.match(/^\/servers\/config\/(\d+)\/?$/)
-  const serverId = serverRoute?.[1] || legacyServerRoute?.[1] || ''
+  const isServerRoute = serverRoute !== null
+  const serverId = serverRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
     : path === '/home' ? 'home'
       : serverRoute ? (serverRoute[2] as SettingGroup | undefined) || 'server'
@@ -77,7 +86,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const pop = () => setPath(window.location.pathname)
+    const pop = () => setPath(normalizeRoute(window.location.pathname))
     window.addEventListener('popstate', pop)
     return () => window.removeEventListener('popstate', pop)
   }, [])
@@ -86,16 +95,10 @@ function App() {
     // Discord must be able to return to this public route to finish OAuth login.
     if (path === '/auth/callback') return
 
-    if (legacyServerRoute) {
-      window.history.replaceState({}, '', `/servers/${legacyServerRoute[1]}`)
-      setPath(`/servers/${legacyServerRoute[1]}`)
-      return
-    }
-
     if (path === '/login') {
       if (token) {
         window.history.replaceState({}, '', '/home')
-        setPath('/home')
+        queueMicrotask(() => setPath('/home'))
       }
       return
     }
@@ -104,11 +107,13 @@ function App() {
       sessionStorage.removeItem(TOKEN_KEY)
       sessionStorage.removeItem(PROFILE_KEY)
       window.history.replaceState({}, '', '/login')
-      setPath('/login')
-      setError('Sign in with Discord to access the dashboard.')
-      setUser(null)
-      setServers([])
-      setServer(null)
+      queueMicrotask(() => {
+        setPath('/login')
+        setError('Sign in with Discord to access the dashboard.')
+        setUser(null)
+        setServers([])
+        setServer(null)
+      })
     }
   }, [path, token])
 
@@ -127,9 +132,12 @@ function App() {
     if (receivedToken) {
       sessionStorage.setItem(TOKEN_KEY, receivedToken)
       sessionStorage.removeItem(PROFILE_KEY)
-      setUser(null)
       window.history.replaceState({}, '', '/home')
-      queueMicrotask(() => { setToken(receivedToken); setPath('/home') })
+      queueMicrotask(() => {
+        setUser(null)
+        setToken(receivedToken)
+        setPath('/home')
+      })
       return
     }
 
@@ -242,7 +250,7 @@ function App() {
   }, [page, token, expireSession])
 
   useEffect(() => {
-    if (!serverRoute || !token || !serverId) return
+    if (!isServerRoute || !token || !serverId) return
     if (loadedConfigServerId.current === serverId) return
     let active = true
     queueMicrotask(() => { if (active) setLoading(true) })
@@ -265,7 +273,7 @@ function App() {
       })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [page, token, serverId, path, expireSession])
+  }, [page, token, isServerRoute, serverId, path, expireSession])
 
   const logout = async () => {
     try { if (token) await api('/logout', token, { method: 'POST' }) }

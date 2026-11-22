@@ -45,7 +45,7 @@ class database_pg
 			return this.pool;
 		}
 
-		this.pool = new Pool({
+		const pool = new Pool({
 			host: this.host,
 			user: this.host_user,
 			password: this.host_pwd,
@@ -54,11 +54,11 @@ class database_pg
 			connectionTimeoutMillis: 5000,
 			idleTimeoutMillis: 15000,
 		});
-		this.pool.on('error', (err, client) => {
+		pool.on('error', (err) => {
 			log.err('[DataBase] Error: '+err);
-			delete this.pool;
 		});
-		return this.pool;
+		this.pool = pool;
+		return pool;
 	}
 
 	async testConnection(): Promise <any>

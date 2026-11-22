@@ -27,8 +27,6 @@ import {
 import entryPointApp from '#src/entryPointApp.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
-import model_admin_channels from '#models/admin_channels.ts';
-import model_channels_forbidden from '#models/channels_forbidden.ts';
 import model_servers, {type autobanPunishment} from '#models/server.ts';
 
 type MessageDeletionSweep = {
@@ -64,14 +62,12 @@ export default class MessageCreate
         }
         const guild = message.guild;
 
-        const forbiddenChannels = await new model_channels_forbidden().listByServer({
-            server: guild.id
-        });
-        if (forbiddenChannels === false) {
-            log.warning(`Could not load forbidden channels for guild ${guild.id}.`);
+        const settings = await new model_servers().getServerSettings(guild.id);
+        if (settings === false) {
+            log.warning(`Could not load autoban configuration for guild ${guild.id}.`);
             return;
         }
-        if (!forbiddenChannels.includes(message.channelId)) {
+        if (!settings.forbidden_channels.includes(message.channelId)) {
             return;
         }
 
@@ -86,12 +82,6 @@ export default class MessageCreate
         }
 
         if (member.permissions.has(PermissionFlagsBits.Administrator)) {
-            return;
-        }
-
-        const settings = await new model_servers().getServerSettings(guild.id);
-        if (settings === false) {
-            log.warning(`Could not load autoban configuration for guild ${guild.id}; skipping ban.`);
             return;
         }
 
@@ -118,6 +108,7 @@ export default class MessageCreate
             message,
             guild,
             member.id,
+            settings.admin_channels,
             settings.autoban_del_period,
             settings.autoban_punishment,
             punishmentApplied
@@ -131,12 +122,13 @@ export default class MessageCreate
         message: Message,
         guild: Guild,
         memberId: string,
+        adminChannels: string[],
         periodMinutes: number,
         punishment: autobanPunishment,
         punishmentApplied: boolean
     ): Promise<void>
     {
-        await this.sendAdminLog(message, punishment, punishmentApplied, null);
+        await this.sendAdminLog(message, adminChannels, punishment, punishmentApplied, null);
 
         try {
             const result = await this.deleteMemberMessages(guild, memberId, periodMinutes);
@@ -145,10 +137,10 @@ export default class MessageCreate
                 + `${result.deletedMessages} message(s) deleted across ${result.scannedChannels} channel(s), `
                 + `${result.failedChannels} channel(s) failed.`
             );
-            await this.sendAdminLog(message, punishment, punishmentApplied, result);
+            await this.sendAdminLog(message, adminChannels, punishment, punishmentApplied, result);
         } catch (error) {
             log.warning(`Autoban message sweep failed for member ${memberId} in guild ${message.guildId}: ${error}`);
-            await this.sendAdminLog(message, punishment, punishmentApplied, {
+            await this.sendAdminLog(message, adminChannels, punishment, punishmentApplied, {
                 deletedMessages: 0,
                 scannedChannels: 0,
                 failedChannels: 1
@@ -285,20 +277,13 @@ export default class MessageCreate
 
     private async sendAdminLog(
         message: Message,
+        adminChannels: string[],
         punishment: autobanPunishment,
         punishmentApplied: boolean,
         sweep: MessageDeletionSweep | null
     ): Promise<void>
     {
         if (!message.guild) {
-            return;
-        }
-
-        const adminChannels = await new model_admin_channels().listByServer({
-            server: message.guild.id
-        });
-        if (adminChannels === false) {
-            log.warning(`Could not load admin channels for autoban log in guild ${message.guild.id}.`);
             return;
         }
 

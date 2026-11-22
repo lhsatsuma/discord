@@ -63,65 +63,61 @@ export default class entryPoint extends Client
 		}
         this.runningPid = new processRunning(this, global.entryMode).init();
     }
-    init()
+    async init(): Promise<boolean>
     {
-        return new Promise(async (resolve, reject) => {
+        const processInfo = this.runningPid.processInfo;
+        if (!processInfo) {
+            return false;
+        }
 
-            //First initialization logs
+        await this.runningPid.saveInfo();
 
-            let process_info = this.runningPid.processInfo;
+        log.info("=".repeat(40));
+        log.info(`Starting ${processInfo.entryMode}`);
+        log.info(`Node ${processInfo.nodeVersion} | Discord.JS v${processInfo.discordjsVersion} | App v${processInfo.appVersion}`);
+        log.info("=".repeat(40));
 
-            if(!process_info){
-                resolve(false);
-                return;
-            }
+        log.debug('Loading locale for: '+config.DISCORD_BOT_LOCALE);
+        if (!await this.loadLocale()) {
+            log.fatal('Failed to load locale, aborting execution!');
+            throw new Error('Failed to load locale.');
+        }
+        log.info(lang.translate('system', 'LOCALE_SET', [config.DISCORD_BOT_LOCALE]));
 
-            await this.runningPid.saveInfo();
-            
-            log.info("=".repeat(40));
-            log.info(`Starting ${process_info.entryMode}`);
-            log.info(`Node ${process_info.nodeVersion} | Discord.JS v${process_info.discordjsVersion} | App v${process_info.appVersion}`);
-            log.info("=".repeat(40));
-            
-            log.debug('Loading locale for: '+config.DISCORD_BOT_LOCALE);
-            if(!await this.loadLocale())
-            {
-                log.fatal('Failed to load locale, aborting execution!');
-                reject(false);
-            }
-            log.info(lang.translate('system', 'LOCALE_SET', [config.DISCORD_BOT_LOCALE]));
+        log.debug(lang.translate('system', 'START_LOADING_DATABASE'));
+        if (!await this.dbTestConnection()) {
+            log.fatal(lang.translate('system', 'START_LOADING_DATABASE_ERR'));
+            throw new Error('Could not connect to the database.');
+        }
+        log.debug(lang.translate('system', 'START_LOADED_DATABASE'));
 
-            log.debug(lang.translate('system', 'START_LOADING_DATABASE'));
+        const ready = new Promise<void>((resolve) => {
+            this.once('clientReady', () => {
+                this.super_admin_channel = this.channels.cache.find(
+                    (channel) => channel.id === config.DISCORD_BOT_ADMIN_CHANNEL
+                );
 
-            if(!await this.dbTestConnection())
-            {
-                log.fatal(lang.translate('system', 'START_LOADING_DATABASE_ERR'));
-                reject(false);
-            }
-            log.debug(lang.translate('system', 'START_LOADED_DATABASE'));
-
-            this.once('clientReady', async () => {
-                this.super_admin_channel = this.channels.cache.find(channel => channel.id === config.DISCORD_BOT_ADMIN_CHANNEL);
-
-                if(!!config.DISCORD_BOT_DESCRIPTION){
-                    this.user?.setActivity({
-                        name: config.DISCORD_BOT_DESCRIPTION,
-                    });
+                if (config.DISCORD_BOT_DESCRIPTION) {
+                    this.user?.setActivity({name: config.DISCORD_BOT_DESCRIPTION});
                 }
 
-                resolve(true);
+                resolve();
             });
-
-            log.debug(lang.translate('system', 'START_TRY_CONNECT_API'));
-            try{
-                let logged_in = await this.login(config.DISCORD_BOT_TOKEN);
-                if(logged_in){
-                    log.debug(lang.translate('system', 'START_CONNECTED_API', [this.user?.tag]));
-                }
-            }catch(e){
-                log.fatal(lang.translate('system', 'START_TRY_CONNECT_API_ERR', [e]));
-            }
         });
+
+        log.debug(lang.translate('system', 'START_TRY_CONNECT_API'));
+        try {
+            const loggedIn = await this.login(config.DISCORD_BOT_TOKEN);
+            if (loggedIn) {
+                log.debug(lang.translate('system', 'START_CONNECTED_API', [this.user?.tag]));
+            }
+        } catch (error) {
+            log.fatal(lang.translate('system', 'START_TRY_CONNECT_API_ERR', [error]));
+            throw error;
+        }
+
+        await ready;
+        return true;
     }
 
     finishInit()

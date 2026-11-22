@@ -15,7 +15,6 @@
  */
 
 import model_base from '#models/base.ts';
-import model_server_config from '#models/server_config.ts';
 import redisCache from '#includes/cache/redis_cache.ts';
 import log from '#includes/log.ts';
 import config from '#includes/config.ts';
@@ -83,8 +82,6 @@ const serverFields = {
     },
 } as const satisfies Record<string, fieldInterface>;
 
-type serverFieldName = keyof typeof serverFields;
-
 export default class model_servers extends model_base
 {
     table = 'servers';
@@ -96,7 +93,7 @@ export default class model_servers extends model_base
     active?: boolean;
     name?: string;
 
-    async selectActive(fields: Pick<Record<serverFieldName, string>, 'id'>): Promise<this | null | false>
+    async selectActive(fields: { id: string }): Promise<this | null | false>
     {
         try{
             const res = await this.select(
@@ -126,41 +123,53 @@ export default class model_servers extends model_base
             SERVER_SETTINGS_CACHE_TTL_SECONDS,
             async () => {
                 try {
-                    const [result, serverConfigs] = await Promise.all([
-                        this.query(
-                            `SELECT ARRAY(
+                    const result = await this.query(
+                        `SELECT ARRAY(
                                     SELECT channel_id FROM admin_channels
-                                    WHERE admin_channels.server = servers.id
+                                    WHERE admin_channels.server = $1
                                     ORDER BY channel_id
                                 ) AS admin_channels,
                                 ARRAY(
                                     SELECT channel_id FROM birthday_channels
-                                    WHERE birthday_channels.server = servers.id
+                                    WHERE birthday_channels.server = $1
                                     ORDER BY channel_id
                                 ) AS birthday_channels,
                                 ARRAY(
                                     SELECT channel_id FROM channels_forbidden
-                                    WHERE channels_forbidden.server = servers.id
+                                    WHERE channels_forbidden.server = $1
                                     ORDER BY channel_id
-                                ) AS forbidden_channels
-                             FROM ${this.table}
-                             WHERE id = $1
-                             LIMIT 1`,
-                            [serverId]
-                        ),
-                        new model_server_config().listByServer(serverId),
-                    ]);
-                    if (serverConfigs === false) {
-                        throw new Error('Could not load server configuration records.');
-                    }
-
+                                ) AS forbidden_channels,
+                                COALESCE(
+                                    (
+                                        SELECT json_object_agg(
+                                            config_code,
+                                            COALESCE(long_value, value)
+                                        )
+                                        FROM server_config
+                                        WHERE server_id = $1
+                                          AND config_code IN (
+                                              'reddit_odd_memes',
+                                              'subreddits_memes',
+                                              'autoban_del_period',
+                                              'autoban_punishment',
+                                              'autoban_mute_days',
+                                              'send_voice_update',
+                                              'welcome_message_active',
+                                              'welcome_channel_id',
+                                              'welcome_message'
+                                          )
+                                    ),
+                                    '{}'::json
+                                ) AS server_configs`,
+                        [serverId]
+                    );
                     const row = result.rows[0] as {
                         admin_channels: string[] | null;
                         birthday_channels: string[] | null;
                         forbidden_channels: string[] | null;
+                        server_configs: Record<string, string | null>;
                     } | undefined;
-                    const configValue = (code: string): string | null =>
-                        model_server_config.readValue(serverConfigs, code);
+                    const configValue = (code: string): string | null => row?.server_configs?.[code] ?? null;
                     const redditOdds = Number(configValue('reddit_odd_memes') ?? 5);
                     const deletePeriodMinutes = Number(
                         configValue('autoban_del_period') ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES

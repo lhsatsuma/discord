@@ -18,7 +18,6 @@ import { Colors, EmbedBuilder, Events } from 'discord.js';
 import entryPointApp from '#src/entryPointApp.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
-import model_admin_channels from '#models/admin_channels.ts';
 import model_servers from '#models/server.ts';
 
 export default class VoiceStateUpdate
@@ -66,15 +65,7 @@ export default class VoiceStateUpdate
                 .setDescription(lang.translate('globals', translationKey, [member.id, channelId]))
                 .setTimestamp();
 
-            const adminChannels = await new model_admin_channels().listByServer({
-                server: newState.guild.id
-            });
-            if (adminChannels === false) {
-                log.warning(`Could not load admin channels for guild ${newState.guild.id}.`);
-                return;
-            }
-
-            for (const adminChannelId of adminChannels) {
+            for (const adminChannelId of settings.admin_channels) {
                 try {
                     const channel = await newState.guild.channels.fetch(adminChannelId);
                     if (!channel?.isSendable()) {
