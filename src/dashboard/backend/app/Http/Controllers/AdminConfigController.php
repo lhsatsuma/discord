@@ -81,7 +81,7 @@ class AdminConfigController extends Controller
         try {
             $data = $request->validate([
                 'reddit_odd_memes' => ['required', 'integer', 'between:0,10'],
-                'subreddits_memes' => ['required', 'array', 'max:100'],
+                'subreddits_memes' => ['sometimes', 'array', 'max:100'],
                 'subreddits_memes.*' => ['string', 'regex:/^[A-Za-z0-9_]{2,21}$/'],
                 'autoban_del_period' => ['required', 'integer', 'between:0,'.self::MAX_DELETE_PERIOD],
                 'autoban_punishment' => ['required', 'in:ban,mute'],
@@ -95,7 +95,7 @@ class AdminConfigController extends Controller
                 'forbidden_channels' => ['sometimes', 'array', 'max:500'],
                 'forbidden_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
             ]);
-            $subreddits = array_values(array_unique(array_map('trim', $data['subreddits_memes'])));
+            $subreddits = array_values(array_unique(array_map('trim', $data['subreddits_memes'] ?? [])));
             $message = (string) ($data['welcome_message'] ?? '');
             $botId = (string) config('services.discord.bot_id');
             if ($botId === '' || $botId === '0') {
@@ -172,8 +172,25 @@ class AdminConfigController extends Controller
             throw new \InvalidArgumentException('Unsupported channel rule table.');
         }
 
-        DB::table($table)->where('server', $serverId)->delete();
-        if ($channelIds === []) return;
+        $channelIds = array_values(array_unique($channelIds));
+        $existingChannelIds = DB::table($table)
+            ->where('server', $serverId)
+            ->lockForUpdate()
+            ->pluck('channel_id')
+            ->map(static fn ($id): string => (string) $id)
+            ->all();
+        $existing = array_fill_keys($existingChannelIds, true);
+
+        $removedChannelIds = array_values(array_diff($existingChannelIds, $channelIds));
+        if ($removedChannelIds !== []) {
+            DB::table($table)
+                ->where('server', $serverId)
+                ->whereIn('channel_id', $removedChannelIds)
+                ->delete();
+        }
+
+        $addedChannelIds = array_values(array_filter($channelIds, static fn (string $id): bool => ! isset($existing[$id])));
+        if ($addedChannelIds === []) return;
 
         $now = now();
         DB::table($table)->insert(array_map(static fn (string $channelId): array => [
@@ -183,7 +200,7 @@ class AdminConfigController extends Controller
             'created_by' => $userId,
             'server' => $serverId,
             'channel_id' => $channelId,
-        ], $channelIds));
+        ], $addedChannelIds));
     }
 
     private function verifiedGuilds(Request $request, DashboardGuilds $dashboardGuilds): array

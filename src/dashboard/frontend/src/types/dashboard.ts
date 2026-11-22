@@ -1,7 +1,8 @@
 export type User = { id: string; username: string; avatar: string | null }
 export type Server = { id: string; name: string; icon: string | null }
 export type Channel = { id: string; name: string }
-export type Page = 'login' | 'home' | 'config' | 'callback'
+export type SettingGroup = 'autoban' | 'memes' | 'channels' | 'voice' | 'welcome'
+export type Page = 'login' | 'home' | 'server' | SettingGroup | 'callback'
 
 export type Config = {
   reddit_odd_memes: number

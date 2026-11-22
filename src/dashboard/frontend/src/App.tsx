@@ -1,12 +1,17 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import './App.css'
 import { DashboardTemplate } from './components/DashboardTemplate'
 import { ApiError, api } from './lib/api'
 import { CallbackPage } from './pages/CallbackPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
-import { ServerConfigPage } from './pages/ServerConfigPage'
-import { blankConfig, type Channel, type Config, type Page, type Server, type User } from './types/dashboard'
+import { ServerOverviewPage } from './pages/ServerOverviewPage'
+import { AutoModerationPage } from './pages/settings/AutoModerationPage'
+import { ChannelRulesPage } from './pages/settings/ChannelRulesPage'
+import { MemeSettingsPage } from './pages/settings/MemeSettingsPage'
+import { VoiceUpdatesPage } from './pages/settings/VoiceUpdatesPage'
+import { WelcomeMessagePage } from './pages/settings/WelcomeMessagePage'
+import { blankConfig, type Channel, type Config, type Page, type Server, type SettingGroup, type User } from './types/dashboard'
 
 const TOKEN_KEY = 'guilddesk.jwt'
 const PROFILE_KEY = 'guilddesk.user'
@@ -41,16 +46,19 @@ function App() {
   const [notice, setNotice] = useState('')
   const callbackProcessed = useRef(false)
   const loadedServersToken = useRef('')
-  const page: Page = path === '/auth/callback'
-    ? 'callback'
-    : path.startsWith('/servers/config/')
-      ? 'config'
-      : path === '/home' ? 'home' : 'login'
+  const loadedConfigServerId = useRef('')
+  const serverRoute = path.match(/^\/servers\/(\d+)(?:\/(autoban|memes|channels|voice|welcome))?\/?$/)
+  const legacyServerRoute = path.match(/^\/servers\/config\/(\d+)\/?$/)
+  const serverId = serverRoute?.[1] || legacyServerRoute?.[1] || ''
+  const page: Page = path === '/auth/callback' ? 'callback'
+    : path === '/home' ? 'home'
+      : serverRoute ? (serverRoute[2] as SettingGroup | undefined) || 'server'
+        : 'login'
 
   const navigate = useCallback((to: string) => {
     window.history.pushState({}, '', to)
     setPath(to)
-    if (!to.startsWith('/servers/config/')) setLoading(false)
+    if (!to.startsWith('/servers/')) setLoading(false)
     setError('')
     setNotice('')
   }, [])
@@ -59,6 +67,7 @@ function App() {
     sessionStorage.removeItem(TOKEN_KEY)
     sessionStorage.removeItem(PROFILE_KEY)
     loadedServersToken.current = ''
+    loadedConfigServerId.current = ''
     setToken('')
     setUser(null)
     setServers([])
@@ -76,6 +85,12 @@ function App() {
   useLayoutEffect(() => {
     // Discord must be able to return to this public route to finish OAuth login.
     if (path === '/auth/callback') return
+
+    if (legacyServerRoute) {
+      window.history.replaceState({}, '', `/servers/${legacyServerRoute[1]}`)
+      setPath(`/servers/${legacyServerRoute[1]}`)
+      return
+    }
 
     if (path === '/login') {
       if (token) {
@@ -205,7 +220,6 @@ function App() {
     return () => { active = false }
   }, [token, user, expireSession])
 
-  const serverId = useMemo(() => path.split('/')[3] || '', [path])
   useEffect(() => {
     if (page !== 'home' || !token || loadedServersToken.current === token) return
     let active = true
@@ -228,7 +242,8 @@ function App() {
   }, [page, token, expireSession])
 
   useEffect(() => {
-    if (page !== 'config' || !token || !serverId) return
+    if (!serverRoute || !token || !serverId) return
+    if (loadedConfigServerId.current === serverId) return
     let active = true
     queueMicrotask(() => { if (active) setLoading(true) })
     api<{ server: Server; config: Config; channels: Channel[] }>(`/servers/${serverId}/config`, token)
@@ -238,6 +253,7 @@ function App() {
           setConfig(result.config)
           setSubredditText(result.config.subreddits_memes.join(', '))
           setChannels(result.channels)
+          loadedConfigServerId.current = serverId
         }
       })
       .catch(reason => {
@@ -249,7 +265,7 @@ function App() {
       })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [page, token, serverId, expireSession])
+  }, [page, token, serverId, path, expireSession])
 
   const logout = async () => {
     try { if (token) await api('/logout', token, { method: 'POST' }) }
@@ -257,6 +273,7 @@ function App() {
     sessionStorage.removeItem(TOKEN_KEY)
     sessionStorage.removeItem(PROFILE_KEY)
     loadedServersToken.current = ''
+    loadedConfigServerId.current = ''
     setToken('')
     setUser(null)
     setServers([])
@@ -294,8 +311,14 @@ function App() {
 
   const openServer = (selectedServer: Server) => {
     setServer(selectedServer)
-    setLoading(true)
-    navigate(`/servers/config/${selectedServer.id}`)
+    navigate(`/servers/${selectedServer.id}`)
+  }
+
+  const openGroup = (group: SettingGroup) => navigate(`/servers/${serverId}/${group}`)
+  const settingsProps = {
+    server, config, loading, saving, error, saveError, notice,
+    onBack: () => navigate(`/servers/${serverId}`), onDismissError: () => setError(''),
+    onConfigChange: setValue, onSave: save,
   }
 
   if (page === 'callback') return <CallbackPage/>
@@ -316,22 +339,14 @@ function App() {
       onDismissError={() => setError('')}
       onOpenServer={openServer}
     />}
-    {page === 'config' && <ServerConfigPage
-      server={server}
-      config={config}
-      subredditText={subredditText}
-      channels={channels}
-      loading={loading}
-      saving={saving}
-      error={error}
-      saveError={saveError}
-      notice={notice}
-      onBack={() => navigate('/home')}
-      onDismissError={() => setError('')}
-      onConfigChange={setValue}
-      onSubredditTextChange={value => { setSubredditText(value); setNotice(''); setSaveError('') }}
-      onSave={save}
-    />}
+    {page === 'server' && (loading
+      ? <div className="loading-state"><span className="spinner"/> Loading server settings…</div>
+      : <ServerOverviewPage server={server} error={error} onDismissError={() => setError('')} onBack={() => navigate('/home')} onOpenGroup={openGroup}/>)}
+    {page === 'autoban' && <AutoModerationPage {...settingsProps}/>}
+    {page === 'memes' && <MemeSettingsPage {...settingsProps} subredditText={subredditText} onSubredditTextChange={value => { setSubredditText(value); setNotice(''); setSaveError('') }}/>}
+    {page === 'channels' && <ChannelRulesPage {...settingsProps} channels={channels}/>}
+    {page === 'voice' && <VoiceUpdatesPage {...settingsProps}/>}
+    {page === 'welcome' && <WelcomeMessagePage {...settingsProps} channels={channels}/>}
   </DashboardTemplate>
 }
 
