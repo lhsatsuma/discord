@@ -36,6 +36,7 @@ build/Release
 node_modules/
 jspm_packages/
 dist/
+vendor/
 
 # TypeScript v1 declaration files
 typings/
@@ -79,7 +80,6 @@ typings/
 
 
 # APP GITIGNORE
-*.php
 discord.code-workspace
 package-lock.json
 .idea/
