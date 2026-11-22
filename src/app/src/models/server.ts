@@ -15,6 +15,7 @@
  */
 
 import model_base from '#models/base.ts';
+import model_server_config from '#models/server_config.ts';
 import redisCache from '#includes/cache/redis_cache.ts';
 import log from '#includes/log.ts';
 import config from '#includes/config.ts';
@@ -125,17 +126,9 @@ export default class model_servers extends model_base
             SERVER_SETTINGS_CACHE_TTL_SECONDS,
             async () => {
                 try {
-                    const result = await this.query(
-                        `SELECT COALESCE(reddit_config.value, '5') AS reddit_odd_memes,
-                                COALESCE(subreddits_config.long_value, subreddits_config.value, '') AS subreddits_memes,
-                                COALESCE(autoban_period_config.value, '60') AS autoban_del_period,
-                                COALESCE(autoban_punishment_config.value, 'ban') AS autoban_punishment,
-                                COALESCE(autoban_mute_days_config.value, '7') AS autoban_mute_days,
-                                COALESCE(voice_update_config.value, 'false') AS send_voice_update,
-                                COALESCE(welcome_active_config.value, 'false') AS welcome_message_active,
-                                COALESCE(welcome_channel_config.long_value, welcome_channel_config.value) AS welcome_channel_id,
-                                COALESCE(welcome_message_config.long_value, welcome_message_config.value, '') AS welcome_message,
-                                ARRAY(
+                    const [result, serverConfigs] = await Promise.all([
+                        this.query(
+                            `SELECT ARRAY(
                                     SELECT channel_id FROM admin_channels
                                     WHERE admin_channels.server = servers.id
                                     ORDER BY channel_id
@@ -150,76 +143,48 @@ export default class model_servers extends model_base
                                     WHERE channels_forbidden.server = servers.id
                                     ORDER BY channel_id
                                 ) AS forbidden_channels
-                         FROM ${this.table}
-                         LEFT JOIN server_config AS reddit_config
-                           ON reddit_config.server_id = servers.id
-                          AND reddit_config.config_code = 'reddit_odd_memes'
-                         LEFT JOIN server_config AS subreddits_config
-                           ON subreddits_config.server_id = servers.id
-                          AND subreddits_config.config_code = 'subreddits_memes'
-                         LEFT JOIN server_config AS autoban_period_config
-                           ON autoban_period_config.server_id = servers.id
-                          AND autoban_period_config.config_code = 'autoban_del_period'
-                         LEFT JOIN server_config AS autoban_punishment_config
-                           ON autoban_punishment_config.server_id = servers.id
-                          AND autoban_punishment_config.config_code = 'autoban_punishment'
-                         LEFT JOIN server_config AS autoban_mute_days_config
-                           ON autoban_mute_days_config.server_id = servers.id
-                          AND autoban_mute_days_config.config_code = 'autoban_mute_days'
-                         LEFT JOIN server_config AS voice_update_config
-                           ON voice_update_config.server_id = servers.id
-                          AND voice_update_config.config_code = 'send_voice_update'
-                         LEFT JOIN server_config AS welcome_active_config
-                           ON welcome_active_config.server_id = servers.id
-                          AND welcome_active_config.config_code = 'welcome_message_active'
-                         LEFT JOIN server_config AS welcome_channel_config
-                           ON welcome_channel_config.server_id = servers.id
-                          AND welcome_channel_config.config_code = 'welcome_channel_id'
-                         LEFT JOIN server_config AS welcome_message_config
-                           ON welcome_message_config.server_id = servers.id
-                          AND welcome_message_config.config_code = 'welcome_message'
-                         WHERE id = $1
-                         LIMIT 1`,
-                        [serverId]
-                    );
+                             FROM ${this.table}
+                             WHERE id = $1
+                             LIMIT 1`,
+                            [serverId]
+                        ),
+                        new model_server_config().listByServer(serverId),
+                    ]);
+                    if (serverConfigs === false) {
+                        throw new Error('Could not load server configuration records.');
+                    }
+
                     const row = result.rows[0] as {
-                        reddit_odd_memes: number | string | null;
-                        subreddits_memes: string | null;
-                        autoban_del_period: number | string | null;
-                        autoban_punishment: string | null;
-                        autoban_mute_days: number | string | null;
-                        send_voice_update: boolean | string | null;
-                        welcome_message_active: boolean | string | null;
-                        welcome_channel_id: string | null;
-                        welcome_message: string | null;
                         admin_channels: string[] | null;
                         birthday_channels: string[] | null;
                         forbidden_channels: string[] | null;
                     } | undefined;
-                    const redditOdds = Number(row?.reddit_odd_memes ?? 5);
+                    const configValue = (code: string): string | null =>
+                        model_server_config.readValue(serverConfigs, code);
+                    const redditOdds = Number(configValue('reddit_odd_memes') ?? 5);
                     const deletePeriodMinutes = Number(
-                        row?.autoban_del_period ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES
+                        configValue('autoban_del_period') ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES
                     );
-                    const muteDays = Number(row?.autoban_mute_days ?? DEFAULT_AUTOBAN_MUTE_DAYS);
-                    const isEnabled = (value: boolean | string | null | undefined): boolean =>
-                        value === true || value === 'true' || value === '1';
+                    const muteDays = Number(configValue('autoban_mute_days') ?? DEFAULT_AUTOBAN_MUTE_DAYS);
+                    const isEnabled = (value: string | null): boolean =>
+                        value === 'true' || value === '1';
                     return {
                         reddit_odd_memes: Number.isFinite(redditOdds) ? redditOdds : 5,
-                        subreddits_memes: (row?.subreddits_memes ?? '')
+                        subreddits_memes: (configValue('subreddits_memes') ?? '')
                             .split(/[,\r\n]/)
                             .map((subreddit) => subreddit.trim())
                             .filter(Boolean),
                         autoban_del_period: Number.isFinite(deletePeriodMinutes)
                             ? deletePeriodMinutes
                             : DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES,
-                        autoban_punishment: row?.autoban_punishment === 'mute' ? 'mute' : 'ban',
+                        autoban_punishment: configValue('autoban_punishment') === 'mute' ? 'mute' : 'ban',
                         autoban_mute_days: Number.isFinite(muteDays)
                             ? muteDays
                             : DEFAULT_AUTOBAN_MUTE_DAYS,
-                        send_voice_update: isEnabled(row?.send_voice_update),
-                        welcome_message_active: isEnabled(row?.welcome_message_active),
-                        welcome_channel_id: row?.welcome_channel_id ?? null,
-                        welcome_message: row?.welcome_message ?? '',
+                        send_voice_update: isEnabled(configValue('send_voice_update')),
+                        welcome_message_active: isEnabled(configValue('welcome_message_active')),
+                        welcome_channel_id: configValue('welcome_channel_id'),
+                        welcome_message: configValue('welcome_message') ?? '',
                         admin_channels: row?.admin_channels ?? [],
                         birthday_channels: row?.birthday_channels ?? [],
                         forbidden_channels: row?.forbidden_channels ?? []
