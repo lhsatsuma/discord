@@ -16,6 +16,24 @@ class DashboardGuilds
     /** @return list<array{id: string, name: string, icon: ?string}> */
     public function configuredForUser(string $userId, string $accessToken): array
     {
+        $superadminId = trim((string) config('services.discord.superadmin_id', ''));
+        if ($superadminId !== '' && hash_equals($superadminId, $userId)) {
+            Log::debug('Discord system superadmin bypassed server permission checks.', [
+                'discord_user_id' => $userId,
+            ]);
+
+            return DB::table('servers')
+                ->where('active', true)
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->map(static fn ($server): array => [
+                    'id' => (string) $server->id,
+                    'name' => (string) ($server->name ?: $server->id),
+                    'icon' => null,
+                ])
+                ->all();
+        }
+
         $cache = Cache::store('redis');
         $key = 'dashboard:configured-guilds:v1:'.$userId;
 

@@ -10,6 +10,7 @@ return [
         'bot_id' => env('DISCORD_BOT_ID', '0'),
         'bot_token' => env('DISCORD_BOT_TOKEN'),
         'ca_bundle' => env('DISCORD_CA_BUNDLE'),
+        'superadmin_id' => env('DISCORD_SUPERADMIN_ID', ''),
     ],
 
     /*
