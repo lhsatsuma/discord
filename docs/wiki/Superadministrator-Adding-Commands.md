@@ -124,9 +124,11 @@ For a simple command, use the `CMD_HELLO_*` keys shown in its example. For a com
 ## Register and verify
 
 1. From `src/app/`, run `npm run build` to type-check the bot.
-2. To have startup publish command definitions to Discord, set `DISCORD_BOT_SEND_COMMANDS_API=true` in `.env` and start the bot. When it is false, register updated definitions through your normal deployment process.
+2. Set `DISCORD_BOT_SEND_COMMANDS_API=true` in `.env` to have the bot register commands per guild using that server's configured locale. The bot refreshes guild commands when the locale changes and registers them when it joins a server.
 3. Restart the bot and check startup logs for command-loading errors.
-4. Test the command in a Discord server where the bot is installed.
+4. Test the command in Discord servers configured for each supported locale.
+
+When `DISCORD_BOT_SEND_COMMANDS_API` is false, updated definitions must be registered per guild through your deployment process; global command registration is not used.
 
 ## Optional: use a modal
 

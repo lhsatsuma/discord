@@ -14,7 +14,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Colors, EmbedBuilder, Events } from 'discord.js';
+import { Colors, EmbedBuilder, Events, type GuildMember, type VoiceState } from 'discord.js';
 import entryPointApp from '#src/entryPointApp.ts';
 import lang from '#includes/lang.ts';
 import log from '#includes/log.ts';
@@ -56,28 +56,41 @@ export default class VoiceStateUpdate
                 return;
             }
 
-            const translationKey = newState.channelId
-                ? 'VOICE_STATE_CONNECTED'
-                : 'VOICE_STATE_DISCONNECTED';
-            const embed = new EmbedBuilder()
-                .setColor(Colors.Blue)
-                .setTitle(newState.guild.name)
-                .setDescription(lang.translate('globals', translationKey, [member.id, channelId]))
-                .setTimestamp();
-
-            for (const adminChannelId of settings.admin_channels) {
-                try {
-                    const channel = await newState.guild.channels.fetch(adminChannelId);
-                    if (!channel?.isSendable()) {
-                        log.warning(`Admin channel ${adminChannelId} is unavailable or not sendable.`);
-                        continue;
-                    }
-
-                    await channel.send({embeds: [embed]});
-                } catch (error) {
-                    log.warning(`Could not send voice state update to admin channel ${adminChannelId}: ${error}`);
-                }
-            }
+            await lang.runWithLocale(
+                settings.locale,
+                () => this.sendVoiceUpdate(newState, member, channelId, settings.admin_channels)
+            );
         });
+    }
+
+    private async sendVoiceUpdate(
+        state: VoiceState,
+        member: GuildMember,
+        channelId: string,
+        adminChannels: string[]
+    ): Promise<void>
+    {
+        const translationKey = state.channelId
+            ? 'VOICE_STATE_CONNECTED'
+            : 'VOICE_STATE_DISCONNECTED';
+        const embed = new EmbedBuilder()
+            .setColor(Colors.Blue)
+            .setTitle(state.guild.name)
+            .setDescription(lang.translate('globals', translationKey, [member.id, channelId]))
+            .setTimestamp();
+
+        for (const adminChannelId of adminChannels) {
+            try {
+                const channel = await state.guild.channels.fetch(adminChannelId);
+                if (!channel?.isSendable()) {
+                    log.warning(`Admin channel ${adminChannelId} is unavailable or not sendable.`);
+                    continue;
+                }
+
+                await channel.send({embeds: [embed]});
+            } catch (error) {
+                log.warning(`Could not send voice state update to admin channel ${adminChannelId}: ${error}`);
+            }
+        }
     }
 }

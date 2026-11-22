@@ -6,6 +6,7 @@ import { CallbackPage } from './pages/CallbackPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { ServerOverviewPage } from './pages/ServerOverviewPage'
+import { LocaleSettingsPage } from './pages/settings/LocaleSettingsPage'
 import { AutoModerationPage } from './pages/settings/AutoModerationPage'
 import { ChannelRulesPage } from './pages/settings/ChannelRulesPage'
 import { MemeSettingsPage } from './pages/settings/MemeSettingsPage'
@@ -56,7 +57,7 @@ function App() {
   const callbackProcessed = useRef(false)
   const loadedServersToken = useRef('')
   const loadedConfigServerId = useRef('')
-  const serverRoute = path.match(/^\/servers\/(\d+)(?:\/(autoban|memes|channels|voice|welcome))?\/?$/)
+  const serverRoute = path.match(/^\/servers\/(\d+)(?:\/(autoban|memes|channels|voice|welcome|locale))?\/?$/)
   const isServerRoute = serverRoute !== null
   const serverId = serverRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
@@ -359,6 +360,7 @@ function App() {
     {page === 'channels' && <ChannelRulesPage {...settingsProps} channels={channels}/>}
     {page === 'voice' && <VoiceUpdatesPage {...settingsProps}/>}
     {page === 'welcome' && <WelcomeMessagePage {...settingsProps} channels={channels}/>}
+    {page === 'locale' && <LocaleSettingsPage {...settingsProps}/>}
   </DashboardTemplate>
 }
 

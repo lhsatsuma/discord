@@ -52,6 +52,13 @@ export default class GuildCreate
                 : await serverClass.insert();
             if (!saved) {
                 log.err(`Error saving server ${guild.id}`);
+                return;
+            }
+
+            try {
+                await this.main.registerCommandsForGuild(guild.id);
+            } catch (error) {
+                log.warning(`Could not register slash commands for guild ${guild.id}: ${error}`);
             }
         });
     }

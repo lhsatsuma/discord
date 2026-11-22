@@ -72,7 +72,7 @@ class config
         this.DISCORD_BOT_SEND_COMMANDS_API = process.env.DISCORD_BOT_SEND_COMMANDS_API === undefined
             ? true
             : process.env.DISCORD_BOT_SEND_COMMANDS_API.toLowerCase() === 'true';
-        this.DISCORD_BOT_LOCALE = process.env.DISCORD_BOT_LOCALE ?? 'pt-BR';
+        this.DISCORD_BOT_LOCALE = process.env.DISCORD_BOT_LOCALE ?? 'en-US';
         this.TZ = process.env.TZ ?? 'America/Sao_Paulo';
         this.DISCORD_BOT_HEARTBEAT = Number(process.env.DISCORD_BOT_HEARTBEAT ?? 0);
         this.DISCORD_BOT_ADMIN_CHANNEL = process.env.DISCORD_BOT_ADMIN_CHANNEL ?? '';

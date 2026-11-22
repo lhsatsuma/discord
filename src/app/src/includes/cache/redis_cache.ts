@@ -32,6 +32,7 @@ type RedisClient = ReturnType<typeof createRedisClient>;
 class redis_cache
 {
     private client?: RedisClient;
+    private subscriber?: RedisClient;
     private connection?: Promise<RedisClient | undefined>;
     private readonly pending = new Map<string, Promise<unknown>>();
     private readonly versions = new Map<string, number>();
@@ -170,6 +171,27 @@ class redis_cache
         } catch (error) {
             this.warnUnavailable(error);
         }
+    }
+
+    async subscribe(channel: string, listener: (message: string) => void): Promise<void>
+    {
+        if (this.subscriber?.isReady) {
+            await this.subscriber.subscribe(channel, listener);
+            return;
+        }
+
+        const client = await this.getClient();
+        if (!client?.isReady) {
+            throw new Error('Redis is unavailable; cannot subscribe to server locale updates.');
+        }
+
+        const subscriber = client.duplicate();
+        subscriber.on('error', (error) => {
+            log.warning(`Redis subscription error: ${error}`);
+        });
+        await subscriber.connect();
+        await subscriber.subscribe(channel, listener);
+        this.subscriber = subscriber;
     }
 }
 
