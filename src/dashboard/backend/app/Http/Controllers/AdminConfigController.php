@@ -20,6 +20,8 @@ class AdminConfigController extends Controller
     private const MAX_DELETE_PERIOD = 10080;
     private const MAX_MUTE_DAYS = 28;
     private const MAX_WELCOME_MESSAGE = 2000;
+    private const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
+    private const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
 
     public function servers(Request $request, DashboardGuilds $dashboardGuilds): JsonResponse
     {
@@ -43,20 +45,33 @@ class AdminConfigController extends Controller
             }
             $settings = DB::table('servers')->where('id', $serverId)->where('active', true)->first();
             if (! $settings) return response()->json(['message' => 'This server is not configured for the bot.'], 404);
+            $serverConfig = DB::table('server_config')
+                ->where('server_id', $serverId)
+                ->whereIn('config_code', [
+                    'reddit_odd_memes', 'subreddits_memes',
+                    'autoban_del_period', 'autoban_punishment', 'autoban_mute_days',
+                    'send_voice_update', 'welcome_message_active', 'welcome_channel_id', 'welcome_message',
+                ])
+                ->get()
+                ->keyBy('config_code');
+            $configValue = static function (string $code) use ($serverConfig): ?string {
+                $config = $serverConfig->get($code);
+                return $config?->long_value ?? $config?->value;
+            };
             $channels = $discordApi->botGuildChannels($serverId);
 
             return response()->json([
                 'server' => $guild,
                 'config' => [
-                    'reddit_odd_memes' => (int) $settings->reddit_odd_memes,
-                    'subreddits_memes' => preg_split('/[,\r\n]/', (string) ($settings->subreddits_memes ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: [],
-                    'autoban_del_period' => (int) $settings->autoban_del_period,
-                    'autoban_punishment' => $settings->autoban_punishment,
-                    'autoban_mute_days' => (int) $settings->autoban_mute_days,
-                    'send_voice_update' => (bool) $settings->send_voice_update,
-                    'welcome_message_active' => (bool) $settings->welcome_message_active,
-                    'welcome_channel_id' => $settings->welcome_channel_id,
-                    'welcome_message' => (string) ($settings->welcome_message ?? ''),
+                    'reddit_odd_memes' => (int) ($configValue('reddit_odd_memes') ?? 5),
+                    'subreddits_memes' => preg_split('/[,\r\n]/', $configValue('subreddits_memes') ?? '', -1, PREG_SPLIT_NO_EMPTY) ?: [],
+                    'autoban_del_period' => (int) ($configValue('autoban_del_period') ?? self::DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES),
+                    'autoban_punishment' => $configValue('autoban_punishment') ?? 'ban',
+                    'autoban_mute_days' => (int) ($configValue('autoban_mute_days') ?? self::DEFAULT_AUTOBAN_MUTE_DAYS),
+                    'send_voice_update' => filter_var($configValue('send_voice_update') ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'welcome_message_active' => filter_var($configValue('welcome_message_active') ?? false, FILTER_VALIDATE_BOOLEAN),
+                    'welcome_channel_id' => $configValue('welcome_channel_id'),
+                    'welcome_message' => $configValue('welcome_message') ?? '',
                     'admin_channels' => DB::table('admin_channels')->where('server', $serverId)->orderBy('channel_id')->pluck('channel_id')->map(static fn ($id): string => (string) $id)->all(),
                     'forbidden_channels' => DB::table('channels_forbidden')->where('server', $serverId)->orderBy('channel_id')->pluck('channel_id')->map(static fn ($id): string => (string) $id)->all(),
                 ],
@@ -127,20 +142,44 @@ class AdminConfigController extends Controller
             $identity = $request->attributes->get('dashboard.session')['identity'];
             $updated = DB::transaction(function () use ($serverId, $data, $subreddits, $message, $identity): int {
                 $updated = DB::table('servers')->where('id', $serverId)->where('active', true)->update([
-                    'reddit_odd_memes' => $data['reddit_odd_memes'],
-                    'subreddits_memes' => implode(',', $subreddits),
-                    'autoban_del_period' => $data['autoban_del_period'],
-                    'autoban_punishment' => $data['autoban_punishment'],
-                    'autoban_mute_days' => $data['autoban_mute_days'],
-                    'send_voice_update' => $data['send_voice_update'],
-                    'welcome_message_active' => $data['welcome_message_active'],
-                    'welcome_channel_id' => $data['welcome_channel_id'] ?: null,
-                    'welcome_message' => $message !== '' ? $message : null,
                     'updated_at' => now(),
                     'created_by' => $identity['id'],
                 ]);
 
                 if ($updated > 0) {
+                    $now = now();
+                    $subredditsValue = implode(',', $subreddits);
+                    $configValues = [
+                        'reddit_odd_memes' => ['integer', (string) $data['reddit_odd_memes']],
+                        'subreddits_memes' => ['text', $subredditsValue],
+                        'autoban_del_period' => ['integer', (string) $data['autoban_del_period']],
+                        'autoban_punishment' => ['string', (string) $data['autoban_punishment']],
+                        'autoban_mute_days' => ['integer', (string) $data['autoban_mute_days']],
+                        'send_voice_update' => ['boolean', $data['send_voice_update'] ? 'true' : 'false'],
+                        'welcome_message_active' => ['boolean', $data['welcome_message_active'] ? 'true' : 'false'],
+                        'welcome_channel_id' => ['string', $data['welcome_channel_id'] ?: null],
+                        'welcome_message' => ['text', $message !== '' ? $message : null],
+                    ];
+                    $configRows = [];
+                    foreach ($configValues as $code => [$type, $value]) {
+                        $isLongValue = $value !== null && mb_strlen($value) > 255;
+                        $configRows[] = [
+                            'server_id' => $serverId,
+                            'config_code' => $code,
+                            'created_at' => $now,
+                            'updated_at' => $now,
+                            'created_by' => (string) $identity['id'],
+                            'type' => $type,
+                            'value' => $isLongValue ? null : $value,
+                            'long_value' => $isLongValue ? $value : null,
+                        ];
+                    }
+                    DB::table('server_config')->upsert(
+                        $configRows,
+                        ['server_id', 'config_code'],
+                        ['updated_at', 'created_by', 'type', 'value', 'long_value']
+                    );
+
                     if (array_key_exists('admin_channels', $data)) {
                         $this->syncChannelRules('admin_channels', $serverId, $data['admin_channels'], (string) $identity['id']);
                     }

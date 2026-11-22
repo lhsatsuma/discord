@@ -32,35 +32,36 @@ export default class entryPointApp extends entryPoint
 		this.modals = new Collection();
 	}
 
-    async init(): Promise<void>
+    async init(): Promise<boolean>
     {
-        return super.init().then(async () => {
+        const initialized = await super.init();
+        if (!initialized) {
+            return false;
+        }
 
-            log.debug(lang.translate('system', 'START_LOADING_COMMANDS'));
-            let loaded_commands = await this.loadCommands();
-			if(!loaded_commands){
-				log.fatal(lang.translate('system', 'START_LOADING_COMMANDS_ERR'));
-			}
-            log.debug(lang.translate('system', 'START_LOADED_COMMANDS', [loaded_commands]));
+        log.debug(lang.translate('system', 'START_LOADING_COMMANDS'));
+        const loadedCommands = await this.loadCommands();
+        if (!loadedCommands) {
+            log.fatal(lang.translate('system', 'START_LOADING_COMMANDS_ERR'));
+        }
+        log.debug(lang.translate('system', 'START_LOADED_COMMANDS', [loadedCommands]));
 
+        log.debug(lang.translate('system', 'START_LOADING_MODALS'));
+        const loadedModals = await this.loadModals();
+        if (!loadedModals) {
+            log.fatal(lang.translate('system', 'START_LOADING_MODALS_ERR'));
+        }
+        log.debug(lang.translate('system', 'START_LOADED_MODALS', [loadedModals]));
 
-			log.debug(lang.translate('system', 'START_LOADING_MODALS'));
-			let loaded_modals = await this.loadModals();
-			if(!loaded_modals){
-				log.fatal(lang.translate('system', 'START_LOADING_MODALS_ERR'));
-			}
-			log.debug(lang.translate('system', 'START_LOADED_MODALS', [loaded_modals]));
+        log.debug(lang.translate('system', 'START_LOADING_EVENTS'));
+        const loadedEvents = await this.loadEvents();
+        if (!loadedEvents) {
+            log.fatal(lang.translate('system', 'START_LOADING_EVENTS_ERR'));
+        }
+        log.debug(lang.translate('system', 'START_LOADED_EVENTS', [loadedEvents]));
 
-
-			log.debug(lang.translate('system', 'START_LOADING_EVENTS'));
-			let loaded_events = await this.loadEvents();
-			if(!loaded_events){
-				log.fatal(lang.translate('system', 'START_LOADING_EVENTS_ERR'));
-			}
-			log.debug(lang.translate('system', 'START_LOADED_EVENTS', [loaded_events]));
-
-			super.finishInit();
-        });
+        super.finishInit();
+        return true;
     }
 
     async loadCommands()

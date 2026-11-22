@@ -33,8 +33,7 @@ export async function api<T>(path: string, token: string, init?: RequestInit): P
 
   if (method !== 'GET') return request
 
-  let trackedRequest: Promise<T>
-  trackedRequest = request.finally(() => {
+  const trackedRequest = request.finally(() => {
     if (inFlightGets.get(requestKey) === trackedRequest) inFlightGets.delete(requestKey)
   })
   inFlightGets.set(requestKey, trackedRequest)

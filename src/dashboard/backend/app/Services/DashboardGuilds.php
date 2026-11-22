@@ -19,11 +19,6 @@ class DashboardGuilds
         $cache = Cache::store('redis');
         $key = 'dashboard:configured-guilds:v1:'.$userId;
 
-        // Remove entries from the previous cache format, which included guilds
-        // without an active bot configuration row.
-        $cache->forget('dashboard:discord-guilds:'.$userId);
-        $cache->forget('dashboard:discord-guilds:v1:'.$userId);
-
         $guilds = $cache->get($key);
         if (is_array($guilds)) {
             Log::debug('Discord manageable guild cache hit.', [

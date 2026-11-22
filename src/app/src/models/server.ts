@@ -80,47 +80,7 @@ const serverFields = {
         type: fieldTypeInterface.string,
         maxLength: 255,
     },
-    reddit_odd_memes: {
-        label: 'Reddit meme odds',
-        type: fieldTypeInterface.number,
-    },
-    subreddits_memes: {
-        label: 'Meme subreddits',
-        type: fieldTypeInterface.string,
-    },
-    autoban_del_period: {
-        label: 'Autoban delete period (minutes)',
-        type: fieldTypeInterface.number,
-    },
-    autoban_punishment: {
-        label: 'Autoban punishment',
-        type: fieldTypeInterface.string,
-        maxLength: 10,
-    },
-    autoban_mute_days: {
-        label: 'Autoban timeout (days)',
-        type: fieldTypeInterface.number,
-    },
-    send_voice_update: {
-        label: 'Send voice updates on Admin Channel',
-        type: fieldTypeInterface.boolean,
-    },
-    welcome_message_active: {
-        label: 'Welcome message active',
-        type: fieldTypeInterface.boolean,
-    },
-    welcome_channel_id: {
-        label: 'Welcome message channel ID',
-        type: fieldTypeInterface.string,
-        maxLength: 255,
-    },
-    welcome_message: {
-        label: 'Welcome message',
-        type: fieldTypeInterface.text,
-    },
 } as const satisfies Record<string, fieldInterface>;
-
-type serverFieldName = keyof typeof serverFields;
 
 export default class model_servers extends model_base
 {
@@ -132,17 +92,8 @@ export default class model_servers extends model_base
     created_by?: string;
     active?: boolean;
     name?: string;
-    reddit_odd_memes?: number;
-    subreddits_memes?: string | null;
-    autoban_del_period?: number | string;
-    autoban_punishment?: autobanPunishment;
-    autoban_mute_days?: number | string;
-    send_voice_update?: boolean;
-    welcome_message_active?: boolean;
-    welcome_channel_id?: string | null;
-    welcome_message?: string | null;
 
-    async selectActive(fields: Pick<Record<serverFieldName, string>, 'id'>): Promise<this | null | false>
+    async selectActive(fields: { id: string }): Promise<this | null | false>
     {
         try{
             const res = await this.select(
@@ -173,65 +124,76 @@ export default class model_servers extends model_base
             async () => {
                 try {
                     const result = await this.query(
-                        `SELECT reddit_odd_memes, subreddits_memes,
-                                autoban_del_period, autoban_punishment, autoban_mute_days, send_voice_update,
-                                welcome_message_active, welcome_channel_id, welcome_message,
-                                ARRAY(
+                        `SELECT ARRAY(
                                     SELECT channel_id FROM admin_channels
-                                    WHERE admin_channels.server = servers.id
+                                    WHERE admin_channels.server = $1
                                     ORDER BY channel_id
                                 ) AS admin_channels,
                                 ARRAY(
                                     SELECT channel_id FROM birthday_channels
-                                    WHERE birthday_channels.server = servers.id
+                                    WHERE birthday_channels.server = $1
                                     ORDER BY channel_id
                                 ) AS birthday_channels,
                                 ARRAY(
                                     SELECT channel_id FROM channels_forbidden
-                                    WHERE channels_forbidden.server = servers.id
+                                    WHERE channels_forbidden.server = $1
                                     ORDER BY channel_id
-                                ) AS forbidden_channels
-                         FROM ${this.table}
-                         WHERE id = $1
-                         LIMIT 1`,
+                                ) AS forbidden_channels,
+                                COALESCE(
+                                    (
+                                        SELECT json_object_agg(
+                                            config_code,
+                                            COALESCE(long_value, value)
+                                        )
+                                        FROM server_config
+                                        WHERE server_id = $1
+                                          AND config_code IN (
+                                              'reddit_odd_memes',
+                                              'subreddits_memes',
+                                              'autoban_del_period',
+                                              'autoban_punishment',
+                                              'autoban_mute_days',
+                                              'send_voice_update',
+                                              'welcome_message_active',
+                                              'welcome_channel_id',
+                                              'welcome_message'
+                                          )
+                                    ),
+                                    '{}'::json
+                                ) AS server_configs`,
                         [serverId]
                     );
                     const row = result.rows[0] as {
-                        reddit_odd_memes: number | string | null;
-                        subreddits_memes: string | null;
-                        autoban_del_period: number | string | null;
-                        autoban_punishment: string | null;
-                        autoban_mute_days: number | string | null;
-                        send_voice_update: boolean | null;
-                        welcome_message_active: boolean | null;
-                        welcome_channel_id: string | null;
-                        welcome_message: string | null;
                         admin_channels: string[] | null;
                         birthday_channels: string[] | null;
                         forbidden_channels: string[] | null;
+                        server_configs: Record<string, string | null>;
                     } | undefined;
-                    const redditOdds = Number(row?.reddit_odd_memes ?? 0);
+                    const configValue = (code: string): string | null => row?.server_configs?.[code] ?? null;
+                    const redditOdds = Number(configValue('reddit_odd_memes') ?? 5);
                     const deletePeriodMinutes = Number(
-                        row?.autoban_del_period ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES
+                        configValue('autoban_del_period') ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES
                     );
-                    const muteDays = Number(row?.autoban_mute_days ?? DEFAULT_AUTOBAN_MUTE_DAYS);
+                    const muteDays = Number(configValue('autoban_mute_days') ?? DEFAULT_AUTOBAN_MUTE_DAYS);
+                    const isEnabled = (value: string | null): boolean =>
+                        value === 'true' || value === '1';
                     return {
-                        reddit_odd_memes: Number.isFinite(redditOdds) ? redditOdds : 0,
-                        subreddits_memes: (row?.subreddits_memes ?? '')
+                        reddit_odd_memes: Number.isFinite(redditOdds) ? redditOdds : 5,
+                        subreddits_memes: (configValue('subreddits_memes') ?? '')
                             .split(/[,\r\n]/)
                             .map((subreddit) => subreddit.trim())
                             .filter(Boolean),
                         autoban_del_period: Number.isFinite(deletePeriodMinutes)
                             ? deletePeriodMinutes
                             : DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES,
-                        autoban_punishment: row?.autoban_punishment === 'mute' ? 'mute' : 'ban',
+                        autoban_punishment: configValue('autoban_punishment') === 'mute' ? 'mute' : 'ban',
                         autoban_mute_days: Number.isFinite(muteDays)
                             ? muteDays
                             : DEFAULT_AUTOBAN_MUTE_DAYS,
-                        send_voice_update: row?.send_voice_update === true,
-                        welcome_message_active: row?.welcome_message_active === true,
-                        welcome_channel_id: row?.welcome_channel_id ?? null,
-                        welcome_message: row?.welcome_message ?? '',
+                        send_voice_update: isEnabled(configValue('send_voice_update')),
+                        welcome_message_active: isEnabled(configValue('welcome_message_active')),
+                        welcome_channel_id: configValue('welcome_channel_id'),
+                        welcome_message: configValue('welcome_message') ?? '',
                         admin_channels: row?.admin_channels ?? [],
                         birthday_channels: row?.birthday_channels ?? [],
                         forbidden_channels: row?.forbidden_channels ?? []
