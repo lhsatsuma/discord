@@ -31,8 +31,6 @@ class DashboardJwt
             'access_token' => $oauth['access_token'],
             'refresh_token' => $oauth['refresh_token'] ?? null,
         ], now()->addHour());
-        Cache::put('dashboard:discord-guilds:'.$identity['id'], $guilds, now()->addSeconds(60));
-
         return $unsigned.'.'.rtrim(strtr(base64_encode(hash_hmac('sha256', $unsigned, $this->secret(), true)), '+/', '-_'), '=');
     }
 

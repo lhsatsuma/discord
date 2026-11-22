@@ -1,9 +1,10 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
+    "version": "1.0.0",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "DBIKE BOT Dashboard - GuildDesk",
+    "keywords": [],
     "license": "MIT",
     "require": {
         "php": "^8.3",

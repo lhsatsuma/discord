@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Lib\DiscordApi;
 use App\Models\User;
+use App\Services\DashboardGuilds;
 use App\Services\DashboardJwt;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,11 +31,11 @@ class DashboardAuthController extends Controller
         return Redirect::away($discordApi->authorizationUrl($state));
     }
 
-    public function exchangeCode(Request $request, DashboardJwt $jwt, DiscordApi $discordApi): JsonResponse
+    public function exchangeCode(Request $request, DashboardJwt $jwt, DiscordApi $discordApi, DashboardGuilds $dashboardGuilds): JsonResponse
     {
         try {
             $data = $request->validate(['code' => ['required', 'string'], 'state' => ['required', 'string']]);
-            [$identity, $token] = $this->exchange($data['code'], $data['state'], $jwt, $discordApi);
+            [$identity, $token] = $this->exchange($data['code'], $data['state'], $jwt, $discordApi, $dashboardGuilds);
             return response()->json(['token' => $token, 'user' => $identity]);
         } catch (ValidationException $error) {
             throw $error;
@@ -83,15 +84,14 @@ class DashboardAuthController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    private function exchange(string $code, string $state, DashboardJwt $jwt, DiscordApi $discordApi): array
+    private function exchange(string $code, string $state, DashboardJwt $jwt, DiscordApi $discordApi, DashboardGuilds $dashboardGuilds): array
     {
         if ($state === '' || ! Cache::pull('dashboard:oauth-state:'.$state)) {
             throw new \UnexpectedValueException('Discord OAuth state was invalid or expired.');
         }
         $tokenResponse = $discordApi->exchangeAuthorizationCode($code);
         $user = $discordApi->currentUser($tokenResponse['access_token']);
-        $guilds = $discordApi->currentUserGuilds($tokenResponse['access_token']);
-        if (! is_array($user) || ! isset($user['id']) || ! is_array($guilds)) {
+        if (! is_array($user) || ! isset($user['id'])) {
             throw new \UnexpectedValueException('Discord returned an incomplete user profile.');
         }
 
@@ -100,6 +100,8 @@ class DashboardAuthController extends Controller
             'username' => (string) ($user['global_name'] ?? $user['username'] ?? 'Discord user'),
             'avatar' => isset($user['avatar']) ? (string) $user['avatar'] : null,
         ];
+        $guilds = $dashboardGuilds->configuredForUser($identity['id'], $tokenResponse['access_token']);
+
         User::query()->updateOrCreate(
             ['discord_id' => $identity['id']],
             [
@@ -109,15 +111,7 @@ class DashboardAuthController extends Controller
                 'discord_avatar' => $identity['avatar'],
             ]
         );
-        $guilds = array_values(array_map(static fn (array $guild): array => [
-            'id' => (string) $guild['id'], 'name' => (string) $guild['name'],
-            'icon' => isset($guild['icon']) ? (string) $guild['icon'] : null,
-        ], array_filter($guilds, static function ($guild): bool {
-            if (! is_array($guild) || ! isset($guild['permissions'])) return false;
-            $permissions = (int) $guild['permissions'];
-            return ($permissions & 8) !== 0 || ($permissions & 32) !== 0;
-        })));
-        return [$identity, $jwt->issue($identity, $tokenResponse, $guilds), $guilds];
+        return [$identity, $jwt->issue($identity, $tokenResponse, $guilds)];
     }
 
     private function frontendUrl(): string

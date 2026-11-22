@@ -113,22 +113,4 @@ export default class model_channels_forbidden extends model_base
             return false;
         }
     }
-
-    async removeActive(fields: forbiddenChannelFilter): Promise<boolean>
-    {
-        try {
-            const result = await this.query(
-                `DELETE FROM ${this.table} WHERE server = $1 AND channel_id = $2`,
-                [fields.server, fields.channel_id]
-            );
-            const removed = (result.rowCount ?? 0) > 0;
-            if (removed && fields.server) {
-                await this.invalidateCache(fields.server);
-            }
-            return removed;
-        } catch (error) {
-            log.warning(`Error removing forbidden channel: ${error}`);
-            return false;
-        }
-    }
 }

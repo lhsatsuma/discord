@@ -61,10 +61,14 @@ DB_PASSWORD=your_database_password
 REDIS_HOST=127.0.0.1
 REDIS_PORT=6379
 REDIS_PASSWORD=null
+CACHE_STORE=redis
+REDIS_CACHE_DB=1
 BOT_REDIS_DB=0
 ```
 
 Set `DISCORD_REDIRECT_URI` to the frontend callback URL and add that exact URL to the Discord application's OAuth2 Redirects. Keep secrets out of source control. Configure the session, cache, and logging values appropriate to your deployment as well.
+
+The dashboard uses Redis for the user's manageable guilds that also have an active row in the `servers` table, and for Discord channel lists. Guild entries are rechecked against active server rows on cache reads and cached for 60 seconds; bot channel data is cached for 180 seconds. Saved server settings are still read from PostgreSQL. Laravel's OAuth state and JWT session cache use the configured `CACHE_STORE` (Redis in this example). `REDIS_CACHE_DB` separates Laravel cache entries from the bot's Redis database.
 
 Generate the application key, apply migrations, seed the initial bot records, and build Laravel's production caches:
 
