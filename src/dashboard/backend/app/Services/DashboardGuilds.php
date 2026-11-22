@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 class DashboardGuilds
 {
     private const CACHE_TTL_SECONDS = 60;
+    private const SUPERADMIN_ICON_CACHE_TTL_SECONDS = 180;
 
     public function __construct(private readonly DiscordApi $discordApi) {}
 
@@ -21,6 +22,15 @@ class DashboardGuilds
             Log::debug('Discord system superadmin bypassed server permission checks.', [
                 'discord_user_id' => $userId,
             ]);
+            try {
+                $guildIcons = $this->guildIconsForUser($userId, $accessToken);
+            } catch (\Throwable $error) {
+                Log::warning('Could not load Discord guild icons for system superadmin.', [
+                    'discord_user_id' => $userId,
+                    'message' => $error->getMessage(),
+                ]);
+                $guildIcons = [];
+            }
 
             return DB::table('servers')
                 ->where('active', true)
@@ -29,7 +39,7 @@ class DashboardGuilds
                 ->map(static fn ($server): array => [
                     'id' => (string) $server->id,
                     'name' => (string) ($server->name ?: $server->id),
-                    'icon' => null,
+                    'icon' => $guildIcons[(string) $server->id] ?? null,
                 ])
                 ->all();
         }
@@ -102,5 +112,35 @@ class DashboardGuilds
             $guilds,
             static fn (array $guild): bool => $configuredIds->has((string) $guild['id'])
         ));
+    }
+
+    /** @return array<string, ?string> */
+    private function guildIconsForUser(string $userId, string $accessToken): array
+    {
+        $cache = Cache::store('redis');
+        $key = 'dashboard:superadmin-guild-icons:v1:'.$userId;
+        $icons = $cache->get($key);
+        if (is_array($icons)) return $icons;
+
+        return $cache->lock($key.':lock', 15)->block(12, function () use ($cache, $key, $userId, $accessToken): array {
+            $icons = $cache->get($key);
+            if (is_array($icons)) return $icons;
+
+            $icons = [];
+            try {
+                foreach ($this->discordApi->currentUserGuilds($accessToken, $userId) as $guild) {
+                    if (! is_array($guild) || ! isset($guild['id'])) continue;
+                    $icons[(string) $guild['id']] = isset($guild['icon']) ? (string) $guild['icon'] : null;
+                }
+            } catch (\Throwable $error) {
+                Log::warning('Could not load Discord guild icons for system superadmin.', [
+                    'discord_user_id' => $userId,
+                    'message' => $error->getMessage(),
+                ]);
+            }
+
+            $cache->put($key, $icons, now()->addSeconds(self::SUPERADMIN_ICON_CACHE_TTL_SECONDS));
+            return $icons;
+        });
     }
 }
