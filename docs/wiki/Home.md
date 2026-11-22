@@ -1,19 +1,5 @@
 # DBIKE BOT Wiki
 
-DBIKE BOT is a Discord bot for community administration, moderation, birthdays, games, and entertainment.
+See the [documentation index](README) for the four main topics: [Installation](Installation), [Superadministrator commands](Superadministrator-Commands), [Administrator commands](Admin-Commands), and [User commands](User-Commands).
 
-## Bot operators and developers
-
-- [Installation and configuration](Superadministrator-Installation) — deploy and operate the bot.
-- [Architecture](Superadministrator-Architecture) — application structure and runtime.
-- [Adding commands](Superadministrator-Adding-Commands) — developer guide for commands and translations.
-- [Superadministrator commands](Superadministrator-Commands) — operator-only commands.
-
-## Discord server administrators and members
-
-- [Server administration](Server-Administration) — configure moderation, channels, and server settings.
-- [Server commands](Server-Commands) — commands and features available to server members.
-- [Privacy Policy](https://github.com/lhsatsuma/discord/blob/main/PRIVACY_POLICY.md)
-- [Terms of Service](https://github.com/lhsatsuma/discord/blob/main/TERMS_OF_SERVICE.md)
-
-For community support, join the [official Discord server](https://discord.gg/mwvFcqPUmZ).
+For developer references, see [Architecture](Superadministrator-Architecture) and [Adding commands](Superadministrator-Adding-Commands). Join the [official Discord server](https://discord.gg/mwvFcqPUmZ) for community support.
