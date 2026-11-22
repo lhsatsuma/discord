@@ -8,11 +8,9 @@ This guide covers server administration. Discord command availability and checks
 |---|---|---|
 | `/admin add_channel` | Add the current channel to the administration channel list. Configured voice notifications and autoban reports are sent there. | Administrator command; subcommand also checks **Manage Server**. |
 | `/admin remove_channel` | Remove the current channel from the administration channel list. | Administrator command; subcommand also checks **Manage Server**. |
-| `/autoban add_channel` | Mark the current channel as forbidden for members. | Administrator command; subcommand also checks **Manage Server**. |
-| `/autoban remove_channel` | Remove the current channel from the autoban list. | Administrator command; subcommand also checks **Manage Server**. |
 | `/pinguser` | Mention a selected member 1–10 times. | Administrator only; subject to command cooldown. |
 
-When a non-administrator posts in an autoban channel, the bot applies the configured ban or timeout, attempts to remove the member's recent messages from accessible channels and threads, and reports the incident to administration channels. Message deletion can be incomplete if the bot lacks channel or history permissions.
+The `/autoban` slash command has been removed. Auto moderation remains available and is configured in the dashboard. When a non-administrator posts in a channel marked **Autoban**, the bot applies the configured ban or timeout, attempts to remove the member's recent messages from accessible channels and threads, and reports the incident to administration channels. Message deletion can be incomplete if the bot lacks channel or history permissions.
 
 ### Birthday announcement channels
 
@@ -32,6 +30,7 @@ The API checks your Discord guild permissions and the bot's active server record
 ### Dashboard settings
 
 - **Auto moderation:** choose ban or timeout, set message cleanup period (0–10,080 minutes), and set timeout duration (1–28 days).
+- **Channel Rules:** select text channels for administration reports and voice notifications, and mark channels that auto moderation should act on. The **Autoban** column replaces the removed `/autoban add_channel` and `/autoban remove_channel` commands.
 - **Meme settings:** set Reddit selection odds from 0 to 10 (`0` disables Reddit fetching) and enter up to 100 subreddit names separated by commas or new lines. The bot operator must configure Reddit credentials.
 - **Voice notifications:** toggle join/leave notifications in the server's administration channels.
 - **Welcome message:** toggle the message, select a text channel, and set text. Use `[@user]` to mention the member who joined. The rendered message must fit Discord's 2,000-character limit.
