@@ -50,6 +50,7 @@ DISCORD_CLIENT_SECRET=your_discord_application_client_secret
 DISCORD_REDIRECT_URI=https://dashboard.example.com/auth/callback
 DISCORD_BOT_ID=your_bot_application_id
 DISCORD_BOT_TOKEN=your_bot_token
+DISCORD_SUPERADMIN_ID=your_discord_user_id
 
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
@@ -67,6 +68,10 @@ BOT_REDIS_DB=0
 ```
 
 Set `DISCORD_REDIRECT_URI` to the frontend callback URL and add that exact URL to the Discord application's OAuth2 Redirects. Keep secrets out of source control. Configure the session, cache, and logging values appropriate to your deployment as well.
+
+`DISCORD_SUPERADMIN_ID` is optional. When set to a Discord user ID, that account can manage dashboard settings for every active server configured for the bot, without needing to be a member or server administrator. It also enables the dashboard's **Superadmin** menu for bot process status and recent logs. Leave it empty to require the normal Discord server permission checks for all accounts.
+
+The dashboard superadmin tools read the bot's `pids/` and log files from `src/app/`. The backend resolves this location from the monorepo layout by default; set `BOT_APP_PATH` if the bot is deployed elsewhere. If the bot's `LOG_DIR` differs from `logs/`, set `BOT_LOG_DIR` to that directory relative to `BOT_APP_PATH`.
 
 The dashboard uses Redis for the user's manageable guilds that also have an active row in the `servers` table, and for Discord channel lists. Guild entries are rechecked against active server rows on cache reads and cached for 60 seconds; bot channel data is cached for 180 seconds. Saved server settings are still read from PostgreSQL. Laravel's OAuth state and JWT session cache use the configured `CACHE_STORE` (Redis in this example). `REDIS_CACHE_DB` separates Laravel cache entries from the bot's Redis database.
 

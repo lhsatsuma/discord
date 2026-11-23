@@ -61,6 +61,17 @@ export default class processRunning
         return fs.writeFileSync(this.filePath, JSON.stringify(this.getRunningInfo()));
     }
 
+    startHeartbeat()
+    {
+        const heartbeat = setInterval(() => {
+            void this.saveInfo().catch((error) => {
+                console.error(`Could not update ${this.name} process heartbeat:`, error);
+            });
+        }, 15000);
+        heartbeat.unref();
+        return heartbeat;
+    }
+
     getRunningInfo()
     {
         let platform: string = 'N/A';
@@ -87,6 +98,7 @@ export default class processRunning
             appVersion: process.env.npm_package_version,
             startAppTime: global.startTimeApp,
             heartbeatInterval: config.DISCORD_BOT_HEARTBEAT,
+            lastHeartbeatAt: new Date().toISOString(),
         }   
     }
 

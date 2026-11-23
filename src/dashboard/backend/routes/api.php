@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminConfigController;
 use App\Http\Controllers\DashboardAuthController;
+use App\Http\Controllers\SuperadminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/auth/discord', [DashboardAuthController::class, 'redirect']);
@@ -13,4 +14,6 @@ Route::middleware('dashboard.jwt')->group(function (): void {
     Route::get('/servers', [AdminConfigController::class, 'servers']);
     Route::get('/servers/{serverId}/config', [AdminConfigController::class, 'show']);
     Route::put('/servers/{serverId}/config', [AdminConfigController::class, 'update']);
+    Route::get('/superadmin/status', [SuperadminController::class, 'status']);
+    Route::get('/superadmin/logs/{process}', [SuperadminController::class, 'logs'])->where('process', 'app|scheduler');
 });

@@ -6,6 +6,8 @@ import { CallbackPage } from './pages/CallbackPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { ServerOverviewPage } from './pages/ServerOverviewPage'
+import { SuperadminLogsPage } from './pages/SuperadminLogsPage'
+import { SuperadminStatusPage } from './pages/SuperadminStatusPage'
 import { LocaleSettingsPage } from './pages/settings/LocaleSettingsPage'
 import { AutoModerationPage } from './pages/settings/AutoModerationPage'
 import { ChannelRulesPage } from './pages/settings/ChannelRulesPage'
@@ -23,7 +25,9 @@ function readStoredUser(): User | null {
   try {
     const user = JSON.parse(serialized) as Partial<User>
     return typeof user.id === 'string' && typeof user.username === 'string'
-      ? { id: user.id, username: user.username, avatar: typeof user.avatar === 'string' ? user.avatar : null }
+      ? typeof user.is_superadmin === 'boolean'
+        ? { id: user.id, username: user.username, avatar: typeof user.avatar === 'string' ? user.avatar : null, is_superadmin: user.is_superadmin }
+        : null
       : null
   } catch {
     sessionStorage.removeItem(PROFILE_KEY)
@@ -62,6 +66,8 @@ function App() {
   const serverId = serverRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
     : path === '/home' ? 'home'
+      : path === '/superadmin/status' ? 'superadmin-status'
+        : path === '/superadmin/logs' ? 'superadmin-logs'
       : serverRoute ? (serverRoute[2] as SettingGroup | undefined) || 'server'
         : 'login'
 
@@ -96,6 +102,13 @@ function App() {
     // Discord must be able to return to this public route to finish OAuth login.
     if (path === '/auth/callback') return
 
+    if (path.startsWith('/superadmin/') && user && !user.is_superadmin) {
+      window.history.replaceState({}, '', '/home')
+      setPath('/home')
+      setError('This area is only available to the system superadmin.')
+      return
+    }
+
     if (path === '/login') {
       if (token) {
         window.history.replaceState({}, '', '/home')
@@ -116,7 +129,7 @@ function App() {
         setServer(null)
       })
     }
-  }, [path, token])
+  }, [path, token, user])
 
   useEffect(() => {
     if (path !== '/auth/callback' || callbackProcessed.current) return
@@ -342,6 +355,8 @@ function App() {
     showHeader={page !== 'login'}
     onHome={() => navigate(token ? '/home' : '/login')}
     onLogout={logout}
+    onSuperadminStatus={() => navigate('/superadmin/status')}
+    onSuperadminLogs={() => navigate('/superadmin/logs')}
   >
     {page === 'login' && <LoginPage error={!token ? error : ''}/>}
     {page === 'home' && <HomePage
@@ -361,6 +376,8 @@ function App() {
     {page === 'voice' && <VoiceUpdatesPage {...settingsProps}/>}
     {page === 'welcome' && <WelcomeMessagePage {...settingsProps} channels={channels}/>}
     {page === 'locale' && <LocaleSettingsPage {...settingsProps}/>}
+    {page === 'superadmin-status' && (user?.is_superadmin ? <SuperadminStatusPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
+    {page === 'superadmin-logs' && (user?.is_superadmin ? <SuperadminLogsPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
   </DashboardTemplate>
 }
 

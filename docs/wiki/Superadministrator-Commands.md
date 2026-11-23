@@ -1,10 +1,10 @@
-# Superadministrator Commands
+# Superadministrator Dashboard
 
-This page lists commands reserved for the bot operator. Discord command availability is limited to members with **Administrator** permission, and the bot checks that commands run in the channel configured by `DISCORD_BOT_ADMIN_CHANNEL`.
+System superadministrator tools are available from the dashboard's **Superadmin** menu, shown beside **My servers** to the account configured with `DISCORD_SUPERADMIN_ID`.
 
-| Command | Description |
-|---|---|
-| `/superadmin status` | Displays app and scheduler status. |
-| `/superadmin logs` | Posts recent process log lines to the operator channel. |
+- **Process status** shows the bot application and scheduler state, process IDs, uptime, platform, Node.js, discord.js, and bot versions.
+- **Bot logs** shows the latest 30 lines for either process.
 
-For installation and technical documentation, see [Installation](Installation), [Architecture](Superadministrator-Architecture), and [Adding Commands](Superadministrator-Adding-Commands).
+The dashboard backend must be able to read the bot's `pids/` and log files. Configure `BOT_APP_PATH` if the bot is not at the default monorepo location, and `BOT_LOG_DIR` if the bot's `LOG_DIR` differs from `logs/`. See [Installation](Installation) for setup.
+
+For technical documentation, see [Architecture](Superadministrator-Architecture) and [Adding Commands](Superadministrator-Adding-Commands).

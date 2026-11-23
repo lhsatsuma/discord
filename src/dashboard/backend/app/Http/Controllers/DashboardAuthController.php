@@ -6,6 +6,7 @@ use App\Lib\DiscordApi;
 use App\Models\User;
 use App\Services\DashboardGuilds;
 use App\Services\DashboardJwt;
+use App\Services\DashboardSuperadmin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -31,11 +32,11 @@ class DashboardAuthController extends Controller
         return Redirect::away($discordApi->authorizationUrl($state));
     }
 
-    public function exchangeCode(Request $request, DashboardJwt $jwt, DiscordApi $discordApi, DashboardGuilds $dashboardGuilds): JsonResponse
+    public function exchangeCode(Request $request, DashboardJwt $jwt, DiscordApi $discordApi, DashboardGuilds $dashboardGuilds, DashboardSuperadmin $dashboardSuperadmin): JsonResponse
     {
         try {
             $data = $request->validate(['code' => ['required', 'string'], 'state' => ['required', 'string']]);
-            [$identity, $token] = $this->exchange($data['code'], $data['state'], $jwt, $discordApi, $dashboardGuilds);
+            [$identity, $token] = $this->exchange($data['code'], $data['state'], $jwt, $discordApi, $dashboardGuilds, $dashboardSuperadmin);
             return response()->json(['token' => $token, 'user' => $identity]);
         } catch (ValidationException $error) {
             throw $error;
@@ -72,10 +73,12 @@ class DashboardAuthController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    public function me(Request $request): JsonResponse
+    public function me(Request $request, DashboardSuperadmin $dashboardSuperadmin): JsonResponse
     {
         $session = $request->attributes->get('dashboard.session');
-        return response()->json(['user' => $session['identity']]);
+        $identity = $session['identity'];
+        $identity['is_superadmin'] = $dashboardSuperadmin->isUser((string) $identity['id']);
+        return response()->json(['user' => $identity]);
     }
 
     public function logout(Request $request, DashboardJwt $jwt): JsonResponse
@@ -84,7 +87,7 @@ class DashboardAuthController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    private function exchange(string $code, string $state, DashboardJwt $jwt, DiscordApi $discordApi, DashboardGuilds $dashboardGuilds): array
+    private function exchange(string $code, string $state, DashboardJwt $jwt, DiscordApi $discordApi, DashboardGuilds $dashboardGuilds, DashboardSuperadmin $dashboardSuperadmin): array
     {
         if ($state === '' || ! Cache::pull('dashboard:oauth-state:'.$state)) {
             throw new \UnexpectedValueException('Discord OAuth state was invalid or expired.');
@@ -99,6 +102,7 @@ class DashboardAuthController extends Controller
             'id' => (string) $user['id'],
             'username' => (string) ($user['global_name'] ?? $user['username'] ?? 'Discord user'),
             'avatar' => isset($user['avatar']) ? (string) $user['avatar'] : null,
+            'is_superadmin' => $dashboardSuperadmin->isUser((string) $user['id']),
         ];
         $guilds = $dashboardGuilds->configuredForUser($identity['id'], $tokenResponse['access_token']);
 
