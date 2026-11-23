@@ -104,7 +104,7 @@ class config
 
         if(missing.length > 0){
             console.log('Missing required environment variables! Check your .env file and make sure all required variables are set!', missing);
-            process.exit();
+            process.exit(1);
         }
         return this;
     }
