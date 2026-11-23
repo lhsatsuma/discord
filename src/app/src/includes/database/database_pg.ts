@@ -25,10 +25,7 @@ class database_pg
 	host_pwd: string;
 	db_name: string;
 	db_port: number;
-	last_error: string;
 	pool?: Pool;
-	connection: any;
-	bindParams: any[] = [];
 
 	constructor()
 	{
@@ -37,7 +34,6 @@ class database_pg
 		this.host_pwd = config.DB_PASSWORD;
 		this.db_name = config.DB_NAME;
 		this.db_port = config.DB_PORT;
-		this.last_error = '';
 	}
 	createPool()
 	{
@@ -71,24 +67,15 @@ class database_pg
 		}
 	}
 
-	getInfo(): Object
-	{
-		return {
-			host: this.host,
-			host_user: this.host_user,
-			host_pwd: this.host_pwd,
-			database: this.db_name,
-		};
-	}
-
 	async query(text: string, params?: any[])
 	{
-		log.debug('[SQL][QUERY] '+text);
-		if(params){
-			log.debug('[SQL][PARAM] '+JSON.stringify(params));
-		}
+		const startedAt = performance.now();
 		const res = await this.createPool().query(text, params);
-		log.debug('[SQL][QUERY] Total rows affected: '+res.rowCount);
+		const durationMs = performance.now() - startedAt;
+		if (durationMs >= 1000) {
+			const querySummary = text.replace(/\s+/g, ' ').trim().slice(0, 240);
+			log.warning(`[DataBase] Slow query (${durationMs.toFixed(0)}ms, ${res.rowCount ?? 0} rows): ${querySummary}`);
+		}
 		return res;
 	}
 }

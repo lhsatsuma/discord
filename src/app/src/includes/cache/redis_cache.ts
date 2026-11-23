@@ -28,12 +28,16 @@ const createRedisClient = (url: string, password: string) => createClient({
 });
 
 type RedisClient = ReturnType<typeof createRedisClient>;
+type LocalCacheEntry = {value: unknown; expiresAt: number};
+
+const LOCAL_CACHE_TTL_MILLISECONDS = 5000;
 
 class redis_cache
 {
     private client?: RedisClient;
     private subscriber?: RedisClient;
     private connection?: Promise<RedisClient | undefined>;
+    private readonly localCache = new Map<string, LocalCacheEntry>();
     private readonly pending = new Map<string, Promise<unknown>>();
     private readonly versions = new Map<string, number>();
     private unavailable = false;
@@ -101,21 +105,33 @@ class redis_cache
 
     async getOrSet<T>(key: string, ttlSeconds: number, load: () => Promise<T>): Promise<T>
     {
+        const localEntry = this.localCache.get(key);
+        if (localEntry && localEntry.expiresAt > Date.now()) {
+            return localEntry.value as T;
+        }
+        if (localEntry) {
+            this.localCache.delete(key);
+        }
+
         const currentRequest = this.pending.get(key);
         if (currentRequest) {
             return currentRequest as Promise<T>;
         }
 
         const request = (async () => {
-            const version = this.versions.get(key) ?? 0;
+            let version = this.versions.get(key) ?? 0;
             log.debug(`[Redis][GET] Searching cache key: ${key}`);
             const client = await this.getClient();
             if (client?.isReady) {
                 try {
                     const cached = await client.get(key);
                     if (cached !== null) {
-                        log.debug(`[Redis][GET] Cache hit for key: ${key}`);
-                        return JSON.parse(cached) as T;
+                        if ((this.versions.get(key) ?? 0) === version) {
+                            log.debug(`[Redis][GET] Cache hit for key: ${key}`);
+                            const value = JSON.parse(cached) as T;
+                            this.rememberLocally(key, value, ttlSeconds);
+                            return value;
+                        }
                     }
                     log.debug(`[Redis][GET] Cache miss for key: ${key}`);
                 } catch (error) {
@@ -125,23 +141,34 @@ class redis_cache
                 log.debug(`[Redis][GET] Skipped for key ${key}; Redis is unavailable.`);
             }
 
-            const value = await load();
-            if (
-                client?.isReady
-                && (this.versions.get(key) ?? 0) === version
-                && value !== false
-                && value !== undefined
-            ) {
-                try {
-                    await client.set(key, JSON.stringify(value), {EX: ttlSeconds});
-                    log.debug(`[Redis][SET] Cached key: ${key} (TTL: ${ttlSeconds}s)`);
-                } catch (error) {
-                    this.warnUnavailable(error);
+            while (true) {
+                const loadVersion = version;
+                const value = await load();
+                if ((this.versions.get(key) ?? 0) !== loadVersion) {
+                    version = this.versions.get(key) ?? 0;
+                    continue;
                 }
-            } else if (client?.isReady && value !== false && value !== undefined) {
-                log.debug(`[Redis][SET] Skipped key ${key}; cache invalidated during load.`);
+
+                if (client?.isReady && value !== false && value !== undefined) {
+                    try {
+                        await client.set(key, JSON.stringify(value), {EX: ttlSeconds});
+                        log.debug(`[Redis][SET] Cached key: ${key} (TTL: ${ttlSeconds}s)`);
+                    } catch (error) {
+                        this.warnUnavailable(error);
+                    }
+                }
+
+                if ((this.versions.get(key) ?? 0) !== loadVersion) {
+                    version = this.versions.get(key) ?? 0;
+                    log.debug(`[Redis][SET] Skipped key ${key}; cache invalidated during load.`);
+                    continue;
+                }
+
+                if (value !== false && value !== undefined) {
+                    this.rememberLocally(key, value, ttlSeconds);
+                }
+                return value;
             }
-            return value;
         })().finally(() => {
             if (this.pending.get(key) === request) {
                 this.pending.delete(key);
@@ -156,6 +183,7 @@ class redis_cache
     async delete(key: string): Promise<void>
     {
         log.debug(`[Redis][DEL] Deleting cache key: ${key}`);
+        this.localCache.delete(key);
         if (this.pending.has(key)) {
             this.versions.set(key, (this.versions.get(key) ?? 0) + 1);
         }
@@ -192,6 +220,24 @@ class redis_cache
         await subscriber.connect();
         await subscriber.subscribe(channel, listener);
         this.subscriber = subscriber;
+    }
+
+    private rememberLocally(key: string, value: unknown, ttlSeconds: number): void
+    {
+        const ttl = Math.min(ttlSeconds * 1000, LOCAL_CACHE_TTL_MILLISECONDS);
+        if (ttl <= 0) return;
+
+        if (this.localCache.size >= 1000) {
+            const now = Date.now();
+            for (const [cachedKey, entry] of this.localCache) {
+                if (entry.expiresAt <= now) this.localCache.delete(cachedKey);
+            }
+            if (this.localCache.size >= 1000) {
+                const oldestKey = this.localCache.keys().next().value;
+                if (oldestKey !== undefined) this.localCache.delete(oldestKey);
+            }
+        }
+        this.localCache.set(key, {value, expiresAt: Date.now() + ttl});
     }
 }
 

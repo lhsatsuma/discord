@@ -15,7 +15,7 @@
  */
 
 import fs from 'fs';
-import readLastLines from 'read-last-lines';
+import path from 'node:path';
 import config from '#includes/config.ts';
 export const logLevelInterface ={
 	debug: 1,
@@ -32,15 +32,22 @@ class log
 	basePath = '';
 	datePath = '';
 	absolutPath = '';
-	error: string | undefined;
-	max_log_files = 99;
-	max_file_size = 10485760; //10MB
 	logLevel: logLevelInterface;
+	private readonly pendingWrites = new Map<string, string[]>();
+	private writeQueue: Promise<void> = Promise.resolve();
+	private flushScheduled = false;
     constructor(fileName: string)
     {
         this.fileName = fileName.toString() + '.log';
 		this.logLevel = logLevelInterface[config.LOG_LEVEL as keyof typeof logLevelInterface];
+		process.once('SIGINT', this.flushBeforeExit);
+		process.once('SIGTERM', this.flushBeforeExit);
     }
+
+	private flushBeforeExit = (): void => {
+		this.flushWrites();
+		void this.writeQueue.finally(() => process.exit(0));
+	};
 
     getDatePath()
 	{
@@ -54,14 +61,40 @@ class log
 		}
 
 		this.datePath = this.getDatePath();
-		let dirPath = config.LOG_DIR;
-		if(dirPath.substring(dirPath.length - 1, dirPath.length) !== '/'){
-			dirPath += '/';
-		}
-		this.basePath = process.cwd()+'/'+dirPath+'/'+this.datePath+'/';
-		this.absolutPath = this.basePath+this.fileName;
+		this.basePath = path.resolve(process.cwd(), config.LOG_DIR, this.datePath) + path.sep;
+		this.absolutPath = path.join(this.basePath, this.fileName);
 
 		return this;
+	}
+
+	private scheduleFlush(): void
+	{
+		if (this.flushScheduled) return;
+		this.flushScheduled = true;
+		setImmediate(() => this.flushWrites());
+	}
+
+	private flushWrites(): void
+	{
+		this.flushScheduled = false;
+		const batches = [...this.pendingWrites.entries()];
+		this.pendingWrites.clear();
+
+		for (const [filePath, lines] of batches) {
+			const content = lines.join('');
+			this.writeQueue = this.writeQueue.then(async () => {
+				await fs.promises.mkdir(path.dirname(filePath), {recursive: true});
+				await fs.promises.appendFile(filePath, content, 'utf8');
+			}).catch((error: unknown) => {
+				console.error('Could not write the bot log file:', error);
+			});
+		}
+	}
+
+	async flush(): Promise<void>
+	{
+		this.flushWrites();
+		await this.writeQueue;
 	}
 
     add(str: string, options: {level: string; echo: boolean; die: boolean} = {level: '', echo: false, die: false})
@@ -72,18 +105,18 @@ class log
 		str = date.toLocaleString(config.DISCORD_BOT_LOCALE) + '[' + process.pid.toString()+']['+options.level.padEnd(5, ' ')+'] '+str;
 
 		this.setBasePath();
-
-		if(!fs.existsSync(this.basePath)){
-			fs.mkdirSync(this.basePath,{ recursive: true });
-		}
-		fs.appendFileSync(this.absolutPath, str+"\n");
+		const lines = this.pendingWrites.get(this.absolutPath) ?? [];
+		lines.push(str + '\n');
+		this.pendingWrites.set(this.absolutPath, lines);
+		this.scheduleFlush();
 		
 		if(options.echo){
 			console.log(str);
 		}
 		
 		if(options.die){
-			process.exit();
+			this.flushWrites();
+			void this.writeQueue.finally(() => process.exit(1));
 		}
 		return str;
 	}
@@ -126,7 +159,7 @@ class log
 	
 	err(str: string)
 	{
-		if(this.logLevel < 8){
+		if(this.logLevel > logLevelInterface.error){
 			return true;
 		}
 		return this.add(str, {
@@ -145,10 +178,6 @@ class log
         });
 	}
 
-	async getLines(lines: number = 1): Promise<string>
-	{
-		return await readLastLines.read(this.absolutPath, lines);
-	}
 }
 const instance = new log(global.entryMode);
 

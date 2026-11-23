@@ -1,5 +1,6 @@
 const API = ''
 const inFlightGets = new Map<string, Promise<unknown>>()
+export const SESSION_EXPIRED_EVENT = 'guilddesk:session-expired'
 
 export class ApiError extends Error {
   readonly status: number
@@ -21,9 +22,17 @@ export async function api<T>(path: string, token: string, init?: RequestInit): P
 
   const request = fetch(`${API}/api${path}`, {
     ...init,
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...init?.headers },
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+      ...init?.headers,
+    },
   }).then(async response => {
     if (!response.ok) {
+      if (response.status === 401) {
+        window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT))
+      }
       const payload = await response.json().catch(() => ({})) as { message?: string; errors?: Record<string, string[]> }
       const detail = payload.errors ? Object.values(payload.errors).flat()[0] : payload.message
       throw new ApiError(detail || `Request failed (${response.status})`, response.status)

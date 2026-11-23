@@ -21,19 +21,15 @@
     "#src/*": "./src/*"
   },
   "dependencies": {
-    "@devraelfreeze/discordjs-pagination": "^2.7.6",
-    "cronstrue": "^2.28.0",
     "discord.js": "^14.27",
     "imgur": "^2.3.0",
     "node-cron": "^4.6",
     "pagination.djs": "^4.0.18",
     "pg": "^8.23.0",
     "pidusage": "^4.1.0",
-    "read-last-lines": "^1.8.0",
     "reddit": "^1.2.1",
     "redis": "^6.3.1",
-    "terser": "^5.51.2",
-    "uuid": "latest"
+    "uuid": "^14.0.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

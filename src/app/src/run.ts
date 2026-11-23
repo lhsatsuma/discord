@@ -26,6 +26,8 @@ const main = new entryPointApp();
 try{
     await main.init();
 }catch(e){
-    console.error('Error initializing app:', e);
-    process.exit();
+    const {default: log} = await import('#includes/log.ts');
+    log.err(`Error initializing app: ${e instanceof Error ? e.stack ?? e.message : String(e)}`);
+    await log.flush();
+    process.exit(1);
 }
