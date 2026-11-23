@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import './App.css'
 import { DashboardTemplate } from './components/DashboardTemplate'
+import { ErrorAlert } from './components/ErrorAlert'
 import { ApiError, api, SESSION_EXPIRED_EVENT } from './lib/api'
 import { CallbackPage } from './pages/CallbackPage'
 import { HomePage } from './pages/HomePage'
