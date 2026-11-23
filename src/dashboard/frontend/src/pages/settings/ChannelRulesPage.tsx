@@ -1,9 +1,9 @@
-import type { Channel, Config, Server } from '../../types/dashboard'
+import type { Channel, ServerSettingsPageProps } from '../../types/dashboard'
 import { Icon } from '../../components/Icon'
 import { SaveBar } from '../../components/SaveBar'
 import { ServerSettingsLayout } from '../../components/ServerSettingsLayout'
 
-type Props = { server: Server | null; config: Config; channels: Channel[]; loading: boolean; saving: boolean; error: string; saveError: string; notice: string; onBack: () => void; onDismissError: () => void; onConfigChange: <K extends keyof Config>(key: K, value: Config[K]) => void; onSave: () => void }
+type Props = ServerSettingsPageProps & { channels: Channel[] }
 
 export function ChannelRulesPage({ server, config, channels, loading, saving, error, saveError, notice, onBack, onDismissError, onConfigChange, onSave }: Props) {
   const updateChannel = (key: 'admin_channels' | 'forbidden_channels', id: string, enabled: boolean) => onConfigChange(key, enabled ? [...new Set([...config[key], id])] : config[key].filter(channelId => channelId !== id))

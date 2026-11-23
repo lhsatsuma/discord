@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import './App.css'
 import { DashboardTemplate } from './components/DashboardTemplate'
-import { ApiError, api } from './lib/api'
+import { ApiError, api, SESSION_EXPIRED_EVENT } from './lib/api'
 import { CallbackPage } from './pages/CallbackPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
@@ -48,6 +48,9 @@ function App() {
   const [path, setPath] = useState(() => normalizeRoute(window.location.pathname))
   const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '')
   const [user, setUser] = useState<User | null>(() => readStoredUser())
+  const [validatedToken, setValidatedToken] = useState('')
+  const [sessionCheckError, setSessionCheckError] = useState('')
+  const [sessionCheckAttempt, setSessionCheckAttempt] = useState(0)
   const [servers, setServers] = useState<Server[]>([])
   const [server, setServer] = useState<Server | null>(null)
   const [config, setConfig] = useState<Config>(blankConfig)
@@ -58,6 +61,7 @@ function App() {
   const [error, setError] = useState('')
   const [saveError, setSaveError] = useState('')
   const [notice, setNotice] = useState('')
+  const sessionVerified = Boolean(token && validatedToken === token)
   const callbackProcessed = useRef(false)
   const loadedServersToken = useRef('')
   const loadedConfigServerId = useRef('')
@@ -85,6 +89,8 @@ function App() {
     loadedServersToken.current = ''
     loadedConfigServerId.current = ''
     setToken('')
+    setValidatedToken('')
+    setSessionCheckError('')
     setUser(null)
     setServers([])
     window.history.replaceState({}, '', '/login')
@@ -98,11 +104,16 @@ function App() {
     return () => window.removeEventListener('popstate', pop)
   }, [])
 
+  useEffect(() => {
+    window.addEventListener(SESSION_EXPIRED_EVENT, expireSession)
+    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, expireSession)
+  }, [expireSession])
+
   useLayoutEffect(() => {
     // Discord must be able to return to this public route to finish OAuth login.
     if (path === '/auth/callback') return
 
-    if (path.startsWith('/superadmin/') && user && !user.is_superadmin) {
+    if (path.startsWith('/superadmin/') && sessionVerified && user && !user.is_superadmin) {
       window.history.replaceState({}, '', '/home')
       setPath('/home')
       setError('This area is only available to the system superadmin.')
@@ -129,7 +140,7 @@ function App() {
         setServer(null)
       })
     }
-  }, [path, token, user])
+  }, [path, token, user, sessionVerified])
 
   useEffect(() => {
     if (path !== '/auth/callback' || callbackProcessed.current) return
@@ -149,6 +160,7 @@ function App() {
       window.history.replaceState({}, '', '/home')
       queueMicrotask(() => {
         setUser(null)
+        setValidatedToken('')
         setToken(receivedToken)
         setPath('/home')
       })
@@ -159,7 +171,7 @@ function App() {
       window.history.replaceState({}, '', '/auth/callback')
       fetch('/api/auth/exchange', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: authorizationCode, state: authorizationState }),
       }).then(async response => {
         if (!response.ok) {
@@ -171,6 +183,8 @@ function App() {
         sessionStorage.setItem(TOKEN_KEY, result.token)
         sessionStorage.setItem(PROFILE_KEY, JSON.stringify(result.user))
         setUser(result.user)
+        setSessionCheckError('')
+        setValidatedToken(result.token)
         window.history.replaceState({}, '', '/home')
         setToken(result.token)
         setPath('/home')
@@ -195,7 +209,7 @@ function App() {
     console.error('Discord OAuth callback did not include a usable authorization code.', diagnostic)
     fetch('/api/auth/callback-failure', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify(diagnostic),
     }).catch(reason => console.error('Could not send the OAuth callback diagnostic to Laravel.', reason))
     const callbackMessage = returnedError === 'access_denied'
@@ -221,13 +235,22 @@ function App() {
   }, [path])
 
   useEffect(() => {
-    if (!token || user) return
+    if (!token) {
+      setValidatedToken('')
+      setSessionCheckError('')
+      return
+    }
+    if (validatedToken === token) {
+      return
+    }
     let active = true
+    setSessionCheckError('')
     api<{ user: User }>('/me', token)
       .then(profile => {
         if (active) {
           sessionStorage.setItem(PROFILE_KEY, JSON.stringify(profile.user))
           setUser(profile.user)
+          setValidatedToken(token)
         }
       })
       .catch(reason => {
@@ -236,14 +259,14 @@ function App() {
         if (reason instanceof ApiError && reason.status === 401) {
           expireSession()
         } else {
-          setError(reason instanceof Error ? reason.message : 'Could not connect to the dashboard.')
+          setSessionCheckError(reason instanceof Error ? reason.message : 'Could not connect to the dashboard.')
         }
       })
     return () => { active = false }
-  }, [token, user, expireSession])
+  }, [token, validatedToken, sessionCheckAttempt, expireSession])
 
   useEffect(() => {
-    if (page !== 'home' || !token || loadedServersToken.current === token) return
+    if (page !== 'home' || !sessionVerified || !token || loadedServersToken.current === token) return
     let active = true
     queueMicrotask(() => { if (active) setLoading(true) })
     api<{ servers: Server[] }>('/servers', token)
@@ -261,10 +284,10 @@ function App() {
       })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [page, token, expireSession])
+  }, [page, token, sessionVerified, expireSession])
 
   useEffect(() => {
-    if (!isServerRoute || !token || !serverId) return
+    if (!isServerRoute || !sessionVerified || !token || !serverId) return
     if (loadedConfigServerId.current === serverId) return
     let active = true
     queueMicrotask(() => { if (active) setLoading(true) })
@@ -287,7 +310,7 @@ function App() {
       })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [page, token, isServerRoute, serverId, path, expireSession])
+  }, [page, token, sessionVerified, isServerRoute, serverId, path, expireSession])
 
   const logout = async () => {
     try { if (token) await api('/logout', token, { method: 'POST' }) }
@@ -297,6 +320,8 @@ function App() {
     loadedServersToken.current = ''
     loadedConfigServerId.current = ''
     setToken('')
+    setValidatedToken('')
+    setSessionCheckError('')
     setUser(null)
     setServers([])
     navigate('/login')
@@ -349,6 +374,8 @@ function App() {
 
   if (page === 'callback') return <CallbackPage/>
 
+  const isVerifyingSession = Boolean(token && page !== 'login' && !sessionVerified)
+
   return <DashboardTemplate
     user={user}
     active={page}
@@ -358,6 +385,7 @@ function App() {
     onSuperadminStatus={() => navigate('/superadmin/status')}
     onSuperadminLogs={() => navigate('/superadmin/logs')}
   >
+    {!isVerifyingSession && <>
     {page === 'login' && <LoginPage error={!token ? error : ''}/>}
     {page === 'home' && <HomePage
       user={user}
@@ -378,6 +406,10 @@ function App() {
     {page === 'locale' && <LocaleSettingsPage {...settingsProps}/>}
     {page === 'superadmin-status' && (user?.is_superadmin ? <SuperadminStatusPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     {page === 'superadmin-logs' && (user?.is_superadmin ? <SuperadminLogsPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
+    </>}
+    {isVerifyingSession && (sessionCheckError
+      ? <div className="session-check-state"><ErrorAlert message={sessionCheckError} className="page-alert"/><button type="button" className="back-button" onClick={() => setSessionCheckAttempt(attempt => attempt + 1)}>Retry session check</button></div>
+      : <div className="loading-state"><span className="spinner"/> Verifying your session…</div>)}
   </DashboardTemplate>
 }
 

@@ -27,6 +27,20 @@ export type Config = {
   forbidden_channels: string[]
 }
 
+export type ServerSettingsPageProps = {
+  server: Server | null
+  config: Config
+  loading: boolean
+  saving: boolean
+  error: string
+  saveError: string
+  notice: string
+  onBack: () => void
+  onDismissError: () => void
+  onConfigChange: <K extends keyof Config>(key: K, value: Config[K]) => void
+  onSave: () => void
+}
+
 export const blankConfig: Config = {
   locale: 'en-US',
   reddit_odd_memes: 5,

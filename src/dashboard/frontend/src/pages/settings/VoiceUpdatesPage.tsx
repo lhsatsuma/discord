@@ -1,9 +1,9 @@
-import type { Config, Server } from '../../types/dashboard'
+import type { ServerSettingsPageProps } from '../../types/dashboard'
 import { Icon } from '../../components/Icon'
 import { SaveBar } from '../../components/SaveBar'
 import { ServerSettingsLayout } from '../../components/ServerSettingsLayout'
 
-type Props = { server: Server | null; config: Config; loading: boolean; saving: boolean; error: string; saveError: string; notice: string; onBack: () => void; onDismissError: () => void; onConfigChange: <K extends keyof Config>(key: K, value: Config[K]) => void; onSave: () => void }
+type Props = ServerSettingsPageProps
 
 export function VoiceUpdatesPage({ server, config, loading, saving, error, saveError, notice, onBack, onDismissError, onConfigChange, onSave }: Props) {
   return <ServerSettingsLayout server={server} title="Voice updates" description="Post a message to the admin channel when members join or leave voice." error={error} loading={loading} onBack={onBack} onDismissError={onDismissError}>

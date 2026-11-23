@@ -29,7 +29,6 @@ class DashboardJwt
             'identity' => $identity,
             'guilds' => $guilds,
             'access_token' => $oauth['access_token'],
-            'refresh_token' => $oauth['refresh_token'] ?? null,
         ], now()->addHour());
         return $unsigned.'.'.rtrim(strtr(base64_encode(hash_hmac('sha256', $unsigned, $this->secret(), true)), '+/', '-_'), '=');
     }

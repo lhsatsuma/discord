@@ -6,7 +6,6 @@ use App\Services\DashboardSuperadmin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use SplFileObject;
 use Throwable;
 
 class SuperadminController extends Controller
@@ -142,18 +141,46 @@ class SuperadminController extends Controller
     /** @return list<string> */
     private function tailLines(string $path, int $limit): array
     {
-        $file = new SplFileObject($path, 'r');
-        $file->seek(PHP_INT_MAX);
-        $lastLine = $file->key();
-        $file->seek(max(0, $lastLine - $limit + 1));
+        if ($limit <= 0) return [];
 
-        $lines = [];
-        while (! $file->eof() && count($lines) < $limit) {
-            $line = $file->current();
-            $file->next();
-            if ($line !== false) $lines[] = rtrim((string) $line, "\r\n");
+        $file = fopen($path, 'rb');
+        if ($file === false) {
+            throw new \RuntimeException('Could not open the bot log file.');
         }
 
-        return array_values(array_filter(array_slice($lines, -$limit), static fn (string $line): bool => $line !== ''));
+        try {
+            if (fseek($file, 0, SEEK_END) !== 0) {
+                throw new \RuntimeException('Could not seek to the end of the bot log file.');
+            }
+            $position = ftell($file);
+            if ($position === false) return [];
+
+            $buffer = '';
+            $newlineCount = 0;
+            while ($position > 0 && $newlineCount <= $limit) {
+                $chunkSize = min(8192, $position);
+                $position -= $chunkSize;
+                if (fseek($file, $position) !== 0) {
+                    throw new \RuntimeException('Could not read the bot log file.');
+                }
+
+                $chunk = fread($file, $chunkSize);
+                if ($chunk === false) {
+                    throw new \RuntimeException('Could not read the bot log file.');
+                }
+                $newlineCount += substr_count($chunk, "\n");
+                $buffer = $chunk.$buffer;
+            }
+        } finally {
+            fclose($file);
+        }
+
+        $lines = explode("\n", $buffer);
+        if (end($lines) === '') array_pop($lines);
+
+        return array_values(array_filter(
+            array_map(static fn (string $line): string => rtrim($line, "\r"), array_slice($lines, -$limit)),
+            static fn (string $line): bool => $line !== ''
+        ));
     }
 }
