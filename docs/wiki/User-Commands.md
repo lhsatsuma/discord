@@ -1,44 +1,45 @@
 # User Commands
 
-These commands are available to members in servers where DBIKE BOT is installed, subject to Discord permissions, command cooldowns, and feature configuration. Command names and responses follow the bot's configured locale.
+These commands are available in servers where the bot is installed. Some features depend on server settings. Command names may appear translated to match the server's language.
 
 ## Birthdays
 
-| Command | Description |
+| Command | What it does |
 |---|---|
-| `/birthday add` | Register a member's birthday. Use `MM/DD` in English locales and `DD/MM` in Portuguese locales. |
-| `/birthday list` | List registered birthdays in the server. |
-| `/birthday remove` | Remove a registered birthday; the user option defaults to you. |
+| `/birthday add` | Save your birthday. Use `MM/DD` in English or `DD/MM` in Portuguese. |
+| `/birthday list` | Show birthdays saved for this server. |
+| `/birthday remove` | Remove a saved birthday. |
 
-The bot announces birthdays daily at 08:00 in the configured time zone. Server channel setup is covered under [Administrator commands](Admin-Commands#birthday-announcement-channels).
-
-Although they configure server-wide destinations, `/birthday add_channel`, `/birthday remove_channel`, and `/birthday list_channels` currently do not enforce an administrator permission in the bot. Server owners should restrict the add/remove commands through Discord if only staff should manage them.
+Birthday announcements are sent daily at 08:00 in the bot's configured time zone. The server owner selects the announcement channels in the [Admin Guide](Admin-Guide).
 
 ## Games
 
-| Command | Description |
+| Command | What it does |
 |---|---|
 | `/jankenpon play` | Play rock-paper-scissors against the bot. |
-| `/jankenpon status` | View your wins, losses, and draws in this server. |
+| `/jankenpon status` | See your wins, losses, and draws in this server. |
 | `/jankenpon reset` | Reset your Jankenpon statistics in this server. |
 
-## Jokes
+## Trivia
 
-- `/jokes random` posts a random saved joke.
-- `/jokes add` opens a form to submit joke text or an image URL.
+| Command | What it does |
+|---|---|
+| `/trivia help` | Show enabled categories, daily limit, difficulty levels, timer, and scoring rules. |
+| `/trivia play` | Answer a random question at the difficulty you choose. |
+| `/trivia rank` | Show the server's top 10 players by total points. |
 
-## Memes
+Each question has a 30-second timer. Correct answers earn at least half the question's weight, with a speed bonus based on time remaining. The scoring time is at least 1 second to account for network latency. The answer result shows points earned and the question's maximum possible points. Incorrect answers earn zero points, and the correct answer is not revealed after a wrong guess.
 
-- `/memes random` posts a saved meme and may fetch a Reddit post if Reddit credentials and server settings are configured.
-- `/memes add` opens a form to submit a description and image; submitted images are hosted by Imgur.
-- `/memes list` lists saved memes for the server.
-- `/memes get` searches for a meme by ID or name.
+The server administrator chooses the question categories and a daily limit of 1 to 3 questions per player in the dashboard. Questions are random; a player sees repeats only after answering all available questions for the chosen difficulty and enabled categories.
 
-## Pickup lines
+## Jokes, memes, and pickup lines
 
-- `/pickup-lines random` posts a pickup line; you may select a member as its recipient.
-- `/pickup-lines add` submits text or an image URL.
+| Commands | What they do |
+|---|---|
+| `/jokes random`, `/jokes add` | Show a saved joke or submit one. |
+| `/memes random`, `/memes add`, `/memes list`, `/memes get` | View, submit, list, or search server memes. Reddit fetching requires server settings and credentials from the system owner. |
+| `/pickup-lines random`, `/pickup-lines add` | Show or submit a pickup line. |
 
-## Commands requiring administrator access
+## Administrator-only command
 
-`/pinguser` is restricted to administrators. The `/admin` and `/autoban` channel configuration commands have been removed; administrators configure server channels and auto moderation through the dashboard. See [Administrator commands](Admin-Commands) for the dashboard guide.
+`/pinguser` is restricted to administrators. Server configuration is managed through the dashboard; the old `/admin config` and channel configuration commands have been removed. See the [Admin Guide](Admin-Guide).

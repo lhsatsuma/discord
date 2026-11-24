@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Lib\DiscordApi;
 use App\Lib\DiscordRateLimitException;
 use App\Lib\DiscordUnauthorizedException;
+use App\Models\AdminChannel;
+use App\Models\ForbiddenChannel;
+use App\Models\Server;
+use App\Models\ServerConfig;
+use App\Models\TriviaCategory;
 use App\Services\DashboardGuilds;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -22,6 +26,7 @@ class AdminConfigController extends Controller
     private const MAX_WELCOME_MESSAGE = 2000;
     private const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
     private const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
+    private const DEFAULT_TRIVIA_QUESTIONS_PER_DAY = 3;
     private const DEFAULT_LOCALE = 'en-US';
     private const SUPPORTED_LOCALES = ['en-US', 'pt-BR'];
 
@@ -45,23 +50,23 @@ class AdminConfigController extends Controller
                 Log::error('Discord bot token is required to list server channels.');
                 return response()->json(['message' => 'Server channel access is not configured.'], 503);
             }
-            $settings = DB::table('servers')->where('id', $serverId)->where('active', true)->first();
+            $settings = Server::findActive($serverId);
             if (! $settings) return response()->json(['message' => 'This server is not configured for the bot.'], 404);
-            $serverConfig = DB::table('server_config')
-                ->where('server_id', $serverId)
-                ->whereIn('config_code', [
+            $serverConfig = ServerConfig::valuesForServer($serverId, [
                     'reddit_odd_memes', 'subreddits_memes',
                     'autoban_del_period', 'autoban_punishment', 'autoban_mute_days',
                     'send_voice_update', 'welcome_message_active', 'welcome_channel_id', 'welcome_message',
-                    'locale',
-                ])
-                ->get()
-                ->keyBy('config_code');
+                    'locale', 'trivia_categories', 'trivia_questions_per_day',
+                ]);
             $configValue = static function (string $code) use ($serverConfig): ?string {
                 $config = $serverConfig->get($code);
                 return $config?->long_value ?? $config?->value;
             };
             $locale = $configValue('locale');
+            $triviaCategoryIds = json_decode($configValue('trivia_categories') ?? 'null', true);
+            if (! is_array($triviaCategoryIds)) {
+                $triviaCategoryIds = TriviaCategory::idsForLocale(in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE);
+            }
             $channels = $discordApi->botGuildChannels($serverId);
 
             return response()->json([
@@ -77,9 +82,17 @@ class AdminConfigController extends Controller
                     'welcome_message_active' => filter_var($configValue('welcome_message_active') ?? false, FILTER_VALIDATE_BOOLEAN),
                     'welcome_channel_id' => $configValue('welcome_channel_id'),
                     'welcome_message' => $configValue('welcome_message') ?? '',
-                    'admin_channels' => DB::table('admin_channels')->where('server', $serverId)->orderBy('channel_id')->pluck('channel_id')->map(static fn ($id): string => (string) $id)->all(),
-                    'forbidden_channels' => DB::table('channels_forbidden')->where('server', $serverId)->orderBy('channel_id')->pluck('channel_id')->map(static fn ($id): string => (string) $id)->all(),
+                    'trivia_categories' => array_values(array_filter($triviaCategoryIds, 'is_string')),
+                    'trivia_questions_per_day' => (int) ($configValue('trivia_questions_per_day') ?? self::DEFAULT_TRIVIA_QUESTIONS_PER_DAY),
+                    'admin_channels' => AdminChannel::channelIdsForServer($serverId),
+                    'forbidden_channels' => ForbiddenChannel::channelIdsForServer($serverId),
                 ],
+                'trivia_categories' => TriviaCategory::catalog()->map(static fn (TriviaCategory $category): array => [
+                    'id' => (string) $category->id,
+                    'short_description' => (string) $category->short_description,
+                    'description' => (string) $category->description,
+                    'locale' => (string) $category->locale,
+                ])->all(),
                 'channels' => array_values(array_map(static fn (array $channel): array => [
                     'id' => (string) $channel['id'], 'name' => (string) $channel['name'],
                 ], array_filter($channels, static fn ($channel): bool => is_array($channel) && ($channel['type'] ?? null) === 0))),
@@ -111,11 +124,20 @@ class AdminConfigController extends Controller
                 'welcome_message_active' => ['required', 'boolean'],
                 'welcome_channel_id' => ['nullable', 'string', 'regex:/^[0-9]{17,20}$/'],
                 'welcome_message' => ['nullable', 'string', 'max:'.self::MAX_WELCOME_MESSAGE],
+                'trivia_categories' => ['required', 'array', 'min:1', 'max:100'],
+                'trivia_categories.*' => ['required', 'string', 'uuid', 'distinct'],
+                'trivia_questions_per_day' => ['required', 'integer', 'between:1,3'],
                 'admin_channels' => ['sometimes', 'array', 'max:500'],
                 'admin_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
                 'forbidden_channels' => ['sometimes', 'array', 'max:500'],
                 'forbidden_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
             ]);
+            $availableTriviaCategoryIds = TriviaCategory::idsForLocale($data['locale']);
+            if (array_diff($data['trivia_categories'], $availableTriviaCategoryIds) !== []) {
+                throw ValidationException::withMessages([
+                    'trivia_categories' => 'Choose trivia categories available for the selected server language.',
+                ]);
+            }
             $subreddits = array_values(array_unique(array_map('trim', $data['subreddits_memes'] ?? [])));
             $message = (string) ($data['welcome_message'] ?? '');
             $botId = (string) config('services.discord.bot_id');
@@ -146,14 +168,11 @@ class AdminConfigController extends Controller
             }
 
             $identity = $request->attributes->get('dashboard.session')['identity'];
-            $updated = DB::transaction(function () use ($serverId, $data, $subreddits, $message, $identity): int {
-                $updated = DB::table('servers')->where('id', $serverId)->where('active', true)->update([
-                    'updated_at' => now(),
-                    'created_by' => $identity['id'],
-                ]);
+            $userId = (string) $identity['id'];
+            $updated = DB::transaction(function () use ($serverId, $data, $subreddits, $message, $userId): int {
+                $updated = Server::updateActiveBy($serverId, $userId);
 
                 if ($updated > 0) {
-                    $now = now();
                     $subredditsValue = implode(',', $subreddits);
                     $configValues = [
                         'locale' => ['string', $data['locale']],
@@ -166,32 +185,16 @@ class AdminConfigController extends Controller
                         'welcome_message_active' => ['boolean', $data['welcome_message_active'] ? 'true' : 'false'],
                         'welcome_channel_id' => ['string', $data['welcome_channel_id'] ?: null],
                         'welcome_message' => ['text', $message !== '' ? $message : null],
+                        'trivia_categories' => ['text', json_encode(array_values($data['trivia_categories']), JSON_THROW_ON_ERROR)],
+                        'trivia_questions_per_day' => ['integer', (string) $data['trivia_questions_per_day']],
                     ];
-                    $configRows = [];
-                    foreach ($configValues as $code => [$type, $value]) {
-                        $isLongValue = $value !== null && mb_strlen($value) > 255;
-                        $configRows[] = [
-                            'server_id' => $serverId,
-                            'config_code' => $code,
-                            'created_at' => $now,
-                            'updated_at' => $now,
-                            'created_by' => (string) $identity['id'],
-                            'type' => $type,
-                            'value' => $isLongValue ? null : $value,
-                            'long_value' => $isLongValue ? $value : null,
-                        ];
-                    }
-                    DB::table('server_config')->upsert(
-                        $configRows,
-                        ['server_id', 'config_code'],
-                        ['updated_at', 'created_by', 'type', 'value', 'long_value']
-                    );
+                    ServerConfig::upsertForServer($serverId, $configValues, $userId);
 
                     if (array_key_exists('admin_channels', $data)) {
-                        $this->syncChannelRules('admin_channels', $serverId, $data['admin_channels'], (string) $identity['id']);
+                        AdminChannel::syncForServer($serverId, $data['admin_channels'], $userId);
                     }
                     if (array_key_exists('forbidden_channels', $data)) {
-                        $this->syncChannelRules('channels_forbidden', $serverId, $data['forbidden_channels'], (string) $identity['id']);
+                        ForbiddenChannel::syncForServer($serverId, $data['forbidden_channels'], $userId);
                     }
                 }
 
@@ -199,7 +202,7 @@ class AdminConfigController extends Controller
             });
             if (! $updated) return response()->json(['message' => 'Could not save configuration for this server.'], 404);
 
-            $key = 'discord-bot:server-settings:v4:'.$botId.':'.$serverId;
+            $key = 'discord-bot:server-settings:v5:'.$botId.':'.$serverId;
             Redis::connection('bot_cache')->del($key);
             Redis::connection('bot_cache')->publish('discord-bot:server-locale-updated', $serverId);
             return response()->json(['ok' => true]);
@@ -209,45 +212,6 @@ class AdminConfigController extends Controller
             Log::error('Could not save server configuration.', ['server_id' => $serverId, 'message' => $error->getMessage()]);
             return response()->json(['message' => 'Could not save server configuration.'], 500);
         }
-    }
-
-    /** @param list<string> $channelIds */
-    private function syncChannelRules(string $table, string $serverId, array $channelIds, string $userId): void
-    {
-        // The table name is selected only from this fixed allowlist.
-        if (! in_array($table, ['admin_channels', 'channels_forbidden'], true)) {
-            throw new \InvalidArgumentException('Unsupported channel rule table.');
-        }
-
-        $channelIds = array_values(array_unique($channelIds));
-        $existingChannelIds = DB::table($table)
-            ->where('server', $serverId)
-            ->lockForUpdate()
-            ->pluck('channel_id')
-            ->map(static fn ($id): string => (string) $id)
-            ->all();
-        $existing = array_fill_keys($existingChannelIds, true);
-
-        $removedChannelIds = array_values(array_diff($existingChannelIds, $channelIds));
-        if ($removedChannelIds !== []) {
-            DB::table($table)
-                ->where('server', $serverId)
-                ->whereIn('channel_id', $removedChannelIds)
-                ->delete();
-        }
-
-        $addedChannelIds = array_values(array_filter($channelIds, static fn (string $id): bool => ! isset($existing[$id])));
-        if ($addedChannelIds === []) return;
-
-        $now = now();
-        DB::table($table)->insert(array_map(static fn (string $channelId): array => [
-            'id' => (string) Str::uuid(),
-            'created_at' => $now,
-            'updated_at' => $now,
-            'created_by' => $userId,
-            'server' => $serverId,
-            'channel_id' => $channelId,
-        ], $addedChannelIds));
     }
 
     private function verifiedGuilds(Request $request, DashboardGuilds $dashboardGuilds): array

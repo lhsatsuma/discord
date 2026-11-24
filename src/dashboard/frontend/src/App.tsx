@@ -15,7 +15,8 @@ import { ChannelRulesPage } from './pages/settings/ChannelRulesPage'
 import { MemeSettingsPage } from './pages/settings/MemeSettingsPage'
 import { VoiceUpdatesPage } from './pages/settings/VoiceUpdatesPage'
 import { WelcomeMessagePage } from './pages/settings/WelcomeMessagePage'
-import { blankConfig, type Channel, type Config, type Page, type Server, type SettingGroup, type User } from './types/dashboard'
+import { TriviaSettingsPage } from './pages/settings/TriviaSettingsPage'
+import { blankConfig, type Channel, type Config, type Page, type Server, type SettingGroup, type TriviaCategory, type User } from './types/dashboard'
 
 const TOKEN_KEY = 'guilddesk.jwt'
 const PROFILE_KEY = 'guilddesk.user'
@@ -57,6 +58,7 @@ function App() {
   const [config, setConfig] = useState<Config>(blankConfig)
   const [subredditText, setSubredditText] = useState('')
   const [channels, setChannels] = useState<Channel[]>([])
+  const [triviaCategories, setTriviaCategories] = useState<TriviaCategory[]>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -66,7 +68,7 @@ function App() {
   const callbackProcessed = useRef(false)
   const loadedServersToken = useRef('')
   const loadedConfigServerId = useRef('')
-  const serverRoute = path.match(/^\/servers\/(\d+)(?:\/(autoban|memes|channels|voice|welcome|locale))?\/?$/)
+  const serverRoute = path.match(/^\/servers\/(\d+)(?:\/(autoban|memes|channels|voice|welcome|locale|trivia))?\/?$/)
   const isServerRoute = serverRoute !== null
   const serverId = serverRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
@@ -292,13 +294,14 @@ function App() {
     if (loadedConfigServerId.current === serverId) return
     let active = true
     queueMicrotask(() => { if (active) setLoading(true) })
-    api<{ server: Server; config: Config; channels: Channel[] }>(`/servers/${serverId}/config`, token)
+    api<{ server: Server; config: Config; channels: Channel[]; trivia_categories: TriviaCategory[] }>(`/servers/${serverId}/config`, token)
       .then(result => {
         if (active) {
           setServer(result.server)
           setConfig(result.config)
           setSubredditText(result.config.subreddits_memes.join(', '))
           setChannels(result.channels)
+          setTriviaCategories(result.trivia_categories)
           loadedConfigServerId.current = serverId
         }
       })
@@ -358,6 +361,12 @@ function App() {
   const setValue = <K extends keyof Config>(key: K, value: Config[K]) => {
     setNotice('')
     setSaveError('')
+    if (key === 'locale') {
+      const locale = value as Config['locale']
+      const categoryIds = triviaCategories.filter(category => category.locale === locale).map(category => category.id)
+      setConfig(current => ({ ...current, locale, trivia_categories: categoryIds }))
+      return
+    }
     setConfig(current => ({ ...current, [key]: value }))
   }
 
@@ -405,6 +414,7 @@ function App() {
     {page === 'voice' && <VoiceUpdatesPage {...settingsProps}/>}
     {page === 'welcome' && <WelcomeMessagePage {...settingsProps} channels={channels}/>}
     {page === 'locale' && <LocaleSettingsPage {...settingsProps}/>}
+    {page === 'trivia' && <TriviaSettingsPage {...settingsProps} categories={triviaCategories}/>}
     {page === 'superadmin-status' && (user?.is_superadmin ? <SuperadminStatusPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     {page === 'superadmin-logs' && (user?.is_superadmin ? <SuperadminLogsPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     </>}

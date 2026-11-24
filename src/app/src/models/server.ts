@@ -24,13 +24,14 @@ import type { fieldInterface } from '../interfaces/fieldInterface.ts';
 
 const SERVER_SETTINGS_CACHE_TTL_SECONDS = 360;
 const SERVER_SETTINGS_CACHE_KEY_PREFIX =
-    `discord-bot:server-settings:v4:${config.DISCORD_BOT_ID}:`;
+    `discord-bot:server-settings:v5:${config.DISCORD_BOT_ID}:`;
 
 const serverSettingsCacheKey = (serverId: string): string =>
     `${SERVER_SETTINGS_CACHE_KEY_PREFIX}${serverId}`;
 
 export const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
 export const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
+export const DEFAULT_TRIVIA_QUESTIONS_PER_DAY = 3;
 
 export type autobanPunishment = 'ban' | 'mute';
 
@@ -49,6 +50,8 @@ export interface serverSettings
     admin_channels: string[];
     birthday_channels: string[];
     forbidden_channels: string[];
+    trivia_categories: string[];
+    trivia_questions_per_day: number;
 }
 
 const serverFields = {
@@ -159,7 +162,9 @@ export default class model_servers extends model_base
                                               'welcome_message_active',
                                               'welcome_channel_id',
                                               'welcome_message',
-                                              'locale'
+                                              'locale',
+                                              'trivia_categories',
+                                              'trivia_questions_per_day'
                                           )
                                     ),
                                     '{}'::json
@@ -174,6 +179,22 @@ export default class model_servers extends model_base
                     } | undefined;
                     const configValue = (code: string): string | null => row?.server_configs?.[code] ?? null;
                     const configuredLocale = configValue('locale');
+                    let triviaCategories: string[] = [];
+                    try {
+                        const parsedCategories: unknown = JSON.parse(configValue('trivia_categories') ?? '[]');
+                        if (Array.isArray(parsedCategories)) {
+                            triviaCategories = [...new Set(parsedCategories.filter(
+                                (category): category is string =>
+                                    typeof category === 'string'
+                                    && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(category)
+                            ))];
+                        }
+                    } catch {
+                        log.warning(`Invalid trivia category configuration for server ${serverId}.`);
+                    }
+                    const configuredTriviaLimit = Number(
+                        configValue('trivia_questions_per_day') ?? DEFAULT_TRIVIA_QUESTIONS_PER_DAY
+                    );
                     const redditOdds = Number(configValue('reddit_odd_memes') ?? 5);
                     const deletePeriodMinutes = Number(
                         configValue('autoban_del_period') ?? DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES
@@ -199,6 +220,12 @@ export default class model_servers extends model_base
                         welcome_message_active: isEnabled(configValue('welcome_message_active')),
                         welcome_channel_id: configValue('welcome_channel_id'),
                         welcome_message: configValue('welcome_message') ?? '',
+                        trivia_categories: triviaCategories,
+                        trivia_questions_per_day: Number.isInteger(configuredTriviaLimit)
+                            && configuredTriviaLimit >= 1
+                            && configuredTriviaLimit <= 3
+                            ? configuredTriviaLimit
+                            : DEFAULT_TRIVIA_QUESTIONS_PER_DAY,
                         admin_channels: row?.admin_channels ?? [],
                         birthday_channels: row?.birthday_channels ?? [],
                         forbidden_channels: row?.forbidden_channels ?? []

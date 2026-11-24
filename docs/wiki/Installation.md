@@ -198,7 +198,7 @@ For a backend release, install production Composer dependencies, run any new mig
 
 ## Related topics
 
-- [Administrator commands and dashboard usage](Admin-Commands)
-- [Superadministrator commands](Superadministrator-Commands)
-- [User commands](User-Commands)
+- [Superadmin Guide](Superadmin-Guide)
+- [Admin Guide](Admin-Guide)
+- [User Commands](User-Commands)
 - [Architecture](Superadministrator-Architecture)

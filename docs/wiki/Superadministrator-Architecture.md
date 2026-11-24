@@ -24,4 +24,4 @@ The backend and bot use the same PostgreSQL server configuration records. On a s
 
 The dashboard stores each server's bot locale in `server_config`. The bot applies that locale to command responses and scheduled announcements per server, and registers each guild's slash commands using the same locale. When command API publishing is enabled, locale changes trigger command re-registration. English (`en-US`) is the default, with Brazilian Portuguese (`pt-BR`) also available.
 
-See [Installation](Installation) for setup and [Administrator commands](Admin-Commands) for dashboard use.
+See [Installation](Installation) for setup and the [Admin Guide](Admin-Guide) for dashboard use.
