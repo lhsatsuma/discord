@@ -358,6 +358,12 @@ function App() {
     }
   }
 
+  const resetTriviaAnswers = async (): Promise<number> => {
+    if (!token || !serverId) throw new Error('Your dashboard session is unavailable. Sign in again.')
+    const result = await api<{ deleted_answers: number }>(`/servers/${serverId}/trivia/answers`, token, { method: 'DELETE' })
+    return result.deleted_answers
+  }
+
   const setValue = <K extends keyof Config>(key: K, value: Config[K]) => {
     setNotice('')
     setSaveError('')
@@ -414,7 +420,7 @@ function App() {
     {page === 'voice' && <VoiceUpdatesPage {...settingsProps}/>}
     {page === 'welcome' && <WelcomeMessagePage {...settingsProps} channels={channels}/>}
     {page === 'locale' && <LocaleSettingsPage {...settingsProps}/>}
-    {page === 'trivia' && <TriviaSettingsPage {...settingsProps} categories={triviaCategories}/>}
+    {page === 'trivia' && <TriviaSettingsPage {...settingsProps} categories={triviaCategories} onResetAnswers={resetTriviaAnswers}/>}
     {page === 'superadmin-status' && (user?.is_superadmin ? <SuperadminStatusPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     {page === 'superadmin-logs' && (user?.is_superadmin ? <SuperadminLogsPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     </>}

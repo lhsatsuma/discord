@@ -321,6 +321,24 @@
 .trivia-category-option b { overflow:hidden; color:#e0e3ec; font-size:12px; text-overflow:ellipsis; white-space:nowrap; }
 .trivia-category-option small { overflow:hidden; color:#969baa; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
 .trivia-categories-empty { margin:0; color:#a0a5b4; font-size:13px; line-height:1.6; }
+.trivia-reset-card { border-color:#4a3337; }
+.trivia-reset-content { display:grid; justify-items:start; gap:13px; padding-top:15px; }
+.trivia-reset-content>p { margin:0; color:#a0a5b4; font-size:13px; line-height:1.55; }
+.trivia-reset-content .trivia-reset-error { color:#ffaaaa; }
+.trivia-reset-content .trivia-reset-notice { color:#8de0b2; }
+.danger-button { min-height:39px; padding:0 15px; color:#fff; border:1px solid #b64e58; border-radius:7px; background:#8f333d; font-size:12px; font-weight:700; cursor:pointer; }
+.danger-button:hover:not(:disabled) { background:#a43b47; }
+.danger-button:disabled { opacity:.65; cursor:wait; }
+.modal-backdrop { position:fixed; inset:0; z-index:1000; display:grid; place-items:center; padding:20px; background:#090b10c9; backdrop-filter:blur(3px); }
+.confirmation-modal { width:min(100%,440px); padding:25px; border:1px solid #3b404c; border-radius:12px; background:#1b1e26; box-shadow:0 20px 70px #0008; }
+.confirmation-mark { display:grid; place-items:center; width:34px; height:34px; color:#ffb2aa; border:1px solid #743e44; border-radius:50%; background:#3e252b; font:700 19px 'Manrope',sans-serif; }
+.confirmation-modal h2 { margin:17px 0 8px; color:#f0f1f6; font:700 19px 'Manrope',sans-serif; }
+.confirmation-modal p { margin:0; color:#aeb3c0; font-size:13px; line-height:1.6; }
+.confirmation-actions { display:flex; justify-content:flex-end; gap:9px; margin-top:24px; }
+.confirmation-actions button { min-height:38px; padding:0 14px; border-radius:6px; font-size:12px; font-weight:700; }
+.modal-cancel-button { color:#d4d7e0; border:1px solid #444957; background:#272a34; }
+.modal-confirm-button { display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; border:1px solid #b64e58; background:#8f333d; }
+.confirmation-actions button:disabled { opacity:.65; cursor:wait; }
 
 @media (max-width: 640px) {
   .channel-rules-header,.channel-rule-row { grid-template-columns:minmax(100px,1fr) 94px 94px; }

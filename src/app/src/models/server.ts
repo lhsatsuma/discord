@@ -223,7 +223,7 @@ export default class model_servers extends model_base
                         trivia_categories: triviaCategories,
                         trivia_questions_per_day: Number.isInteger(configuredTriviaLimit)
                             && configuredTriviaLimit >= 1
-                            && configuredTriviaLimit <= 3
+                            && configuredTriviaLimit <= 5
                             ? configuredTriviaLimit
                             : DEFAULT_TRIVIA_QUESTIONS_PER_DAY,
                         admin_channels: row?.admin_channels ?? [],
