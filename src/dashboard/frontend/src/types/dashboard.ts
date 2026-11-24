@@ -58,5 +58,5 @@ export const blankConfig: Config = {
   admin_channels: [],
   forbidden_channels: [],
   trivia_categories: [],
-  trivia_questions_per_day: 10,
+  trivia_questions_per_day: 3,
 }

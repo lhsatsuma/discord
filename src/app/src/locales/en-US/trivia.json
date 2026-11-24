@@ -1,0 +1,23 @@
+{
+  "CMD_TRIVIA_NAME": "trivia",
+  "CMD_TRIVIA_DESCRIPTION": "Daily server trivia",
+  "SUBCMD_HELP_NAME": "help",
+  "SUBCMD_HELP_DESCRIPTION": "Learn how trivia works on this server",
+  "HELP_TITLE": "Daily Trivia Help",
+  "HELP_DESCRIPTION": "Answer the server's daily trivia questions. Server admins can choose categories and set the daily question limit in the dashboard.",
+  "HELP_DAILY_LIMIT_TITLE": "Daily limit",
+  "HELP_DAILY_LIMIT_VALUE": "**{0} question(s)** per day",
+  "HELP_TIMER_TITLE": "Answer timer",
+  "HELP_TIMER_VALUE": "Each question has a **20-second default timer**.",
+  "HELP_CATEGORIES_TITLE": "Categories available on this server",
+  "HELP_NO_CATEGORIES": "No categories are enabled. Ask a server admin to configure Trivia in the dashboard.",
+  "HELP_DIFFICULTIES_TITLE": "Difficulties",
+  "HELP_DIFFICULTY_1": "**1 — Easy:** Straightforward questions.",
+  "HELP_DIFFICULTY_2": "**2 — Medium:** Requires some knowledge of the topic.",
+  "HELP_DIFFICULTY_3": "**3 — Hard:** Tests more detailed knowledge.",
+  "HELP_DIFFICULTY_4": "**4 — Very hard:** Challenging questions about specific details.",
+  "HELP_DIFFICULTY_5": "**5 — Impossible:** The most difficult questions in the collection.",
+  "HELP_WEIGHT_TITLE": "Question weight",
+  "HELP_WEIGHT_VALUE": "Weight determines a question's point value, and harder questions have higher weight. **Points = question weight ÷ seconds taken to answer.** Answer faster to earn more points.",
+  "HELP_SERVER_ONLY": "Trivia is only available inside a server."
+}

@@ -26,7 +26,7 @@ class AdminConfigController extends Controller
     private const MAX_WELCOME_MESSAGE = 2000;
     private const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
     private const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
-    private const DEFAULT_TRIVIA_QUESTIONS_PER_DAY = 10;
+    private const DEFAULT_TRIVIA_QUESTIONS_PER_DAY = 3;
     private const DEFAULT_LOCALE = 'en-US';
     private const SUPPORTED_LOCALES = ['en-US', 'pt-BR'];
 
@@ -202,7 +202,7 @@ class AdminConfigController extends Controller
             });
             if (! $updated) return response()->json(['message' => 'Could not save configuration for this server.'], 404);
 
-            $key = 'discord-bot:server-settings:v4:'.$botId.':'.$serverId;
+            $key = 'discord-bot:server-settings:v5:'.$botId.':'.$serverId;
             Redis::connection('bot_cache')->del($key);
             Redis::connection('bot_cache')->publish('discord-bot:server-locale-updated', $serverId);
             return response()->json(['ok' => true]);

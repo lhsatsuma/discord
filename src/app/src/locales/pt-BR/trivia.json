@@ -1,0 +1,23 @@
+{
+  "CMD_TRIVIA_NAME": "trivia",
+  "CMD_TRIVIA_DESCRIPTION": "Trivia diária do servidor",
+  "SUBCMD_HELP_NAME": "ajuda",
+  "SUBCMD_HELP_DESCRIPTION": "Saiba como funciona a trivia neste servidor",
+  "HELP_TITLE": "Ajuda da Trivia Diária",
+  "HELP_DESCRIPTION": "Responda às perguntas diárias de trivia do servidor. Administradores podem escolher as categorias e definir o limite diário de perguntas no dashboard.",
+  "HELP_DAILY_LIMIT_TITLE": "Limite diário",
+  "HELP_DAILY_LIMIT_VALUE": "**{0} pergunta(s)** por dia",
+  "HELP_TIMER_TITLE": "Tempo para responder",
+  "HELP_TIMER_VALUE": "Cada pergunta tem um **temporizador padrão de 20 segundos**.",
+  "HELP_CATEGORIES_TITLE": "Categorias disponíveis neste servidor",
+  "HELP_NO_CATEGORIES": "Nenhuma categoria está ativa. Peça a um administrador para configurar a Trivia no dashboard.",
+  "HELP_DIFFICULTIES_TITLE": "Dificuldades",
+  "HELP_DIFFICULTY_1": "**1 — Fácil:** Perguntas diretas.",
+  "HELP_DIFFICULTY_2": "**2 — Média:** Exige algum conhecimento do assunto.",
+  "HELP_DIFFICULTY_3": "**3 — Difícil:** Testa conhecimentos mais detalhados.",
+  "HELP_DIFFICULTY_4": "**4 — Muito difícil:** Perguntas desafiadoras sobre detalhes específicos.",
+  "HELP_DIFFICULTY_5": "**5 — Impossível:** As perguntas mais difíceis da coleção.",
+  "HELP_WEIGHT_TITLE": "Peso da pergunta",
+  "HELP_WEIGHT_VALUE": "O peso determina a pontuação da pergunta, e perguntas mais difíceis têm pesos maiores. **Pontos = peso da pergunta ÷ segundos gastos para responder.** Responda mais rápido para ganhar mais pontos.",
+  "HELP_SERVER_ONLY": "A Trivia só pode ser usada dentro de um servidor."
+}
