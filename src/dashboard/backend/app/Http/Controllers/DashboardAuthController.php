@@ -106,14 +106,12 @@ class DashboardAuthController extends Controller
         ];
         $guilds = $dashboardGuilds->configuredForUser($identity['id'], $tokenResponse['access_token']);
 
-        User::query()->updateOrCreate(
-            ['discord_id' => $identity['id']],
-            [
-                'name' => $identity['username'],
-                'discord_username' => (string) ($user['username'] ?? $identity['username']),
-                'discord_global_name' => isset($user['global_name']) ? (string) $user['global_name'] : null,
-                'discord_avatar' => $identity['avatar'],
-            ]
+        User::updateDiscordProfile(
+            $identity['id'],
+            $identity['username'],
+            (string) ($user['username'] ?? $identity['username']),
+            isset($user['global_name']) ? (string) $user['global_name'] : null,
+            $identity['avatar']
         );
         return [$identity, $jwt->issue($identity, $tokenResponse, $guilds)];
     }

@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Lib\DiscordApi;
+use App\Models\Server;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class DashboardGuilds
@@ -34,10 +34,7 @@ class DashboardGuilds
                 $guildIcons = [];
             }
 
-            return DB::table('servers')
-                ->where('active', true)
-                ->orderBy('name')
-                ->get(['id', 'name'])
+            return Server::activeForDashboard()
                 ->map(static fn ($server): array => [
                     'id' => (string) $server->id,
                     'name' => (string) ($server->name ?: $server->id),
@@ -103,12 +100,7 @@ class DashboardGuilds
         $ids = array_values(array_map(static fn (array $guild): string => (string) $guild['id'], $guilds));
         if ($ids === []) return [];
 
-        $configuredIds = DB::table('servers')
-            ->where('active', true)
-            ->whereIn('id', $ids)
-            ->pluck('id')
-            ->map(static fn ($id): string => (string) $id)
-            ->flip();
+        $configuredIds = Server::activeIdsAmong($ids)->flip();
 
         return array_values(array_filter(
             $guilds,
