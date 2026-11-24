@@ -8,7 +8,7 @@
   "HELP_DAILY_LIMIT_TITLE": "Limite diário",
   "HELP_DAILY_LIMIT_VALUE": "**{0} pergunta(s)** por dia",
   "HELP_TIMER_TITLE": "Tempo para responder",
-  "HELP_TIMER_VALUE": "Cada pergunta tem um **temporizador padrão de 20 segundos**.",
+  "HELP_TIMER_VALUE": "Cada pergunta tem um **temporizador de 30 segundos**.",
   "HELP_CATEGORIES_TITLE": "Categorias disponíveis neste servidor",
   "HELP_NO_CATEGORIES": "Nenhuma categoria está ativa. Peça a um administrador para configurar a Trivia no dashboard.",
   "HELP_DIFFICULTIES_TITLE": "Dificuldades",
@@ -18,7 +18,7 @@
   "HELP_DIFFICULTY_4": "**4 — Muito difícil:** Perguntas desafiadoras sobre detalhes específicos.",
   "HELP_DIFFICULTY_5": "**5 — Impossível:** As perguntas mais difíceis da coleção.",
   "HELP_WEIGHT_TITLE": "Peso da pergunta",
-  "HELP_WEIGHT_VALUE": "Uma resposta correta sempre vale pelo menos metade do peso da pergunta. A outra metade é um bônus de velocidade baseado no tempo restante: **arredondar(pontos base + pontos base × tempo restante / 20)**. Responder imediatamente vale o peso total; responder no fim do tempo vale metade.",
+  "HELP_WEIGHT_VALUE": "Uma resposta correta sempre vale pelo menos metade do peso da pergunta. A outra metade é um bônus de velocidade baseado no tempo restante: **arredondar(pontos base + pontos base × tempo restante / 30)**. Para o cálculo, o tempo mínimo considerado é de 1 segundo para compensar a latência do Discord e da rede.",
   "HELP_SERVER_ONLY": "A Trivia só pode ser usada dentro de um servidor.",
   "SUBCMD_PLAY_NAME": "jogar",
   "SUBCMD_PLAY_DESCRIPTION": "Responda a uma pergunta de trivia",
@@ -35,7 +35,7 @@
   "PLAY_QUESTION_TITLE": "Pergunta de trivia",
   "PLAY_CATEGORY": "Categoria",
   "PLAY_DIFFICULTY": "Dificuldade",
-  "PLAY_TIMER": "Você tem 20 segundos para responder.",
+  "PLAY_TIMER": "Você tem 30 segundos para responder.",
   "PLAY_TIMEOUT_TITLE": "O tempo acabou",
   "PLAY_TIMEOUT_DESCRIPTION": "Você não respondeu a tempo. Esta pergunta ainda conta para o limite de hoje.",
   "PLAY_CORRECT_ANSWER": "Resposta correta",
@@ -45,7 +45,7 @@
   "PLAY_CORRECT_DESCRIPTION": "Muito bem! Você acertou.",
   "PLAY_WRONG_DESCRIPTION": "Não foi dessa vez, mas valeu por jogar. Tente outra pergunta!",
   "PUBLIC_PLAY_COMMAND": "/trivia jogar",
-  "PUBLIC_CORRECT_TITLE": "🎉 {0} acertou!",
+  "PUBLIC_CORRECT_TITLE": "🎉 {0} acertou e ganhou {1} pontos!",
   "PUBLIC_CORRECT_DESCRIPTION": "Mandou bem! Experimente a trivia com **{0}**!",
   "PUBLIC_WRONG_TITLE": "🙌 {0} encarou o desafio!",
   "PUBLIC_WRONG_DESCRIPTION": "Não foi dessa vez, mas valeu a tentativa! Toda pergunta é uma chance de aprender - quem vai ser o próximo? Jogue em **{0}**!",
@@ -55,5 +55,6 @@
   "RANK_FOOTER": "10 melhores jogadores por pontuação total",
   "RANK_POINTS": "pontos",
   "RANK_EMPTY": "Ninguém ganhou pontos na trivia ainda. Seja o primeiro a jogar com **/trivia jogar**!",
-  "PLAY_TOTAL_POINTS": "Pontos ganhos"
+  "PLAY_TOTAL_POINTS": "Pontos ganhos",
+  "PLAY_MAX_POINTS": "Pontuação máxima possível"
 }

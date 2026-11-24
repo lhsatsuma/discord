@@ -25,7 +25,7 @@ import model_trivia_categories from '#models/trivia_categories.ts';
 import model_trivia_members from '#models/trivia_members.ts';
 import type {triviaQuestionRecord} from '#models/trivia_members.ts';
 
-const QUESTION_TIMER_MS = 20_000;
+const QUESTION_TIMER_MS = 30_000;
 const difficultyNames = ['EASY', 'MEDIUM', 'HARD', 'VERY_HARD', 'IMPOSSIBLE'] as const;
 
 export default class trivia_play extends appSubCommandBase
@@ -183,9 +183,11 @@ export default class trivia_play extends appSubCommandBase
 
         const secondsSpent = Math.max(0, Number(((Date.now() - startedAt) / 1000).toFixed(2)));
         const correct = selectedAnswer.correct_answer;
-        const timeRemaining = Math.max(0, QUESTION_TIMER_MS / 1000 - secondsSpent);
+        const timerSeconds = QUESTION_TIMER_MS / 1000;
+        const scoringSeconds = Math.max(1, secondsSpent);
+        const timeRemaining = Math.max(0, timerSeconds - scoringSeconds);
         const basePoints = question.weight / 2;
-        const speedBonus = basePoints * (timeRemaining / (QUESTION_TIMER_MS / 1000));
+        const speedBonus = basePoints * (timeRemaining / timerSeconds);
         const points = correct ? Math.min(question.weight, Math.round(basePoints + speedBonus)) : 0;
         const saved = await new model_trivia_members().saveAnswer({
             progressId: question.progress_id,
@@ -211,6 +213,10 @@ export default class trivia_play extends appSubCommandBase
                 name: lang.translate(this.parentName, 'PLAY_TOTAL_POINTS'),
                 value: String(saved.points),
                 inline: true,
+            }, {
+                name: lang.translate(this.parentName, 'PLAY_MAX_POINTS'),
+                value: String(question.weight),
+                inline: true,
             });
 
         await interaction.editReply({embeds: [resultEmbed], components: []});
@@ -221,7 +227,7 @@ export default class trivia_play extends appSubCommandBase
                 const publicResultEmbed = new EmbedBuilder()
                     .setColor(correct ? Colors.Green : Colors.Blurple)
                     .setAuthor({name: interaction.user.username, iconURL: interaction.user.displayAvatarURL()})
-                    .setTitle(lang.translate(this.parentName, correct ? 'PUBLIC_CORRECT_TITLE' : 'PUBLIC_WRONG_TITLE', [interaction.user.username]))
+                    .setTitle(lang.translate(this.parentName, correct ? 'PUBLIC_CORRECT_TITLE' : 'PUBLIC_WRONG_TITLE', [interaction.user.username, saved.points]))
                     .setDescription(correct
                         ? lang.translate(this.parentName, 'PUBLIC_CORRECT_DESCRIPTION', [playCommand])
                         : lang.translate(this.parentName, 'PUBLIC_WRONG_DESCRIPTION', [playCommand]));

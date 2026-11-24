@@ -8,7 +8,7 @@
   "HELP_DAILY_LIMIT_TITLE": "Daily limit",
   "HELP_DAILY_LIMIT_VALUE": "**{0} question(s)** per day",
   "HELP_TIMER_TITLE": "Answer timer",
-  "HELP_TIMER_VALUE": "Each question has a **20-second default timer**.",
+  "HELP_TIMER_VALUE": "Each question has a **30-second timer**.",
   "HELP_CATEGORIES_TITLE": "Categories available on this server",
   "HELP_NO_CATEGORIES": "No categories are enabled. Ask a server admin to configure Trivia in the dashboard.",
   "HELP_DIFFICULTIES_TITLE": "Difficulties",
@@ -18,7 +18,7 @@
   "HELP_DIFFICULTY_4": "**4 — Very hard:** Challenging questions about specific details.",
   "HELP_DIFFICULTY_5": "**5 — Impossible:** The most difficult questions in the collection.",
   "HELP_WEIGHT_TITLE": "Question weight",
-  "HELP_WEIGHT_VALUE": "A correct answer always earns at least half the question's weight. The other half is a speed bonus based on the time remaining: **round(base points + base points × time remaining / 20)**. Answering immediately earns the full weight; answering at the end of the timer earns half.",
+  "HELP_WEIGHT_VALUE": "A correct answer always earns at least half the question's weight. The other half is a speed bonus based on the time remaining: **round(base points + base points times time remaining / 30)**. Scoring uses a minimum elapsed time of 1 second to account for Discord and network latency.",
   "HELP_SERVER_ONLY": "Trivia is only available inside a server.",
   "SUBCMD_PLAY_NAME": "play",
   "SUBCMD_PLAY_DESCRIPTION": "Answer a trivia question",
@@ -35,7 +35,7 @@
   "PLAY_QUESTION_TITLE": "Trivia question",
   "PLAY_CATEGORY": "Category",
   "PLAY_DIFFICULTY": "Difficulty",
-  "PLAY_TIMER": "You have 20 seconds to answer.",
+  "PLAY_TIMER": "You have 30 seconds to answer.",
   "PLAY_TIMEOUT_TITLE": "Time is up",
   "PLAY_TIMEOUT_DESCRIPTION": "You did not answer in time. This question still counts toward today's limit.",
   "PLAY_CORRECT_ANSWER": "Correct answer",
@@ -45,7 +45,7 @@
   "PLAY_CORRECT_DESCRIPTION": "Great job! You got it right.",
   "PLAY_WRONG_DESCRIPTION": "Not quite, but thanks for playing. Try another question!",
   "PUBLIC_PLAY_COMMAND": "/trivia play",
-  "PUBLIC_CORRECT_TITLE": "🎉 {0} got it right!",
+  "PUBLIC_CORRECT_TITLE": "🎉 {0} got it right and won {1} points!",
   "PUBLIC_CORRECT_DESCRIPTION": "Nice work! Give trivia a try with **{0}**!",
   "PUBLIC_WRONG_TITLE": "🙌 {0} took on the challenge!",
   "PUBLIC_WRONG_DESCRIPTION": "Not this time, but nice try! Every question is a chance to learn - who's next? Play with **{0}**!",
@@ -55,5 +55,6 @@
   "RANK_FOOTER": "Top 10 players by total points",
   "RANK_POINTS": "points",
   "RANK_EMPTY": "No one has earned trivia points yet. Be the first to play with **/trivia play**!",
-  "PLAY_TOTAL_POINTS": "Points earned"
+  "PLAY_TOTAL_POINTS": "Points earned",
+  "PLAY_MAX_POINTS": "Maximum possible points"
 }
