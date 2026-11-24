@@ -36,6 +36,7 @@ export type triviaStartResult =
     | {status: 'started'; question: triviaQuestionRecord}
     | {status: 'daily_limit'}
     | {status: 'active_question'}
+    | {status: 'difficulty_unavailable'; availableDifficulties: number[]}
     | {status: 'no_questions'}
     | false;
 
@@ -123,7 +124,7 @@ export default class model_trivia_members extends model_base
                     COUNT(*) FILTER (
                         WHERE answer IS NULL
                           AND answered = false
-                          AND created_at >= CURRENT_TIMESTAMP - INTERVAL '25 seconds'
+                          AND created_at >= CURRENT_TIMESTAMP - INTERVAL '35 seconds'
                     )::int AS active_count
                  FROM ${this.table}
                  WHERE server = $1 AND user_id = $2`,
@@ -140,40 +141,50 @@ export default class model_trivia_members extends model_base
                 return {status: 'active_question'};
             }
 
-            const poolParams = [fields.locale, fields.difficulty, fields.categoryIds];
-            const poolResult = await client.query(
-                `SELECT COUNT(*)::int AS question_count
-                 FROM trivia_questions
-                 WHERE locale = $1 AND difficulty = $2 AND category = ANY($3::uuid[])`,
-                poolParams
-            );
-            if (Number(poolResult.rows[0]?.question_count ?? 0) === 0) {
-                await client.query('COMMIT');
-                return {status: 'no_questions'};
-            }
-
-            const freshQuestion = await client.query(
-                `SELECT q.id, q.question, q.category, q.difficulty, q.weight, c.description AS category_name
+            const freshDifficulties = await client.query(
+                `SELECT q.difficulty::int AS difficulty
                  FROM trivia_questions AS q
-                 INNER JOIN trivia_categorys AS c ON c.id = q.category
                  WHERE q.locale = $1
-                   AND q.difficulty = $2
-                   AND q.category = ANY($3::uuid[])
+                   AND q.category = ANY($2::uuid[])
                    AND NOT EXISTS (
                        SELECT 1
                        FROM ${this.table} AS member
-                       WHERE member.server = $4
-                         AND member.user_id = $5
+                       WHERE member.server = $3
+                         AND member.user_id = $4
                          AND member.question = q.id
                          AND member.answered = true
                    )
-                 ORDER BY random()
-                 LIMIT 1`,
-                [...poolParams, fields.server, fields.user_id]
+                 GROUP BY q.difficulty
+                 ORDER BY q.difficulty`,
+                [fields.locale, fields.categoryIds, fields.server, fields.user_id]
             );
+            const availableDifficulties = freshDifficulties.rows.map(row => Number(row.difficulty));
 
-            const questionResult = freshQuestion.rowCount
-                ? freshQuestion
+            if (availableDifficulties.length && !availableDifficulties.includes(fields.difficulty)) {
+                await client.query('COMMIT');
+                return {status: 'difficulty_unavailable', availableDifficulties};
+            }
+
+            const questionResult = availableDifficulties.length
+                ? await client.query(
+                    `SELECT q.id, q.question, q.category, q.difficulty, q.weight, c.description AS category_name
+                     FROM trivia_questions AS q
+                     INNER JOIN trivia_categorys AS c ON c.id = q.category
+                     WHERE q.locale = $1
+                       AND q.difficulty = $2
+                       AND q.category = ANY($3::uuid[])
+                       AND NOT EXISTS (
+                           SELECT 1
+                           FROM ${this.table} AS member
+                           WHERE member.server = $4
+                             AND member.user_id = $5
+                             AND member.question = q.id
+                             AND member.answered = true
+                       )
+                     ORDER BY random()
+                     LIMIT 1`,
+                    [fields.locale, fields.difficulty, fields.categoryIds, fields.server, fields.user_id]
+                )
                 : await client.query(
                     `SELECT q.id, q.question, q.category, q.difficulty, q.weight, c.description AS category_name
                      FROM trivia_questions AS q
@@ -181,7 +192,7 @@ export default class model_trivia_members extends model_base
                      WHERE q.locale = $1 AND q.difficulty = $2 AND q.category = ANY($3::uuid[])
                      ORDER BY random()
                      LIMIT 1`,
-                    poolParams
+                    [fields.locale, fields.difficulty, fields.categoryIds]
                 );
             const selected = questionResult.rows[0] as {
                 id: string;

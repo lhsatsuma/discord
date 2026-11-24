@@ -30,7 +30,7 @@ Birthday announcements are sent daily at 08:00 in the bot's configured time zone
 
 Each question has a 30-second timer. Correct answers earn at least half the question's weight, with a speed bonus based on time remaining. The scoring time is at least 1 second to account for network latency. The answer result shows points earned and the question's maximum possible points. Incorrect answers earn zero points, and the correct answer is not revealed after a wrong guess.
 
-The server administrator chooses the question categories and a daily limit of 1 to 3 questions per player in the dashboard. Questions are random; a player sees repeats only after answering all available questions for the chosen difficulty and enabled categories.
+The server administrator chooses the question categories and a daily limit of 1 to 3 questions per player in the dashboard. Questions are random. If the selected difficulty has no unanswered questions but other difficulties still do, the bot lists the available difficulties. Previously answered questions can repeat only after the player has answered every question in the enabled categories across all difficulties.
 
 ## Jokes, memes, and pickup lines
 

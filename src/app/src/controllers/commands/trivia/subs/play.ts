@@ -114,6 +114,16 @@ export default class trivia_play extends appSubCommandBase
             });
             return true;
         }
+        if (round.status === 'difficulty_unavailable') {
+            const availableDifficulties = round.availableDifficulties
+                .map(level => lang.translate(this.parentName, `DIFFICULTY_${difficultyNames[level - 1]}`))
+                .join(', ');
+            await interaction.reply({
+                content: lang.translate(this.parentName, 'PLAY_DIFFICULTY_UNAVAILABLE', [availableDifficulties]),
+                flags: [MessageFlags.Ephemeral]
+            });
+            return true;
+        }
         if (round.status === 'no_questions') {
             await interaction.reply({
                 content: lang.translate(this.parentName, 'PLAY_NO_QUESTIONS'),

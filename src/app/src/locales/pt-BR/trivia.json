@@ -56,5 +56,6 @@
   "RANK_POINTS": "pontos",
   "RANK_EMPTY": "Ninguém ganhou pontos na trivia ainda. Seja o primeiro a jogar com **/trivia jogar**!",
   "PLAY_TOTAL_POINTS": "Pontos ganhos",
-  "PLAY_MAX_POINTS": "Pontuação máxima possível"
+  "PLAY_MAX_POINTS": "Pontuação máxima possível",
+  "PLAY_DIFFICULTY_UNAVAILABLE": "Não há mais perguntas sem resposta nessa dificuldade. Escolha uma dificuldade que ainda tenha perguntas: **{0}**."
 }

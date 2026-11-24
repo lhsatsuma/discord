@@ -56,5 +56,6 @@
   "RANK_POINTS": "points",
   "RANK_EMPTY": "No one has earned trivia points yet. Be the first to play with **/trivia play**!",
   "PLAY_TOTAL_POINTS": "Points earned",
-  "PLAY_MAX_POINTS": "Maximum possible points"
+  "PLAY_MAX_POINTS": "Maximum possible points",
+  "PLAY_DIFFICULTY_UNAVAILABLE": "No unanswered questions are left at that difficulty. Choose a difficulty that still has questions: **{0}**."
 }
