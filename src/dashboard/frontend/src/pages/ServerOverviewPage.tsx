@@ -10,6 +10,7 @@ const groups: { id: SettingGroup; title: string; description: string; icon: 'shi
   { id: 'channels', title: 'Channel Rules', description: 'Choose admin notification channels and autoban exclusions.', icon: 'lock' },
   { id: 'voice', title: 'Voice updates', description: 'Choose whether the bot posts member voice activity updates.', icon: 'voice' },
   { id: 'welcome', title: 'Welcome message', description: 'Configure the greeting and destination for new members.', icon: 'hello' },
+  { id: 'trivia', title: 'Trivia', description: 'Choose trivia categories and the daily question count.', icon: 'spark' },
 ]
 
 type Props = { server: Server | null; error: string; onDismissError: () => void; onBack: () => void; onOpenGroup: (group: SettingGroup) => void }

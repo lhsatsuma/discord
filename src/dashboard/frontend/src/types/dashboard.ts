@@ -9,8 +9,9 @@ export type LocaleCode = typeof localeOptions[number]['value']
 export const isLocaleCode = (value: string): value is LocaleCode =>
   localeOptions.some(locale => locale.value === value)
 
-export type SettingGroup = 'autoban' | 'memes' | 'channels' | 'voice' | 'welcome' | 'locale'
+export type SettingGroup = 'autoban' | 'memes' | 'channels' | 'voice' | 'welcome' | 'locale' | 'trivia'
 export type Page = 'login' | 'home' | 'server' | SettingGroup | 'superadmin-status' | 'superadmin-logs' | 'callback'
+export type TriviaCategory = { id: string; short_description: string; description: string; locale: LocaleCode }
 
 export type Config = {
   locale: LocaleCode
@@ -25,6 +26,8 @@ export type Config = {
   welcome_message: string
   admin_channels: string[]
   forbidden_channels: string[]
+  trivia_categories: string[]
+  trivia_questions_per_day: number
 }
 
 export type ServerSettingsPageProps = {
@@ -54,4 +57,6 @@ export const blankConfig: Config = {
   welcome_message: '',
   admin_channels: [],
   forbidden_channels: [],
+  trivia_categories: [],
+  trivia_questions_per_day: 10,
 }

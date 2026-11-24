@@ -9,6 +9,7 @@ use App\Models\AdminChannel;
 use App\Models\ForbiddenChannel;
 use App\Models\Server;
 use App\Models\ServerConfig;
+use App\Models\TriviaCategory;
 use App\Services\DashboardGuilds;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class AdminConfigController extends Controller
     private const MAX_WELCOME_MESSAGE = 2000;
     private const DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES = 60;
     private const DEFAULT_AUTOBAN_MUTE_DAYS = 7;
+    private const DEFAULT_TRIVIA_QUESTIONS_PER_DAY = 10;
     private const DEFAULT_LOCALE = 'en-US';
     private const SUPPORTED_LOCALES = ['en-US', 'pt-BR'];
 
@@ -54,13 +56,17 @@ class AdminConfigController extends Controller
                     'reddit_odd_memes', 'subreddits_memes',
                     'autoban_del_period', 'autoban_punishment', 'autoban_mute_days',
                     'send_voice_update', 'welcome_message_active', 'welcome_channel_id', 'welcome_message',
-                    'locale',
+                    'locale', 'trivia_categories', 'trivia_questions_per_day',
                 ]);
             $configValue = static function (string $code) use ($serverConfig): ?string {
                 $config = $serverConfig->get($code);
                 return $config?->long_value ?? $config?->value;
             };
             $locale = $configValue('locale');
+            $triviaCategoryIds = json_decode($configValue('trivia_categories') ?? 'null', true);
+            if (! is_array($triviaCategoryIds)) {
+                $triviaCategoryIds = TriviaCategory::idsForLocale(in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE);
+            }
             $channels = $discordApi->botGuildChannels($serverId);
 
             return response()->json([
@@ -76,9 +82,17 @@ class AdminConfigController extends Controller
                     'welcome_message_active' => filter_var($configValue('welcome_message_active') ?? false, FILTER_VALIDATE_BOOLEAN),
                     'welcome_channel_id' => $configValue('welcome_channel_id'),
                     'welcome_message' => $configValue('welcome_message') ?? '',
+                    'trivia_categories' => array_values(array_filter($triviaCategoryIds, 'is_string')),
+                    'trivia_questions_per_day' => (int) ($configValue('trivia_questions_per_day') ?? self::DEFAULT_TRIVIA_QUESTIONS_PER_DAY),
                     'admin_channels' => AdminChannel::channelIdsForServer($serverId),
                     'forbidden_channels' => ForbiddenChannel::channelIdsForServer($serverId),
                 ],
+                'trivia_categories' => TriviaCategory::catalog()->map(static fn (TriviaCategory $category): array => [
+                    'id' => (string) $category->id,
+                    'short_description' => (string) $category->short_description,
+                    'description' => (string) $category->description,
+                    'locale' => (string) $category->locale,
+                ])->all(),
                 'channels' => array_values(array_map(static fn (array $channel): array => [
                     'id' => (string) $channel['id'], 'name' => (string) $channel['name'],
                 ], array_filter($channels, static fn ($channel): bool => is_array($channel) && ($channel['type'] ?? null) === 0))),
@@ -110,11 +124,20 @@ class AdminConfigController extends Controller
                 'welcome_message_active' => ['required', 'boolean'],
                 'welcome_channel_id' => ['nullable', 'string', 'regex:/^[0-9]{17,20}$/'],
                 'welcome_message' => ['nullable', 'string', 'max:'.self::MAX_WELCOME_MESSAGE],
+                'trivia_categories' => ['required', 'array', 'min:1', 'max:100'],
+                'trivia_categories.*' => ['required', 'string', 'uuid', 'distinct'],
+                'trivia_questions_per_day' => ['required', 'integer', 'between:1,3'],
                 'admin_channels' => ['sometimes', 'array', 'max:500'],
                 'admin_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
                 'forbidden_channels' => ['sometimes', 'array', 'max:500'],
                 'forbidden_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
             ]);
+            $availableTriviaCategoryIds = TriviaCategory::idsForLocale($data['locale']);
+            if (array_diff($data['trivia_categories'], $availableTriviaCategoryIds) !== []) {
+                throw ValidationException::withMessages([
+                    'trivia_categories' => 'Choose trivia categories available for the selected server language.',
+                ]);
+            }
             $subreddits = array_values(array_unique(array_map('trim', $data['subreddits_memes'] ?? [])));
             $message = (string) ($data['welcome_message'] ?? '');
             $botId = (string) config('services.discord.bot_id');
@@ -162,6 +185,8 @@ class AdminConfigController extends Controller
                         'welcome_message_active' => ['boolean', $data['welcome_message_active'] ? 'true' : 'false'],
                         'welcome_channel_id' => ['string', $data['welcome_channel_id'] ?: null],
                         'welcome_message' => ['text', $message !== '' ? $message : null],
+                        'trivia_categories' => ['text', json_encode(array_values($data['trivia_categories']), JSON_THROW_ON_ERROR)],
+                        'trivia_questions_per_day' => ['integer', (string) $data['trivia_questions_per_day']],
                     ];
                     ServerConfig::upsertForServer($serverId, $configValues, $userId);
 
