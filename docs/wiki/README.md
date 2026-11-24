@@ -1,19 +1,8 @@
-# DBIKE BOT Documentation
+# DBIKE BOT Wiki
 
-This repository contains the Discord bot and its web dashboard.
+Start with the guide that matches what you need:
 
-## Topics
-
-- [Installation](Installation) — configure PHP/Laravel, React/Vite, PostgreSQL, Discord, and Redis; build and run the bot app and scheduler.
-- [Superadministrator commands](Superadministrator-Commands) — commands for the bot operator.
-- [Administrator commands](Admin-Commands) — server administration commands and the dashboard guide.
-- [User commands](User-Commands) — commands available to server members.
-
-## Developer references
-
-- [Architecture](Superadministrator-Architecture)
-- [Adding bot commands](Superadministrator-Adding-Commands)
-- [Privacy Policy](../../PRIVACY_POLICY.md)
-- [Terms of Service](../../TERMS_OF_SERVICE.md)
-
-The monorepo layout is `src/app/` for the TypeScript bot, `src/dashboard/backend/` for the Laravel API, and `src/dashboard/frontend/` for the React/Vite app.
+1. [Installation](Installation) - set up the bot, dashboard, database, and web server.
+2. [Superadmin Guide](Superadmin-Guide) - configure system-owner access and view process status and logs.
+3. [Admin Guide](Admin-Guide) - sign in and configure server features in the dashboard.
+4. [User Commands](User-Commands) - learn the commands available to server members.
