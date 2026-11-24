@@ -8,6 +8,8 @@
 
 import {v7 as uuidV7} from 'uuid';
 import type {PoolClient} from 'pg';
+import redisCache from '#includes/cache/redis_cache.ts';
+import config from '#includes/config.ts';
 import database_pg from '#includes/database/database_pg.ts';
 import log from '#includes/log.ts';
 import model_base from '#models/base.ts';
@@ -43,9 +45,56 @@ export interface triviaAnswerResult
     points: number;
 }
 
+export interface triviaRankRecord
+{
+    user_id: string;
+    username: string;
+    points: number;
+}
+
 export default class model_trivia_members extends model_base
 {
     table = 'trivia_members';
+    private static readonly RANK_CACHE_TTL_SECONDS = 60;
+
+    private rankCacheKey(serverId: string): string
+    {
+        return `discord-bot:trivia-rank:v1:${config.DISCORD_BOT_ID}:${serverId}`;
+    }
+
+    async getTopRank(serverId: string, limit = 10): Promise<triviaRankRecord[] | false>
+    {
+        const key = this.rankCacheKey(serverId);
+        return redisCache.getOrSet(key, model_trivia_members.RANK_CACHE_TTL_SECONDS, async () => {
+            try {
+                const result = await this.query(
+                    `SELECT member.user_id,
+                            COALESCE(server_member.username, member.user_id) AS username,
+                            SUM(member.points)::numeric AS points
+                     FROM ${this.table} AS member
+                     LEFT JOIN server_members AS server_member
+                       ON server_member.server = member.server
+                      AND server_member.user_id = member.user_id
+                     WHERE member.server = $1 AND member.answered = true
+                     GROUP BY member.user_id, server_member.username
+                     HAVING SUM(member.points) > 0
+                     ORDER BY SUM(member.points) DESC, username ASC, member.user_id ASC
+                     LIMIT $2`,
+                    [serverId, limit]
+                );
+
+                return (result.rows as Array<Omit<triviaRankRecord, 'points'> & {points: string | number}>)
+                    .map(row => ({
+                        user_id: row.user_id,
+                        username: row.username,
+                        points: Number(row.points),
+                    }));
+            } catch (error) {
+                log.warning(`Error loading trivia leaderboard for server ${serverId}: ${error}`);
+                return false;
+            }
+        });
+    }
 
     async startQuestion(fields: {
         server: string;
@@ -222,6 +271,8 @@ export default class model_trivia_members extends model_base
                 [fields.progressId, fields.server, fields.userId, fields.answerId, fields.secondsSpent, fields.points]
             );
             if (!result.rowCount) return false;
+
+            await redisCache.delete(this.rankCacheKey(fields.server));
 
             return {
                 correct: Boolean(result.rows[0].correct_answer),

@@ -142,8 +142,7 @@ export default class trivia_play extends appSubCommandBase
             .setDescription(question.question)
             .addFields(
                 {name: lang.translate(this.parentName, 'PLAY_CATEGORY'), value: question.category, inline: true},
-                {name: lang.translate(this.parentName, 'PLAY_DIFFICULTY'), value: difficulty, inline: true},
-                {name: lang.translate(this.parentName, 'PLAY_WEIGHT'), value: String(question.weight), inline: true}
+                {name: lang.translate(this.parentName, 'PLAY_DIFFICULTY'), value: difficulty, inline: true}
             )
             .setFooter({text: lang.translate(this.parentName, 'PLAY_TIMER')});
 
@@ -184,8 +183,10 @@ export default class trivia_play extends appSubCommandBase
 
         const secondsSpent = Math.max(0, Number(((Date.now() - startedAt) / 1000).toFixed(2)));
         const correct = selectedAnswer.correct_answer;
-        const scoringSeconds = Math.max(1, secondsSpent);
-        const points = correct ? Math.round(question.weight / scoringSeconds) : 0;
+        const timeRemaining = Math.max(0, QUESTION_TIMER_MS / 1000 - secondsSpent);
+        const basePoints = question.weight / 2;
+        const speedBonus = basePoints * (timeRemaining / (QUESTION_TIMER_MS / 1000));
+        const points = correct ? Math.min(question.weight, Math.round(basePoints + speedBonus)) : 0;
         const saved = await new model_trivia_members().saveAnswer({
             progressId: question.progress_id,
             server: interaction.guildId ?? '',
@@ -201,29 +202,15 @@ export default class trivia_play extends appSubCommandBase
             return true;
         }
 
-        const correctAnswer = question.alternatives.find(alternative => alternative.correct_answer)?.description
-            ?? lang.translate(this.parentName, 'PLAY_UNKNOWN_ANSWER');
         const resultEmbed = new EmbedBuilder()
             .setColor(correct ? Colors.Green : Colors.Red)
             .setTitle(lang.translate(this.parentName, correct ? 'PLAY_CORRECT_TITLE' : 'PLAY_WRONG_TITLE'))
             .setAuthor({name: interaction.user.username, iconURL: interaction.user.displayAvatarURL()})
-            .setDescription(correct
-                ? lang.translate(this.parentName, 'PLAY_CORRECT_DESCRIPTION', [saved.points, secondsSpent.toFixed(2)])
-                : lang.translate(this.parentName, 'PLAY_WRONG_DESCRIPTION', [correctAnswer, secondsSpent.toFixed(2)]))
+            .setDescription(lang.translate(this.parentName, correct ? 'PLAY_CORRECT_DESCRIPTION' : 'PLAY_WRONG_DESCRIPTION'))
             .addFields({
-                name: lang.translate(this.parentName, 'PLAY_WEIGHT'),
-                value: String(question.weight),
-                inline: true,
-            }, {
                 name: lang.translate(this.parentName, 'PLAY_TOTAL_POINTS'),
                 value: String(saved.points),
                 inline: true,
-            }, {
-                name: lang.translate(this.parentName, 'PLAY_POINTS_CALCULATION'),
-                value: correct
-                    ? `${question.weight} / ${scoringSeconds.toFixed(2)} = ${saved.points}`
-                    : lang.translate(this.parentName, 'PLAY_INCORRECT_CALCULATION'),
-                inline: false,
             });
 
         await interaction.editReply({embeds: [resultEmbed], components: []});
@@ -236,7 +223,7 @@ export default class trivia_play extends appSubCommandBase
                     .setAuthor({name: interaction.user.username, iconURL: interaction.user.displayAvatarURL()})
                     .setTitle(lang.translate(this.parentName, correct ? 'PUBLIC_CORRECT_TITLE' : 'PUBLIC_WRONG_TITLE', [interaction.user.username]))
                     .setDescription(correct
-                        ? lang.translate(this.parentName, 'PUBLIC_CORRECT_DESCRIPTION', [saved.points, secondsSpent.toFixed(2), playCommand])
+                        ? lang.translate(this.parentName, 'PUBLIC_CORRECT_DESCRIPTION', [playCommand])
                         : lang.translate(this.parentName, 'PUBLIC_WRONG_DESCRIPTION', [playCommand]));
 
                 await channel.send({
