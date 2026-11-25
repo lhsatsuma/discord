@@ -28,7 +28,6 @@ export interface triviaQuestionRecord
     question: string;
     category: string;
     difficulty: number;
-    weight: number;
     alternatives: triviaAlternativeRecord[];
 }
 
@@ -167,7 +166,7 @@ export default class model_trivia_members extends model_base
 
             const questionResult = availableDifficulties.length
                 ? await client.query(
-                    `SELECT q.id, q.question, q.category, q.difficulty, q.weight, c.description AS category_name
+                    `SELECT q.id, q.question, q.category, q.difficulty, c.description AS category_name
                      FROM trivia_questions AS q
                      INNER JOIN trivia_categorys AS c ON c.id = q.category
                      WHERE q.locale = $1
@@ -186,7 +185,7 @@ export default class model_trivia_members extends model_base
                     [fields.locale, fields.difficulty, fields.categoryIds, fields.server, fields.user_id]
                 )
                 : await client.query(
-                    `SELECT q.id, q.question, q.category, q.difficulty, q.weight, c.description AS category_name
+                    `SELECT q.id, q.question, q.category, q.difficulty, c.description AS category_name
                      FROM trivia_questions AS q
                      INNER JOIN trivia_categorys AS c ON c.id = q.category
                      WHERE q.locale = $1 AND q.difficulty = $2 AND q.category = ANY($3::uuid[])
@@ -200,7 +199,6 @@ export default class model_trivia_members extends model_base
                 category: string;
                 category_name: string;
                 difficulty: number;
-                weight: number;
             } | undefined;
 
             if (!selected) {
@@ -236,7 +234,6 @@ export default class model_trivia_members extends model_base
                     question: selected.question,
                     category: selected.category_name,
                     difficulty: Number(selected.difficulty),
-                    weight: Number(selected.weight),
                     alternatives: alternativesResult.rows as triviaAlternativeRecord[],
                 }
             };
