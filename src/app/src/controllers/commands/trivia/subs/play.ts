@@ -158,7 +158,8 @@ export default class trivia_play extends appSubCommandBase
 
         await interaction.reply({embeds: [embed], components: [row], flags: [MessageFlags.Ephemeral]});
         const message = await interaction.fetchReply();
-        const startedAt = Date.now();
+        const startedAt = message.createdTimestamp;
+        const remainingTimerMs = Math.max(0, QUESTION_TIMER_MS - (Date.now() - startedAt));
 
         let answerInteraction: StringSelectMenuInteraction;
         try {
@@ -166,7 +167,7 @@ export default class trivia_play extends appSubCommandBase
                 componentType: ComponentType.StringSelect,
                 filter: component => component.user.id === interaction.user.id
                     && component.customId === `trivia-answer:${question.progress_id}`,
-                time: QUESTION_TIMER_MS,
+                time: remainingTimerMs,
             });
         } catch {
             const timeoutEmbed = new EmbedBuilder()
@@ -194,11 +195,12 @@ export default class trivia_play extends appSubCommandBase
         const secondsSpent = Math.max(0, Number(((Date.now() - startedAt) / 1000).toFixed(2)));
         const correct = selectedAnswer.correct_answer;
         const timerSeconds = QUESTION_TIMER_MS / 1000;
-        const scoringSeconds = Math.max(1, secondsSpent);
+        const scoringSeconds = Math.max(4, secondsSpent);
         const timeRemaining = Math.max(0, timerSeconds - scoringSeconds);
-        const basePoints = question.weight / 2;
+        const maximumPoints = question.difficulty * 100;
+        const basePoints = maximumPoints / 2;
         const speedBonus = basePoints * (timeRemaining / timerSeconds);
-        const points = correct ? Math.min(question.weight, Math.round(basePoints + speedBonus)) : 0;
+        const points = correct ? Math.min(maximumPoints, Math.round(basePoints + speedBonus)) : 0;
         const saved = await new model_trivia_members().saveAnswer({
             progressId: question.progress_id,
             server: interaction.guildId ?? '',
@@ -225,7 +227,7 @@ export default class trivia_play extends appSubCommandBase
                 inline: true,
             }, {
                 name: lang.translate(this.parentName, 'PLAY_MAX_POINTS'),
-                value: String(question.weight),
+                value: String(maximumPoints),
                 inline: true,
             });
 
