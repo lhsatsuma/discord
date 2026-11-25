@@ -10,6 +10,7 @@ use App\Models\ForbiddenChannel;
 use App\Models\Server;
 use App\Models\ServerConfig;
 use App\Models\TriviaCategory;
+use App\Models\TriviaMember;
 use App\Services\DashboardGuilds;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -63,16 +64,26 @@ class AdminConfigController extends Controller
                 return $config?->long_value ?? $config?->value;
             };
             $locale = $configValue('locale');
+            $locale = in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE;
+            $availableTriviaCategoryIds = TriviaCategory::idsForLocale($locale);
             $triviaCategoryIds = json_decode($configValue('trivia_categories') ?? 'null', true);
             if (! is_array($triviaCategoryIds)) {
-                $triviaCategoryIds = TriviaCategory::idsForLocale(in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE);
+                $triviaCategoryIds = $availableTriviaCategoryIds;
+            } else {
+                $triviaCategoryIds = array_values(array_intersect(
+                    array_filter($triviaCategoryIds, 'is_string'),
+                    $availableTriviaCategoryIds,
+                ));
+                if ($triviaCategoryIds === []) {
+                    $triviaCategoryIds = $availableTriviaCategoryIds;
+                }
             }
             $channels = $discordApi->botGuildChannels($serverId);
 
             return response()->json([
                 'server' => $guild,
                 'config' => [
-                    'locale' => in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE,
+                    'locale' => $locale,
                     'reddit_odd_memes' => (int) ($configValue('reddit_odd_memes') ?? 5),
                     'subreddits_memes' => preg_split('/[,\r\n]/', $configValue('subreddits_memes') ?? '', -1, PREG_SPLIT_NO_EMPTY) ?: [],
                     'autoban_del_period' => (int) ($configValue('autoban_del_period') ?? self::DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES),
@@ -126,7 +137,7 @@ class AdminConfigController extends Controller
                 'welcome_message' => ['nullable', 'string', 'max:'.self::MAX_WELCOME_MESSAGE],
                 'trivia_categories' => ['required', 'array', 'min:1', 'max:100'],
                 'trivia_categories.*' => ['required', 'string', 'uuid', 'distinct'],
-                'trivia_questions_per_day' => ['required', 'integer', 'between:1,3'],
+                'trivia_questions_per_day' => ['required', 'integer', 'between:1,5'],
                 'admin_channels' => ['sometimes', 'array', 'max:500'],
                 'admin_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
                 'forbidden_channels' => ['sometimes', 'array', 'max:500'],
@@ -211,6 +222,48 @@ class AdminConfigController extends Controller
         } catch (Throwable $error) {
             Log::error('Could not save server configuration.', ['server_id' => $serverId, 'message' => $error->getMessage()]);
             return response()->json(['message' => 'Could not save server configuration.'], 500);
+        }
+    }
+
+    public function resetTriviaAnswers(Request $request, string $serverId, DashboardGuilds $dashboardGuilds): JsonResponse
+    {
+        [$guilds, $error] = $this->verifiedGuilds($request, $dashboardGuilds);
+        if ($error) return $error;
+        if (! collect($guilds)->contains('id', $serverId)) {
+            return response()->json(['message' => 'You no longer have permission to manage this server.'], 403);
+        }
+
+        try {
+            $identity = $request->attributes->get('dashboard.session')['identity'];
+            $deletedAnswers = TriviaMember::resetForServer($serverId);
+            $botId = (string) config('services.discord.bot_id');
+
+            if ($botId === '' || $botId === '0') {
+                Log::warning('Trivia answers were reset but the leaderboard cache could not be cleared because the Discord bot ID is missing.', [
+                    'server_id' => $serverId,
+                    'deleted_answers' => $deletedAnswers,
+                ]);
+            } else {
+                try {
+                    Redis::connection('bot_cache')->del('discord-bot:trivia-rank:v1:'.$botId.':'.$serverId);
+                } catch (Throwable $cacheError) {
+                    Log::warning('Trivia answers were reset but the leaderboard cache could not be cleared.', [
+                        'server_id' => $serverId,
+                        'message' => $cacheError->getMessage(),
+                    ]);
+                }
+            }
+
+            Log::info('Trivia answers reset from dashboard.', [
+                'server_id' => $serverId,
+                'discord_user_id' => (string) $identity['id'],
+                'deleted_answers' => $deletedAnswers,
+            ]);
+
+            return response()->json(['ok' => true, 'deleted_answers' => $deletedAnswers]);
+        } catch (Throwable $error) {
+            Log::error('Could not reset trivia answers.', ['server_id' => $serverId, 'message' => $error->getMessage()]);
+            return response()->json(['message' => 'Could not reset trivia answers.'], 500);
         }
     }
 

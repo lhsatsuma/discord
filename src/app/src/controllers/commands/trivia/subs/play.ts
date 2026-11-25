@@ -25,7 +25,8 @@ import model_trivia_categories from '#models/trivia_categories.ts';
 import model_trivia_members from '#models/trivia_members.ts';
 import type {triviaQuestionRecord} from '#models/trivia_members.ts';
 
-const QUESTION_TIMER_MS = 30_000;
+const QUESTION_TIMER_MS = 60_000;
+const MINIMUM_SCORING_SECONDS = 5;
 const difficultyNames = ['EASY', 'MEDIUM', 'HARD', 'VERY_HARD', 'IMPOSSIBLE'] as const;
 
 export default class trivia_play extends appSubCommandBase
@@ -114,6 +115,16 @@ export default class trivia_play extends appSubCommandBase
             });
             return true;
         }
+        if (round.status === 'difficulty_unavailable') {
+            const availableDifficulties = round.availableDifficulties
+                .map(level => lang.translate(this.parentName, `DIFFICULTY_${difficultyNames[level - 1]}`))
+                .join(', ');
+            await interaction.reply({
+                content: lang.translate(this.parentName, 'PLAY_DIFFICULTY_UNAVAILABLE', [availableDifficulties]),
+                flags: [MessageFlags.Ephemeral]
+            });
+            return true;
+        }
         if (round.status === 'no_questions') {
             await interaction.reply({
                 content: lang.translate(this.parentName, 'PLAY_NO_QUESTIONS'),
@@ -148,7 +159,8 @@ export default class trivia_play extends appSubCommandBase
 
         await interaction.reply({embeds: [embed], components: [row], flags: [MessageFlags.Ephemeral]});
         const message = await interaction.fetchReply();
-        const startedAt = Date.now();
+        const startedAt = message.createdTimestamp;
+        const remainingTimerMs = Math.max(0, QUESTION_TIMER_MS - (Date.now() - startedAt));
 
         let answerInteraction: StringSelectMenuInteraction;
         try {
@@ -156,7 +168,7 @@ export default class trivia_play extends appSubCommandBase
                 componentType: ComponentType.StringSelect,
                 filter: component => component.user.id === interaction.user.id
                     && component.customId === `trivia-answer:${question.progress_id}`,
-                time: QUESTION_TIMER_MS,
+                time: remainingTimerMs,
             });
         } catch {
             const timeoutEmbed = new EmbedBuilder()
@@ -184,11 +196,12 @@ export default class trivia_play extends appSubCommandBase
         const secondsSpent = Math.max(0, Number(((Date.now() - startedAt) / 1000).toFixed(2)));
         const correct = selectedAnswer.correct_answer;
         const timerSeconds = QUESTION_TIMER_MS / 1000;
-        const scoringSeconds = Math.max(1, secondsSpent);
+        const scoringSeconds = Math.max(MINIMUM_SCORING_SECONDS, secondsSpent);
         const timeRemaining = Math.max(0, timerSeconds - scoringSeconds);
-        const basePoints = question.weight / 2;
-        const speedBonus = basePoints * (timeRemaining / timerSeconds);
-        const points = correct ? Math.min(question.weight, Math.round(basePoints + speedBonus)) : 0;
+        const maximumPoints = question.difficulty * 100;
+        const basePoints = maximumPoints / 2;
+        const speedBonus = basePoints * (timeRemaining / (timerSeconds - MINIMUM_SCORING_SECONDS));
+        const points = correct ? Math.min(maximumPoints, Math.round(basePoints + speedBonus)) : 0;
         const saved = await new model_trivia_members().saveAnswer({
             progressId: question.progress_id,
             server: interaction.guildId ?? '',
@@ -215,7 +228,7 @@ export default class trivia_play extends appSubCommandBase
                 inline: true,
             }, {
                 name: lang.translate(this.parentName, 'PLAY_MAX_POINTS'),
-                value: String(question.weight),
+                value: String(maximumPoints),
                 inline: true,
             });
 

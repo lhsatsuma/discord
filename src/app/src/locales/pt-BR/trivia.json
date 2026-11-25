@@ -8,7 +8,7 @@
   "HELP_DAILY_LIMIT_TITLE": "Limite diário",
   "HELP_DAILY_LIMIT_VALUE": "**{0} pergunta(s)** por dia",
   "HELP_TIMER_TITLE": "Tempo para responder",
-  "HELP_TIMER_VALUE": "Cada pergunta tem um **temporizador de 30 segundos**.",
+  "HELP_TIMER_VALUE": "Cada pergunta tem um **temporizador de 60 segundos**.",
   "HELP_CATEGORIES_TITLE": "Categorias disponíveis neste servidor",
   "HELP_NO_CATEGORIES": "Nenhuma categoria está ativa. Peça a um administrador para configurar a Trivia no dashboard.",
   "HELP_DIFFICULTIES_TITLE": "Dificuldades",
@@ -17,8 +17,8 @@
   "HELP_DIFFICULTY_3": "**3 — Difícil:** Testa conhecimentos mais detalhados.",
   "HELP_DIFFICULTY_4": "**4 — Muito difícil:** Perguntas desafiadoras sobre detalhes específicos.",
   "HELP_DIFFICULTY_5": "**5 — Impossível:** As perguntas mais difíceis da coleção.",
-  "HELP_WEIGHT_TITLE": "Peso da pergunta",
-  "HELP_WEIGHT_VALUE": "Uma resposta correta sempre vale pelo menos metade do peso da pergunta. A outra metade é um bônus de velocidade baseado no tempo restante: **arredondar(pontos base + pontos base × tempo restante / 30)**. Para o cálculo, o tempo mínimo considerado é de 1 segundo para compensar a latência do Discord e da rede.",
+  "HELP_POINTS_TITLE": "Pontuação",
+  "HELP_POINTS_VALUE": "A pontuação máxima é a dificuldade multiplicada por 100. Uma resposta correta recebe pelo menos metade desse máximo, mais um bônus de velocidade baseado no tempo restante. O tempo mínimo de 5 segundos permite que uma resposta rápida alcance a pontuação máxima; o bônus de velocidade varia ao longo dos 50 segundos restantes. O cronômetro começa assim que a pergunta é enviada.",
   "HELP_SERVER_ONLY": "A Trivia só pode ser usada dentro de um servidor.",
   "SUBCMD_PLAY_NAME": "jogar",
   "SUBCMD_PLAY_DESCRIPTION": "Responda a uma pergunta de trivia",
@@ -35,7 +35,7 @@
   "PLAY_QUESTION_TITLE": "Pergunta de trivia",
   "PLAY_CATEGORY": "Categoria",
   "PLAY_DIFFICULTY": "Dificuldade",
-  "PLAY_TIMER": "Você tem 30 segundos para responder.",
+  "PLAY_TIMER": "Você tem 60 segundos para responder.",
   "PLAY_TIMEOUT_TITLE": "O tempo acabou",
   "PLAY_TIMEOUT_DESCRIPTION": "Você não respondeu a tempo. Esta pergunta ainda conta para o limite de hoje.",
   "PLAY_CORRECT_ANSWER": "Resposta correta",
@@ -56,5 +56,6 @@
   "RANK_POINTS": "pontos",
   "RANK_EMPTY": "Ninguém ganhou pontos na trivia ainda. Seja o primeiro a jogar com **/trivia jogar**!",
   "PLAY_TOTAL_POINTS": "Pontos ganhos",
-  "PLAY_MAX_POINTS": "Pontuação máxima possível"
+  "PLAY_MAX_POINTS": "Pontuação máxima possível",
+  "PLAY_DIFFICULTY_UNAVAILABLE": "Não há mais perguntas sem resposta nessa dificuldade. Escolha uma dificuldade que ainda tenha perguntas: **{0}**."
 }

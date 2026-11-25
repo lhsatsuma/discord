@@ -14,6 +14,7 @@ Route::middleware('dashboard.jwt')->group(function (): void {
     Route::get('/servers', [AdminConfigController::class, 'servers']);
     Route::get('/servers/{serverId}/config', [AdminConfigController::class, 'show']);
     Route::put('/servers/{serverId}/config', [AdminConfigController::class, 'update']);
+    Route::delete('/servers/{serverId}/trivia/answers', [AdminConfigController::class, 'resetTriviaAnswers']);
     Route::get('/superadmin/status', [SuperadminController::class, 'status']);
     Route::get('/superadmin/logs/{process}', [SuperadminController::class, 'logs'])->where('process', 'app|scheduler');
 });

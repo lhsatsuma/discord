@@ -89,8 +89,8 @@ export default class trivia_help extends appSubCommandBase
                     inline: true
                 },
                 {
-                    name: lang.translate(this.parentName, 'HELP_WEIGHT_TITLE'),
-                    value: lang.translate(this.parentName, 'HELP_WEIGHT_VALUE'),
+                    name: lang.translate(this.parentName, 'HELP_POINTS_TITLE'),
+                    value: lang.translate(this.parentName, 'HELP_POINTS_VALUE'),
                     inline: true
                 }
             );
