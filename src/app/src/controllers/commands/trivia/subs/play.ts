@@ -25,7 +25,8 @@ import model_trivia_categories from '#models/trivia_categories.ts';
 import model_trivia_members from '#models/trivia_members.ts';
 import type {triviaQuestionRecord} from '#models/trivia_members.ts';
 
-const QUESTION_TIMER_MS = 30_000;
+const QUESTION_TIMER_MS = 60_000;
+const MINIMUM_SCORING_SECONDS = 5;
 const difficultyNames = ['EASY', 'MEDIUM', 'HARD', 'VERY_HARD', 'IMPOSSIBLE'] as const;
 
 export default class trivia_play extends appSubCommandBase
@@ -195,11 +196,11 @@ export default class trivia_play extends appSubCommandBase
         const secondsSpent = Math.max(0, Number(((Date.now() - startedAt) / 1000).toFixed(2)));
         const correct = selectedAnswer.correct_answer;
         const timerSeconds = QUESTION_TIMER_MS / 1000;
-        const scoringSeconds = Math.max(4, secondsSpent);
+        const scoringSeconds = Math.max(MINIMUM_SCORING_SECONDS, secondsSpent);
         const timeRemaining = Math.max(0, timerSeconds - scoringSeconds);
         const maximumPoints = question.difficulty * 100;
         const basePoints = maximumPoints / 2;
-        const speedBonus = basePoints * (timeRemaining / timerSeconds);
+        const speedBonus = basePoints * (timeRemaining / (timerSeconds - MINIMUM_SCORING_SECONDS));
         const points = correct ? Math.min(maximumPoints, Math.round(basePoints + speedBonus)) : 0;
         const saved = await new model_trivia_members().saveAnswer({
             progressId: question.progress_id,

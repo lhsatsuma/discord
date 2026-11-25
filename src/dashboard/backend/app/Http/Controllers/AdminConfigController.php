@@ -64,16 +64,26 @@ class AdminConfigController extends Controller
                 return $config?->long_value ?? $config?->value;
             };
             $locale = $configValue('locale');
+            $locale = in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE;
+            $availableTriviaCategoryIds = TriviaCategory::idsForLocale($locale);
             $triviaCategoryIds = json_decode($configValue('trivia_categories') ?? 'null', true);
             if (! is_array($triviaCategoryIds)) {
-                $triviaCategoryIds = TriviaCategory::idsForLocale(in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE);
+                $triviaCategoryIds = $availableTriviaCategoryIds;
+            } else {
+                $triviaCategoryIds = array_values(array_intersect(
+                    array_filter($triviaCategoryIds, 'is_string'),
+                    $availableTriviaCategoryIds,
+                ));
+                if ($triviaCategoryIds === []) {
+                    $triviaCategoryIds = $availableTriviaCategoryIds;
+                }
             }
             $channels = $discordApi->botGuildChannels($serverId);
 
             return response()->json([
                 'server' => $guild,
                 'config' => [
-                    'locale' => in_array($locale, self::SUPPORTED_LOCALES, true) ? $locale : self::DEFAULT_LOCALE,
+                    'locale' => $locale,
                     'reddit_odd_memes' => (int) ($configValue('reddit_odd_memes') ?? 5),
                     'subreddits_memes' => preg_split('/[,\r\n]/', $configValue('subreddits_memes') ?? '', -1, PREG_SPLIT_NO_EMPTY) ?: [],
                     'autoban_del_period' => (int) ($configValue('autoban_del_period') ?? self::DEFAULT_AUTOBAN_DELETE_PERIOD_MINUTES),

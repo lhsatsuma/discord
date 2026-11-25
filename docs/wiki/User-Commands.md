@@ -28,7 +28,7 @@ Birthday announcements are sent daily at 08:00 in the bot's configured time zone
 | `/trivia play` | Answer a random question at the difficulty you choose. |
 | `/trivia rank` | Show the server's top 10 players by total points. |
 
-Each question has a 30-second timer that starts as soon as the question is sent. Maximum points equal the difficulty multiplied by 100. A correct answer earns at least half that maximum, with a speed bonus based on time remaining. Scoring uses at least 4 seconds to account for network latency. The answer result shows points earned and the maximum possible points. Incorrect answers earn zero points, and the correct answer is not revealed after a wrong guess.
+Each question has a 60-second timer that starts as soon as the question is sent. Maximum points equal the difficulty multiplied by 100. A correct answer earns at least half that maximum, with a speed bonus that scales across the 50 seconds after the 10-second minimum scoring time. A fast answer can earn the full maximum. The answer result shows points earned and the maximum possible points. Incorrect answers earn zero points, and the correct answer is not revealed after a wrong guess.
 
 The server administrator chooses the question categories and a daily limit of 1 to 5 questions per player in the dashboard. Questions are random. If the selected difficulty has no unanswered questions but other difficulties still do, the bot lists the available difficulties. Previously answered questions can repeat only after the player has answered every question in the enabled categories across all difficulties.
 
