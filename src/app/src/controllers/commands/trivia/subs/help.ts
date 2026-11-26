@@ -83,7 +83,7 @@ export default class trivia_help extends appSubCommandBase
                 },
                 {
                     name: lang.translate(this.parentName, 'HELP_DIFFICULTIES_TITLE'),
-                    value: [1, 2, 3, 4, 5]
+                    value: [1, 2, 3]
                         .map(level => lang.translate(this.parentName, `HELP_DIFFICULTY_${level}`))
                         .join('\n'),
                     inline: true

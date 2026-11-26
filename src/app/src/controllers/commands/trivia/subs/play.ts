@@ -27,7 +27,7 @@ import type {triviaQuestionRecord} from '#models/trivia_members.ts';
 
 const QUESTION_TIMER_MS = 60_000;
 const MINIMUM_SCORING_SECONDS = 5;
-const difficultyNames = ['EASY', 'MEDIUM', 'HARD', 'VERY_HARD', 'IMPOSSIBLE'] as const;
+const difficultyNames = ['EASY', 'MEDIUM', 'HARD'] as const;
 
 export default class trivia_play extends appSubCommandBase
 {
@@ -56,7 +56,7 @@ export default class trivia_play extends appSubCommandBase
     {
         const serverId = interaction.guildId;
         const difficulty = interaction.options.getInteger('difficulty');
-        if (!serverId || !difficulty || difficulty < 1 || difficulty > 5) {
+        if (!serverId || !difficulty || difficulty < 1 || difficulty > 3) {
             await interaction.reply({
                 content: lang.translate('globals', 'CHANNEL_NOT_ALLOWED'),
                 flags: [MessageFlags.Ephemeral]
