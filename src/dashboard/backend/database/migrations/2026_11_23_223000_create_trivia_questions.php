@@ -17,9 +17,9 @@ return new class extends Migration
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
 			$table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->string('created_by')->default('SYSTEM');
-            $table->string('locale', 5);
             $table->uuid('category');
             $table->text('question');
+            $table->text('explanation');
             $table->integer('difficulty')->comment('1 - easy, 2 - medium, 3 - hard');
             $table->foreign('category')->references('id')->on('trivia_categorys');
         });

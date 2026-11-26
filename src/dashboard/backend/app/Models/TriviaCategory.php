@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['id', 'created_at', 'updated_at', 'created_by', 'short_description', 'description'])]
+#[Fillable(['id', 'created_at', 'updated_at', 'created_by', 'locale', 'short_description', 'description'])]
 class TriviaCategory extends Model
 {
     protected $table = 'trivia_categorys';
@@ -20,10 +20,8 @@ class TriviaCategory extends Model
     public static function catalog(): Collection
     {
         return static::query()
-            ->join('trivia_questions', 'trivia_questions.category', '=', 'trivia_categorys.id')
-            ->select('trivia_categorys.id', 'trivia_categorys.short_description', 'trivia_categorys.description', 'trivia_questions.locale')
-            ->distinct()
-            ->orderBy('trivia_questions.locale')
+            ->select('trivia_categorys.id', 'trivia_categorys.short_description', 'trivia_categorys.description', 'trivia_categorys.locale')
+            ->orderBy('trivia_categorys.locale')
             ->orderBy('trivia_categorys.description')
             ->get();
     }
@@ -32,7 +30,7 @@ class TriviaCategory extends Model
     public static function idsForLocale(string $locale): array
     {
         return static::query()
-            ->whereHas('questions', static fn ($questions) => $questions->where('locale', $locale))
+            ->where('locale', $locale)
             ->orderBy('description')
             ->pluck('id')
             ->map(static fn ($id): string => (string) $id)

@@ -142,8 +142,9 @@ export default class trivia_play extends appSubCommandBase
         const menu = new StringSelectMenuBuilder()
             .setCustomId(`trivia-answer:${question.progress_id}`)
             .setPlaceholder(lang.translate(this.parentName, 'PLAY_SELECT_ANSWER'))
-            .addOptions(question.alternatives.map(alternative => ({
-                label: alternative.description.slice(0, 100),
+            .addOptions(question.alternatives.map((alternative, index) => ({
+                label: lang.translate(this.parentName, 'PLAY_OPTION_NUMBER', [index + 1]),
+                description: alternative.description.slice(0, 100),
                 value: alternative.id,
             })));
         const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu);
@@ -153,7 +154,12 @@ export default class trivia_play extends appSubCommandBase
             .setDescription(question.question)
             .addFields(
                 {name: lang.translate(this.parentName, 'PLAY_CATEGORY'), value: question.category, inline: true},
-                {name: lang.translate(this.parentName, 'PLAY_DIFFICULTY'), value: difficulty, inline: true}
+                {name: lang.translate(this.parentName, 'PLAY_DIFFICULTY'), value: difficulty, inline: true},
+                ...question.alternatives.map((alternative, index) => ({
+                    name: lang.translate(this.parentName, 'PLAY_OPTION_NUMBER', [index + 1]),
+                    value: alternative.description.slice(0, 1024),
+                    inline: false,
+                }))
             )
             .setFooter({text: lang.translate(this.parentName, 'PLAY_TIMER')});
 
@@ -231,6 +237,22 @@ export default class trivia_play extends appSubCommandBase
                 value: String(maximumPoints),
                 inline: true,
             });
+
+        const answerFields = [];
+        if (!correct) {
+            answerFields.push({
+                name: lang.translate(this.parentName, 'PLAY_CORRECT_ANSWER'),
+                value: question.alternatives.find(alternative => alternative.correct_answer)?.description
+                    ?.slice(0, 1024) ?? lang.translate(this.parentName, 'PLAY_UNKNOWN_ANSWER'),
+                inline: false,
+            });
+        }
+        answerFields.push({
+            name: lang.translate(this.parentName, 'PLAY_EXPLANATION'),
+            value: question.explanation.slice(0, 1024) || lang.translate(this.parentName, 'PLAY_NO_EXPLANATION'),
+            inline: false,
+        });
+        resultEmbed.addFields(...answerFields);
 
         await interaction.editReply({embeds: [resultEmbed], components: []});
         const channel = interaction.channel;

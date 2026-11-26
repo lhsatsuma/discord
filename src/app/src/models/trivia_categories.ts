@@ -25,18 +25,16 @@ export default class model_trivia_categories extends model_base
         try {
             const result = categoryIds.length
                 ? await this.query(
-                    `SELECT DISTINCT categories.id, categories.short_description, categories.description
+                    `SELECT categories.id, categories.short_description, categories.description
                      FROM ${this.table} AS categories
-                     INNER JOIN trivia_questions AS questions ON questions.category = categories.id
-                     WHERE questions.locale = $1 AND categories.id = ANY($2::uuid[])
+                     WHERE categories.locale = $1 AND categories.id = ANY($2::uuid[])
                      ORDER BY categories.description`,
                     [locale, categoryIds]
                 )
                 : await this.query(
-                    `SELECT DISTINCT categories.id, categories.short_description, categories.description
+                    `SELECT categories.id, categories.short_description, categories.description
                      FROM ${this.table} AS categories
-                     INNER JOIN trivia_questions AS questions ON questions.category = categories.id
-                     WHERE questions.locale = $1
+                     WHERE categories.locale = $1
                      ORDER BY categories.description`,
                     [locale]
                 );
