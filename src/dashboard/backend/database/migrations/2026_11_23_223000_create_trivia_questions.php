@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('locale', 5);
             $table->uuid('category');
             $table->text('question');
+            $table->text('explanation');
             $table->integer('difficulty')->comment('1 - easy, 2 - medium, 3 - hard');
             $table->foreign('category')->references('id')->on('trivia_categorys');
         });

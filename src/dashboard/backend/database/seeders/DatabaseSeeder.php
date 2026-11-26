@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Seeder\TriviaSeederenUS261125;
-use Illuminate\Database\Seeder\TriviaSeederptBR261125;
+use Illuminate\Database\Seeders\TriviaSeederenUS261126;
+use Illuminate\Database\Seeders\TriviaSeederptBR261126;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(BotRecordsSeeder::class);
-        $this->call(TriviaSeederenUS261125::class);
-        $this->call(TriviaSeederptBR261125::class);
+        $this->call(TriviaSeederenUS261126::class);
+        $this->call(TriviaSeederptBR261126::class);
     }
 }
