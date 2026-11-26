@@ -35,6 +35,7 @@
   "PLAY_QUESTION_TITLE": "Pergunta de trivia",
   "PLAY_CATEGORY": "Categoria",
   "PLAY_DIFFICULTY": "Dificuldade",
+  "PLAY_OPTION_NUMBER": "Alternativa {0}",
   "PLAY_TIMER": "Você tem 60 segundos para responder.",
   "PLAY_TIMEOUT_TITLE": "O tempo acabou",
   "PLAY_TIMEOUT_DESCRIPTION": "Você não respondeu a tempo. Esta pergunta ainda conta para o limite de hoje.",

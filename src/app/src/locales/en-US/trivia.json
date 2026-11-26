@@ -35,6 +35,7 @@
   "PLAY_QUESTION_TITLE": "Trivia question",
   "PLAY_CATEGORY": "Category",
   "PLAY_DIFFICULTY": "Difficulty",
+  "PLAY_OPTION_NUMBER": "Option {0}",
   "PLAY_TIMER": "You have 60 seconds to answer.",
   "PLAY_TIMEOUT_TITLE": "Time is up",
   "PLAY_TIMEOUT_DESCRIPTION": "You did not answer in time. This question still counts toward today's limit.",

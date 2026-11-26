@@ -142,8 +142,9 @@ export default class trivia_play extends appSubCommandBase
         const menu = new StringSelectMenuBuilder()
             .setCustomId(`trivia-answer:${question.progress_id}`)
             .setPlaceholder(lang.translate(this.parentName, 'PLAY_SELECT_ANSWER'))
-            .addOptions(question.alternatives.map(alternative => ({
-                label: alternative.description.slice(0, 100),
+            .addOptions(question.alternatives.map((alternative, index) => ({
+                label: lang.translate(this.parentName, 'PLAY_OPTION_NUMBER', [index + 1]),
+                description: alternative.description.slice(0, 100),
                 value: alternative.id,
             })));
         const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu);
@@ -153,7 +154,12 @@ export default class trivia_play extends appSubCommandBase
             .setDescription(question.question)
             .addFields(
                 {name: lang.translate(this.parentName, 'PLAY_CATEGORY'), value: question.category, inline: true},
-                {name: lang.translate(this.parentName, 'PLAY_DIFFICULTY'), value: difficulty, inline: true}
+                {name: lang.translate(this.parentName, 'PLAY_DIFFICULTY'), value: difficulty, inline: true},
+                ...question.alternatives.map((alternative, index) => ({
+                    name: lang.translate(this.parentName, 'PLAY_OPTION_NUMBER', [index + 1]),
+                    value: alternative.description.slice(0, 1024),
+                    inline: false,
+                }))
             )
             .setFooter({text: lang.translate(this.parentName, 'PLAY_TIMER')});
 
