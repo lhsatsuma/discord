@@ -36,7 +36,7 @@ use Database\Seeders\Trivia261126\enUS\SportsAndLeisure\TriviaenUSSportsAndLeisu
 use Database\Seeders\Trivia261126\enUS\SportsAndLeisure\TriviaenUSSportsAndLeisurehard;
 
 
-class TriviaSeederenUS261126 extends Seeder
+class TriviaSeederptBR261126 extends Seeder
 {
     public function run(): void
     {

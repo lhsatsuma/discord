@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Seeders\TriviaSeederenUS261126;
-use Illuminate\Database\Seeders\TriviaSeederptBR261126;
 
 class DatabaseSeeder extends Seeder
 {
