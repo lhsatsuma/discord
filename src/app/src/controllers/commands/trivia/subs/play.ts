@@ -232,6 +232,22 @@ export default class trivia_play extends appSubCommandBase
                 inline: true,
             });
 
+        const answerFields = [];
+        if (!correct) {
+            answerFields.push({
+                name: lang.translate(this.parentName, 'PLAY_CORRECT_ANSWER'),
+                value: question.alternatives.find(alternative => alternative.correct_answer)?.description
+                    ?.slice(0, 1024) ?? lang.translate(this.parentName, 'PLAY_UNKNOWN_ANSWER'),
+                inline: false,
+            });
+        }
+        answerFields.push({
+            name: lang.translate(this.parentName, 'PLAY_EXPLANATION'),
+            value: question.explanation.slice(0, 1024) || lang.translate(this.parentName, 'PLAY_NO_EXPLANATION'),
+            inline: false,
+        });
+        resultEmbed.addFields(...answerFields);
+
         await interaction.editReply({embeds: [resultEmbed], components: []});
         const channel = interaction.channel;
         if (channel?.isSendable()) {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['id', 'created_at', 'updated_at', 'created_by', 'locale', 'category', 'question', 'difficulty'])]
+#[Fillable(['id', 'created_at', 'updated_at', 'created_by', 'category', 'question', 'explanation', 'difficulty'])]
 class TriviaQuestion extends Model
 {
     protected $table = 'trivia_questions';

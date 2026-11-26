@@ -39,6 +39,8 @@
   "PLAY_TIMEOUT_TITLE": "O tempo acabou",
   "PLAY_TIMEOUT_DESCRIPTION": "Você não respondeu a tempo. Esta pergunta ainda conta para o limite de hoje.",
   "PLAY_CORRECT_ANSWER": "Resposta correta",
+  "PLAY_EXPLANATION": "Explicação",
+  "PLAY_NO_EXPLANATION": "Não há explicação disponível para esta pergunta.",
   "PLAY_UNKNOWN_ANSWER": "Indisponível",
   "PLAY_CORRECT_TITLE": "Resposta correta!",
   "PLAY_WRONG_TITLE": "Não foi dessa vez",

@@ -39,6 +39,8 @@
   "PLAY_TIMEOUT_TITLE": "Time is up",
   "PLAY_TIMEOUT_DESCRIPTION": "You did not answer in time. This question still counts toward today's limit.",
   "PLAY_CORRECT_ANSWER": "Correct answer",
+  "PLAY_EXPLANATION": "Explanation",
+  "PLAY_NO_EXPLANATION": "No explanation is available for this question.",
   "PLAY_UNKNOWN_ANSWER": "Unavailable",
   "PLAY_CORRECT_TITLE": "Correct answer!",
   "PLAY_WRONG_TITLE": "Not quite",
