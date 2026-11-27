@@ -10,10 +10,11 @@ type Props = {
   onLogout: () => void
   onSuperadminStatus: () => void
   onSuperadminLogs: () => void
+  onSuperadminTrivia: () => void
   showHeader?: boolean
 }
 
-export function DashboardTemplate({ user, active, children, onHome, onLogout, onSuperadminStatus, onSuperadminLogs, showHeader = true }: Props) {
+export function DashboardTemplate({ user, active, children, onHome, onLogout, onSuperadminStatus, onSuperadminLogs, onSuperadminTrivia, showHeader = true }: Props) {
   const [superadminMenuOpen, setSuperadminMenuOpen] = useState(false)
   return <div className="app-shell">
     {showHeader && <header className="topbar">
@@ -30,6 +31,7 @@ export function DashboardTemplate({ user, active, children, onHome, onLogout, on
           {superadminMenuOpen && <div className="superadmin-dropdown" role="menu">
             <button type="button" role="menuitem" className={active === 'superadmin-status' ? 'selected' : ''} onClick={() => { setSuperadminMenuOpen(false); onSuperadminStatus() }}>Process status</button>
             <button type="button" role="menuitem" className={active === 'superadmin-logs' ? 'selected' : ''} onClick={() => { setSuperadminMenuOpen(false); onSuperadminLogs() }}>Bot logs</button>
+            <button type="button" role="menuitem" className={active === 'superadmin-trivia' ? 'selected' : ''} onClick={() => { setSuperadminMenuOpen(false); onSuperadminTrivia() }}>Trivia review</button>
           </div>}
         </div>}
       </nav>

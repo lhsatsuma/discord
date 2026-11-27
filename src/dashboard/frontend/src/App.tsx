@@ -9,6 +9,8 @@ import { LoginPage } from './pages/LoginPage'
 import { ServerOverviewPage } from './pages/ServerOverviewPage'
 import { SuperadminLogsPage } from './pages/SuperadminLogsPage'
 import { SuperadminStatusPage } from './pages/SuperadminStatusPage'
+import { SuperadminTriviaPage } from './pages/SuperadminTriviaPage'
+import { TriviaContentPage } from './pages/TriviaContentPage'
 import { LocaleSettingsPage } from './pages/settings/LocaleSettingsPage'
 import { AutoModerationPage } from './pages/settings/AutoModerationPage'
 import { ChannelRulesPage } from './pages/settings/ChannelRulesPage'
@@ -68,14 +70,17 @@ function App() {
   const callbackProcessed = useRef(false)
   const loadedServersToken = useRef('')
   const loadedConfigServerId = useRef('')
+  const triviaContentRoute = path.match(/^\/servers\/(\d+)\/trivia\/content\/?$/)
   const serverRoute = path.match(/^\/servers\/(\d+)(?:\/(autoban|memes|channels|voice|welcome|locale|trivia))?\/?$/)
-  const isServerRoute = serverRoute !== null
-  const serverId = serverRoute?.[1] || ''
+  const isServerRoute = serverRoute !== null || triviaContentRoute !== null
+  const serverId = serverRoute?.[1] || triviaContentRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
     : path === '/home' ? 'home'
       : path === '/superadmin/status' ? 'superadmin-status'
         : path === '/superadmin/logs' ? 'superadmin-logs'
-      : serverRoute ? (serverRoute[2] as SettingGroup | undefined) || 'server'
+            : path === '/superadmin/trivia/review' ? 'superadmin-trivia'
+              : triviaContentRoute ? 'trivia-content'
+        : serverRoute ? (serverRoute[2] as SettingGroup | undefined) || 'server'
         : 'login'
 
   const navigate = useCallback((to: string) => {
@@ -382,6 +387,7 @@ function App() {
   }
 
   const openGroup = (group: SettingGroup) => navigate(`/servers/${serverId}/${group}`)
+  const manageTriviaQuestions = () => navigate(`/servers/${serverId}/trivia/content`)
   const settingsProps = {
     server, config, loading, saving, error, saveError, notice,
     onBack: () => navigate(`/servers/${serverId}`), onDismissError: () => setError(''),
@@ -400,6 +406,7 @@ function App() {
     onLogout={logout}
     onSuperadminStatus={() => navigate('/superadmin/status')}
     onSuperadminLogs={() => navigate('/superadmin/logs')}
+    onSuperadminTrivia={() => navigate('/superadmin/trivia/review')}
   >
     {!isVerifyingSession && <>
     {page === 'login' && <LoginPage error={!token ? error : ''}/>}
@@ -420,9 +427,11 @@ function App() {
     {page === 'voice' && <VoiceUpdatesPage {...settingsProps}/>}
     {page === 'welcome' && <WelcomeMessagePage {...settingsProps} channels={channels}/>}
     {page === 'locale' && <LocaleSettingsPage {...settingsProps}/>}
-    {page === 'trivia' && <TriviaSettingsPage {...settingsProps} categories={triviaCategories} onResetAnswers={resetTriviaAnswers}/>}
+    {page === 'trivia' && <TriviaSettingsPage {...settingsProps} categories={triviaCategories} onResetAnswers={resetTriviaAnswers} onManageQuestions={manageTriviaQuestions}/>}
+    {page === 'trivia-content' && serverId && <TriviaContentPage token={token} serverId={serverId} onBack={() => navigate(`/servers/${serverId}/trivia`)}/>}
     {page === 'superadmin-status' && (user?.is_superadmin ? <SuperadminStatusPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     {page === 'superadmin-logs' && (user?.is_superadmin ? <SuperadminLogsPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
+    {page === 'superadmin-trivia' && (user?.is_superadmin ? <SuperadminTriviaPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     </>}
     {isVerifyingSession && (sessionCheckError
       ? <div className="session-check-state"><ErrorAlert message={sessionCheckError} className="page-alert"/><button type="button" className="back-button" onClick={() => setSessionCheckAttempt(attempt => attempt + 1)}>Retry session check</button></div>

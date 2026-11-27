@@ -6,9 +6,9 @@ import { Icon } from '../../components/Icon'
 import { SaveBar } from '../../components/SaveBar'
 import { ServerSettingsLayout } from '../../components/ServerSettingsLayout'
 
-type Props = ServerSettingsPageProps & { categories: TriviaCategory[]; onResetAnswers: () => Promise<number> }
+type Props = ServerSettingsPageProps & { categories: TriviaCategory[]; onResetAnswers: () => Promise<number>; onManageQuestions: () => void }
 
-export function TriviaSettingsPage({ server, config, categories, loading, saving, error, saveError, notice, onBack, onDismissError, onConfigChange, onSave, onResetAnswers }: Props) {
+export function TriviaSettingsPage({ server, config, categories, loading, saving, error, saveError, notice, onBack, onDismissError, onConfigChange, onSave, onResetAnswers, onManageQuestions }: Props) {
   const [confirmReset, setConfirmReset] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [resetError, setResetError] = useState('')
@@ -83,6 +83,10 @@ export function TriviaSettingsPage({ server, config, categories, loading, saving
           Reset trivia answers
         </button>
       </div>
+    </section>
+    <section className="settings-card trivia-content-link-card">
+      <div className="card-heading"><span className="card-icon blue"><Icon name="spark"/></span><div><h2>Question library</h2><p>Submit new trivia categories and questions for system superadmin review.</p></div></div>
+      <div className="trivia-reset-content"><button type="button" className="save-button" onClick={onManageQuestions}>Manage question submissions</button></div>
     </section>
     <SaveBar saving={saving} saveError={saveError} notice={notice} onSave={onSave}/>
     {confirmReset && <ConfirmationModal

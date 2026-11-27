@@ -27,14 +27,16 @@ export default class model_trivia_categories extends model_base
                 ? await this.query(
                     `SELECT categories.id, categories.short_description, categories.description
                      FROM ${this.table} AS categories
-                     WHERE categories.locale = $1 AND categories.id = ANY($2::uuid[])
+                     WHERE categories.locale = $1 AND categories.approved = true AND categories.id = ANY($2::uuid[])
+                       AND EXISTS (SELECT 1 FROM trivia_questions AS questions WHERE questions.category = categories.id AND questions.approved = true)
                      ORDER BY categories.description`,
                     [locale, categoryIds]
                 )
                 : await this.query(
                     `SELECT categories.id, categories.short_description, categories.description
                      FROM ${this.table} AS categories
-                     WHERE categories.locale = $1
+                     WHERE categories.locale = $1 AND categories.approved = true
+                       AND EXISTS (SELECT 1 FROM trivia_questions AS questions WHERE questions.category = categories.id AND questions.approved = true)
                      ORDER BY categories.description`,
                     [locale]
                 );
