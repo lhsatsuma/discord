@@ -6,6 +6,7 @@ import { ApiError, api, SESSION_EXPIRED_EVENT } from './lib/api'
 import { CallbackPage } from './pages/CallbackPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
+import { MarkdownPage } from './pages/MarkdownPage'
 import { ServerOverviewPage } from './pages/ServerOverviewPage'
 import { SuperadminLogsPage } from './pages/SuperadminLogsPage'
 import { SuperadminStatusPage } from './pages/SuperadminStatusPage'
@@ -76,12 +77,15 @@ function App() {
   const serverId = serverRoute?.[1] || triviaContentRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
     : path === '/home' ? 'home'
+      : path === '/privacy-policy' ? 'privacy-policy'
+        : path === '/terms-of-service' ? 'terms-of-service'
       : path === '/superadmin/status' ? 'superadmin-status'
         : path === '/superadmin/logs' ? 'superadmin-logs'
             : path === '/superadmin/trivia/review' ? 'superadmin-trivia'
               : triviaContentRoute ? 'trivia-content'
         : serverRoute ? (serverRoute[2] as SettingGroup | undefined) || 'server'
         : 'login'
+  const isPublicDocument = page === 'privacy-policy' || page === 'terms-of-service'
 
   const navigate = useCallback((to: string) => {
     window.history.pushState({}, '', to)
@@ -119,7 +123,7 @@ function App() {
 
   useLayoutEffect(() => {
     // Discord must be able to return to this public route to finish OAuth login.
-    if (path === '/auth/callback') return
+    if (path === '/auth/callback' || isPublicDocument) return
 
     if (path.startsWith('/superadmin/') && sessionVerified && user && !user.is_superadmin) {
       window.history.replaceState({}, '', '/home')
@@ -148,7 +152,7 @@ function App() {
         setServer(null)
       })
     }
-  }, [path, token, user, sessionVerified])
+  }, [path, token, user, sessionVerified, isPublicDocument])
 
   useEffect(() => {
     if (path !== '/auth/callback' || callbackProcessed.current) return
@@ -243,6 +247,7 @@ function App() {
   }, [path])
 
   useEffect(() => {
+    if (isPublicDocument) return
     if (!token) {
       setValidatedToken('')
       setSessionCheckError('')
@@ -271,7 +276,7 @@ function App() {
         }
       })
     return () => { active = false }
-  }, [token, validatedToken, sessionCheckAttempt, expireSession])
+  }, [token, validatedToken, sessionCheckAttempt, expireSession, isPublicDocument])
 
   useEffect(() => {
     if (page !== 'home' || !sessionVerified || !token || loadedServersToken.current === token) return
@@ -396,7 +401,7 @@ function App() {
 
   if (page === 'callback') return <CallbackPage/>
 
-  const isVerifyingSession = Boolean(token && page !== 'login' && !sessionVerified)
+  const isVerifyingSession = Boolean(token && page !== 'login' && !isPublicDocument && !sessionVerified)
 
   return <DashboardTemplate
     user={user}
@@ -410,6 +415,8 @@ function App() {
   >
     {!isVerifyingSession && <>
     {page === 'login' && <LoginPage error={!token ? error : ''}/>}
+    {page === 'privacy-policy' && <MarkdownPage document="privacy-policy"/>}
+    {page === 'terms-of-service' && <MarkdownPage document="terms-of-service"/>}
     {page === 'home' && <HomePage
       user={user}
       servers={servers}

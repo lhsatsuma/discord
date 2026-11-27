@@ -22,6 +22,29 @@
 .footer-status { display:flex; align-items:center; gap:7px; margin-left:36px; }
 .footer-status i,.save-bar>span i { width:6px; height:6px; border-radius:50%; background:#53b98a; box-shadow:0 0 0 3px #e2f5ec; }
 .footer-right { margin-left:auto; }
+.footer-legal,.login-legal-links { display:flex; align-items:center; gap:14px; }
+.footer-legal { margin-left:24px; }
+.footer-legal a,.login-legal-links a { color:#969baa; text-decoration:none; }
+.footer-legal a:hover,.login-legal-links a:hover { color:#a99aff; text-decoration:underline; }
+.login-legal-links { justify-content:center; margin-top:17px; font-size:11px; }
+.markdown-page { width:min(920px,100%); margin:0 auto; }
+.markdown-page .page-heading { margin-bottom:22px; }
+.markdown-back { display:flex; align-items:center; gap:7px; text-decoration:none; }
+.markdown-document { padding:30px clamp(20px,5vw,52px); border:1px solid #30343f; border-radius:12px; background:#1b1e26; color:#c4c9d4; font-size:14px; line-height:1.8; overflow-wrap:anywhere; }
+.markdown-document h2 { margin:34px 0 12px; padding-bottom:8px; border-bottom:1px solid #30343f; color:#f0f1f6; font:700 22px/1.4 'Manrope',sans-serif; }
+.markdown-document h3 { margin:27px 0 10px; color:#e7e9ef; font:700 17px/1.4 'Manrope',sans-serif; }
+.markdown-document h4 { margin:22px 0 8px; color:#e7e9ef; font:700 15px/1.4 'Manrope',sans-serif; }
+.markdown-document p { margin:0 0 15px; }
+.markdown-document p:last-child { margin-bottom:0; }
+.markdown-document ul,.markdown-document ol { display:grid; gap:9px; margin:0 0 18px; padding-left:24px; }
+.markdown-document li { padding-left:3px; }
+.markdown-document strong { color:#f0f1f6; }
+.markdown-document a,.markdown-document-links a { color:#b5aaff; text-underline-offset:3px; }
+.markdown-document a:hover,.markdown-document-links a:hover { color:#d1c9ff; }
+.markdown-document code { padding:2px 5px; border-radius:4px; color:#d4ccff; background:#27243b; font:12px ui-monospace,Consolas,monospace; }
+.markdown-document blockquote { margin:15px 0 20px; padding:12px 15px; border-left:3px solid #806ee4; border-radius:0 6px 6px 0; background:#211f30; color:#d1cced; }
+.markdown-document hr { height:1px; margin:24px 0; border:0; background:#30343f; }
+.markdown-document-links { display:flex; justify-content:flex-end; padding:18px 4px; font-size:13px; }
 .login-layout { min-height:590px; padding:52px 4.2% 34px; display:grid; grid-template-columns:1fr 390px; column-gap:9%; align-items:center; position:relative; }
 .eyebrow { display:flex; align-items:center; gap:10px; color:#8d82ca; font-size:9px; font-weight:700; letter-spacing:1.55px; }
 .eyebrow-line { width:21px; height:1px; background:#8876e8; }
@@ -376,4 +399,8 @@
   .trivia-import-ready { align-items:flex-start; flex-direction:column; }
   .trivia-review-title { flex-direction:column; gap:8px; }
   .trivia-review-meta { display:grid; grid-template-columns:1fr; }
+  .footer { align-items:flex-start; }
+  .footer-legal { width:100%; order:3; margin:4px 0 0; }
+  .footer-status { margin-left:auto; }
+  .markdown-document { padding:22px 18px; font-size:13px; }
 }
