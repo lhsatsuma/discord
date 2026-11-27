@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(BotRecordsSeeder::class);
-        $this->call(TriviaSeederenUS261126::class);
-        $this->call(TriviaSeederptBR261126::class);
+        $this->call(TriviaSeederenUS261127::class);
+        $this->call(TriviaSeederptBR261127::class);
     }
 }
