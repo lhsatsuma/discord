@@ -37,7 +37,7 @@ Run `npm run app` and `npm run scheduler` from `src/app/` as separate long-runni
 - [Superadministrator commands](docs/wiki/Superadministrator-Commands.md)
 - [Administrator commands and dashboard guide](docs/wiki/Admin-Commands.md)
 - [User commands](docs/wiki/User-Commands.md)
-- [Privacy Policy](PRIVACY_POLICY.md)
-- [Terms of Service](TERMS_OF_SERVICE.md)
+- [Privacy Policy](src/dashboard/frontend/src/policies/PRIVACY_POLICY.md)
+- [Terms of Service](src/dashboard/frontend/src/policies/TERMS_OF_SERVICE.md)
 
 For community support, join the [official Discord server](https://discord.gg/mwvFcqPUmZ).
