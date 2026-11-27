@@ -96,11 +96,30 @@ class SuperadminController extends Controller
                 'questions' => TriviaQuestion::query()
                     ->where('approved', false)
                     ->with([
-                        'category:id,locale,description,approved',
+                        'triviaCategory:id,locale,description,approved',
                         'alternatives:id,question,description,correct_answer',
                     ])
                     ->orderBy('created_at')
-                    ->get(['id', 'created_by', 'created_at', 'category', 'question', 'difficulty', 'explanation']),
+                    ->get(['id', 'created_by', 'created_at', 'category', 'question', 'difficulty', 'explanation'])
+                    ->map(static fn (TriviaQuestion $question): array => [
+                        'id' => (string) $question->id,
+                        'created_by' => (string) $question->created_by,
+                        'created_at' => $question->created_at,
+                        'question' => (string) $question->question,
+                        'difficulty' => (int) $question->difficulty,
+                        'explanation' => $question->explanation,
+                        'category' => $question->triviaCategory ? [
+                            'id' => (string) $question->triviaCategory->id,
+                            'locale' => (string) $question->triviaCategory->locale,
+                            'description' => (string) $question->triviaCategory->description,
+                            'approved' => (bool) $question->triviaCategory->approved,
+                        ] : null,
+                        'alternatives' => $question->alternatives->map(static fn (TriviaAlternative $alternative): array => [
+                            'id' => (string) $alternative->id,
+                            'description' => (string) $alternative->description,
+                            'correct_answer' => (bool) $alternative->correct_answer,
+                        ])->all(),
+                    ])->all(),
             ]);
         } catch (Throwable $error) {
             Log::error('Could not load trivia approval queue.', ['message' => $error->getMessage()]);
@@ -161,8 +180,8 @@ class SuperadminController extends Controller
         if ($response = $this->authorizeSuperadmin($request)) return $response;
 
         try {
-            $question = TriviaQuestion::query()->with(['category', 'alternatives'])->findOrFail($questionId);
-            if (! $question->category?->approved) {
+            $question = TriviaQuestion::query()->with(['triviaCategory', 'alternatives'])->findOrFail($questionId);
+            if (! $question->triviaCategory?->approved) {
                 return response()->json(['message' => 'Approve the question category before approving this question.'], 409);
             }
             if ($question->alternatives->count() !== 4 || $question->alternatives->where('correct_answer', true)->count() !== 1) {

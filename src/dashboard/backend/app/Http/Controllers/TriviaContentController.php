@@ -23,12 +23,16 @@ class TriviaContentController extends Controller
         if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) return $response;
 
         try {
+            $userId = (string) $request->attributes->get('dashboard.session')['identity']['id'];
             return response()->json([
                 'categories' => TriviaCategory::query()
-                    ->where('approved', true)
+                    ->where(static function ($query) use ($userId): void {
+                        $query->where('approved', true)
+                            ->orWhere(static fn ($pending) => $pending->where('approved', false)->where('created_by', $userId));
+                    })
                     ->orderBy('locale')
                     ->orderBy('description')
-                    ->get(['id', 'locale', 'short_description', 'description']),
+                    ->get(['id', 'locale', 'short_description', 'description', 'approved']),
             ]);
         } catch (Throwable $error) {
             Log::error('Could not load trivia categories for dashboard submissions.', [
@@ -141,15 +145,18 @@ class TriviaContentController extends Controller
         try {
             $userId = (string) $request->attributes->get('dashboard.session')['identity']['id'];
             $categoryIds = array_values(array_unique(array_map(static fn (array $question): string => (string) $question['category'], $questions)));
-            $approvedCategoryIds = TriviaCategory::query()
-                ->where('approved', true)
+            $availableCategoryIds = TriviaCategory::query()
                 ->whereIn('id', $categoryIds)
+                ->where(static function ($query) use ($userId): void {
+                    $query->where('approved', true)
+                        ->orWhere(static fn ($pending) => $pending->where('approved', false)->where('created_by', $userId));
+                })
                 ->pluck('id')
                 ->map(static fn ($id): string => (string) $id)
                 ->all();
 
-            if (array_diff($categoryIds, $approvedCategoryIds) !== []) {
-                throw ValidationException::withMessages(['category' => 'Choose an approved trivia category.']);
+            if (array_diff($categoryIds, $availableCategoryIds) !== []) {
+                throw ValidationException::withMessages(['category' => 'Choose an approved category or one of your pending category submissions.']);
             }
 
             foreach ($questions as $index => $question) {
