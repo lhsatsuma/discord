@@ -18,17 +18,29 @@ use Throwable;
 
 class DashboardAuthController extends Controller
 {
+    public function publicConfig(): JsonResponse
+    {
+        return response()->json([
+            'links' => [
+                'bot_invite' => $this->httpsUrl(config('services.discord.bot_invite_url')),
+                'support_invite' => $this->httpsUrl(config('services.discord.support_invite_url')),
+            ],
+        ]);
+    }
+
     public function redirect(DiscordApi $discordApi)
     {
         $clientId = (string) config('services.discord.client_id');
         $redirectUri = (string) config('services.discord.redirect');
         if ($clientId === '' || $redirectUri === '') {
             Log::error('Discord OAuth is missing client ID or callback URL.');
+
             return Redirect::to($this->frontendUrl().'/login?error=oauth_unavailable');
         }
 
         $state = Str::random(48);
         Cache::put('dashboard:oauth-state:'.$state, true, now()->addMinutes(5));
+
         return Redirect::away($discordApi->authorizationUrl($state));
     }
 
@@ -37,11 +49,13 @@ class DashboardAuthController extends Controller
         try {
             $data = $request->validate(['code' => ['required', 'string'], 'state' => ['required', 'string']]);
             [$identity, $token] = $this->exchange($data['code'], $data['state'], $jwt, $discordApi, $dashboardGuilds, $dashboardSuperadmin);
+
             return response()->json(['token' => $token, 'user' => $identity]);
         } catch (ValidationException $error) {
             throw $error;
         } catch (Throwable $error) {
             Log::warning('Discord OAuth code exchange failed.', ['message' => $error->getMessage()]);
+
             return response()->json(['message' => 'Discord login could not be completed. Please try again.'], 401);
         }
     }
@@ -78,12 +92,14 @@ class DashboardAuthController extends Controller
         $session = $request->attributes->get('dashboard.session');
         $identity = $session['identity'];
         $identity['is_superadmin'] = $dashboardSuperadmin->isUser((string) $identity['id']);
+
         return response()->json(['user' => $identity]);
     }
 
     public function logout(Request $request, DashboardJwt $jwt): JsonResponse
     {
         $jwt->revoke((string) $request->attributes->get('dashboard.token'));
+
         return response()->json(['ok' => true]);
     }
 
@@ -113,11 +129,24 @@ class DashboardAuthController extends Controller
             isset($user['global_name']) ? (string) $user['global_name'] : null,
             $identity['avatar']
         );
+
         return [$identity, $jwt->issue($identity, $tokenResponse, $guilds)];
     }
 
     private function frontendUrl(): string
     {
         return rtrim((string) config('services.discord.frontend'), '/');
+    }
+
+    private function httpsUrl(mixed $value): ?string
+    {
+        $url = trim((string) $value);
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        if ($url === '' || filter_var($url, FILTER_VALIDATE_URL) === false || strtolower((string) $scheme) !== 'https') {
+            return null;
+        }
+
+        return $url;
     }
 }

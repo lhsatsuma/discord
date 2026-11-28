@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react'
 import type { Server, User } from '../types/dashboard'
 import { ErrorAlert } from '../components/ErrorAlert'
 import { Icon } from '../components/Icon'
 import { PageHeading } from '../components/PageHeading'
+import { getDashboardPublicLinks } from '../lib/publicConfig'
 
 type Props = {
   user: User | null
@@ -13,11 +15,21 @@ type Props = {
 }
 
 export function HomePage({ user, servers, loading, error, onDismissError, onOpenServer }: Props) {
+  const [botInviteUrl, setBotInviteUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+    getDashboardPublicLinks()
+      .then(links => { if (active) setBotInviteUrl(links.bot_invite) })
+      .catch(reason => console.warn('Could not load the bot invite link.', reason))
+    return () => { active = false }
+  }, [])
+
   return <>
     <PageHeading eyebrow="YOUR WORKSPACE" title={<>Good to see you, <span>{user?.username?.split(' ')[0] || 'admin'}.</span></>} description="Choose a server to get started with its settings."/>
     <ErrorAlert message={error} onDismiss={onDismissError} className="page-alert"/>
     {loading ? <div className="loading-state"><span className="spinner"/> Loading your dashboard…</div> : <>
-      <div className="section-topline"><span className="section-title">Servers you manage <span>{servers.length.toString().padStart(2, '0')}</span></span><span className="section-hint"><Icon name="shield" size={14}/> Verified with Discord</span></div>
+      <div className="section-topline"><span className="section-title">Servers you manage <span>{servers.length.toString().padStart(2, '0')}</span></span><div className="home-list-actions"><span className="section-hint"><Icon name="shield" size={14}/> Verified with Discord</span>{botInviteUrl && <a className="invite-bot-link" href={botInviteUrl} target="_blank" rel="noreferrer"><Icon name="discord" size={15}/> Invite bot</a>}</div></div>
       {servers.length ? <div className="server-grid">{servers.map((server, index) => <button className="server-card" key={server.id} onClick={() => onOpenServer(server)}>
         <span className={`server-avatar tint-${index % 5}`}>{server.icon ? <img src={`https://cdn.discordapp.com/icons/${server.id}/${server.icon}.png?size=96`} alt="" loading="lazy" decoding="async"/> : server.name.slice(0, 1).toUpperCase()}</span>
         <span className="server-details"><b>{server.name}</b><small>Manage server settings</small></span>

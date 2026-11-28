@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/auth/discord', [DashboardAuthController::class, 'redirect']);
 Route::post('/auth/exchange', [DashboardAuthController::class, 'exchangeCode']);
 Route::post('/auth/callback-failure', [DashboardAuthController::class, 'callbackFailure'])->middleware('throttle:10,1');
+Route::get('/public-config', [DashboardAuthController::class, 'publicConfig']);
 Route::middleware('dashboard.jwt')->group(function (): void {
     Route::get('/me', [DashboardAuthController::class, 'me']);
     Route::post('/logout', [DashboardAuthController::class, 'logout']);
