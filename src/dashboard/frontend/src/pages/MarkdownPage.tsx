@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
-import privacyPolicy from '../policies/en-US/PRIVACY_POLICY.md?raw'
-import termsOfService from '../policies/en-US/TERMS_OF_SERVICE.md?raw'
+import privacyPolicy from '../policies/PRIVACY_POLICY.md?raw'
+import termsOfService from '../policies/TERMS_OF_SERVICE.md?raw'
 import { Icon } from '../components/Icon'
 import { PageHeading } from '../components/PageHeading'
 
