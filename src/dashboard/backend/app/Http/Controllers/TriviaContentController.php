@@ -6,6 +6,7 @@ use App\Models\TriviaAlternative;
 use App\Models\TriviaCategory;
 use App\Models\TriviaQuestion;
 use App\Services\DashboardGuilds;
+use App\Services\DashboardSuperadmin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,12 +19,75 @@ class TriviaContentController extends Controller
 {
     private const DIFFICULTIES = ['easy' => 1, 'medium' => 2, 'hard' => 3];
 
+    public function library(Request $request, DashboardSuperadmin $dashboardSuperadmin): JsonResponse
+    {
+        $filters = $request->validate([
+            'locale' => ['nullable', 'in:en-US,pt-BR'],
+            'category' => ['nullable', 'uuid'],
+            'difficulty' => ['nullable', 'integer', 'between:1,3'],
+            'page' => ['nullable', 'integer', 'min:1'],
+        ]);
+
+        $session = $request->attributes->get('dashboard.session');
+
+        try {
+            $includePending = $dashboardSuperadmin->isUser((string) $session['identity']['id']);
+            $locale = isset($filters['locale']) ? (string) $filters['locale'] : null;
+            $questions = TriviaQuestion::dashboardLibrary(
+                $includePending,
+                $locale,
+                isset($filters['category']) ? (string) $filters['category'] : null,
+                isset($filters['difficulty']) ? (int) $filters['difficulty'] : null,
+                isset($filters['page']) ? (int) $filters['page'] : 1
+            );
+
+            return response()->json([
+                'categories' => TriviaCategory::dashboardLibrary($includePending, $locale)
+                    ->map(static fn (TriviaCategory $category): array => [
+                        'id' => (string) $category->id,
+                        'locale' => (string) $category->locale,
+                        'short_description' => (string) $category->short_description,
+                        'description' => (string) $category->description,
+                        'approved' => (bool) $category->approved,
+                    ])->all(),
+                'questions' => $questions->through(static fn (TriviaQuestion $question): array => [
+                    'id' => (string) $question->id,
+                    'question' => (string) $question->question,
+                    'difficulty' => (int) $question->difficulty,
+                    'explanation' => $question->explanation,
+                    'approved' => (bool) $question->approved,
+                    'category' => [
+                        'id' => (string) $question->triviaCategory->id,
+                        'locale' => (string) $question->triviaCategory->locale,
+                        'description' => (string) $question->triviaCategory->description,
+                        'approved' => (bool) $question->triviaCategory->approved,
+                    ],
+                    'alternatives' => $question->alternatives->map(static fn (TriviaAlternative $alternative): array => [
+                        'id' => (string) $alternative->id,
+                        'description' => (string) $alternative->description,
+                        'correct_answer' => (bool) $alternative->correct_answer,
+                    ])->all(),
+                ])->toArray(),
+            ]);
+        } catch (Throwable $error) {
+            Log::error('Could not load the trivia dashboard library.', [
+                'discord_user_id' => (string) ($session['identity']['id'] ?? ''),
+                'message' => $error->getMessage(),
+            ]);
+
+            return response()->json(['message' => 'Could not load trivia content.'], 500);
+        }
+    }
+
     public function categories(Request $request, string $serverId, DashboardGuilds $dashboardGuilds): JsonResponse
     {
-        if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) return $response;
+        if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) {
+            return $response;
+        }
 
         try {
             $userId = (string) $request->attributes->get('dashboard.session')['identity']['id'];
+
             return response()->json([
                 'categories' => TriviaCategory::query()
                     ->where(static function ($query) use ($userId): void {
@@ -39,13 +103,16 @@ class TriviaContentController extends Controller
                 'server_id' => $serverId,
                 'message' => $error->getMessage(),
             ]);
+
             return response()->json(['message' => 'Could not load trivia categories.'], 500);
         }
     }
 
     public function storeCategory(Request $request, string $serverId, DashboardGuilds $dashboardGuilds): JsonResponse
     {
-        if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) return $response;
+        if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) {
+            return $response;
+        }
 
         try {
             $data = $request->validate([
@@ -95,21 +162,27 @@ class TriviaContentController extends Controller
             throw $error;
         } catch (Throwable $error) {
             Log::error('Could not submit trivia category.', ['server_id' => $serverId, 'message' => $error->getMessage()]);
+
             return response()->json(['message' => 'Could not submit trivia category.'], 500);
         }
     }
 
     public function storeQuestion(Request $request, string $serverId, DashboardGuilds $dashboardGuilds): JsonResponse
     {
-        if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) return $response;
+        if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) {
+            return $response;
+        }
 
         $question = $request->validate($this->questionRules());
+
         return $this->submitQuestionBatch($request, $serverId, [$question]);
     }
 
     public function importQuestions(Request $request, string $serverId, DashboardGuilds $dashboardGuilds): JsonResponse
     {
-        if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) return $response;
+        if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) {
+            return $response;
+        }
 
         $data = $request->validate([
             'questions' => ['required', 'array', 'min:1', 'max:200'],
@@ -211,6 +284,7 @@ class TriviaContentController extends Controller
             throw $error;
         } catch (Throwable $error) {
             Log::error('Could not submit trivia questions.', ['server_id' => $serverId, 'message' => $error->getMessage()]);
+
             return response()->json(['message' => 'Could not submit trivia questions.'], 500);
         }
     }
@@ -223,7 +297,9 @@ class TriviaContentController extends Controller
                 (string) $session['identity']['id'],
                 (string) $session['access_token']
             );
-            if (collect($guilds)->contains('id', $serverId)) return null;
+            if (collect($guilds)->contains('id', $serverId)) {
+                return null;
+            }
 
             return response()->json(['message' => 'You no longer have permission to manage this server.'], 403);
         } catch (Throwable $error) {
@@ -231,6 +307,7 @@ class TriviaContentController extends Controller
                 'server_id' => $serverId,
                 'message' => $error->getMessage(),
             ]);
+
             return response()->json(['message' => 'Could not verify your server permissions. Please try again.'], 503);
         }
     }

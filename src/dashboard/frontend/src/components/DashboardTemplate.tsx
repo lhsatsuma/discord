@@ -9,13 +9,14 @@ type Props = {
   children: ReactNode
   onHome: () => void
   onLogout: () => void
+  onTriviaLibrary: () => void
   onSuperadminStatus: () => void
   onSuperadminLogs: () => void
   onSuperadminTrivia: () => void
   showHeader?: boolean
 }
 
-export function DashboardTemplate({ user, active, children, onHome, onLogout, onSuperadminStatus, onSuperadminLogs, onSuperadminTrivia, showHeader = true }: Props) {
+export function DashboardTemplate({ user, active, children, onHome, onLogout, onTriviaLibrary, onSuperadminStatus, onSuperadminLogs, onSuperadminTrivia, showHeader = true }: Props) {
   const [superadminMenuOpen, setSuperadminMenuOpen] = useState(false)
   const [publicLinks, setPublicLinks] = useState<DashboardPublicLinks>({ bot_invite: null, support_invite: null })
 
@@ -34,6 +35,7 @@ export function DashboardTemplate({ user, active, children, onHome, onLogout, on
       </a>
       <nav className="top-nav">
         <button className={active === 'home' ? 'nav-link active' : 'nav-link'} onClick={onHome}><Icon name="grid" size={17}/> My servers</button>
+        {user && <button className={active === 'trivia-library' ? 'nav-link active' : 'nav-link'} onClick={onTriviaLibrary}>Trivia library</button>}
         {user?.is_superadmin && <div className="superadmin-nav">
           <button type="button" className={`nav-link superadmin-trigger ${active.startsWith('superadmin-') ? 'active' : ''}`} aria-haspopup="menu" aria-expanded={superadminMenuOpen} onClick={() => setSuperadminMenuOpen(open => !open)}>
             <Icon name="shield" size={17}/> Superadmin <span className="menu-caret"/>

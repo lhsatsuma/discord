@@ -13,6 +13,7 @@ Route::get('/public-config', [DashboardAuthController::class, 'publicConfig']);
 Route::middleware('dashboard.jwt')->group(function (): void {
     Route::get('/me', [DashboardAuthController::class, 'me']);
     Route::post('/logout', [DashboardAuthController::class, 'logout']);
+    Route::get('/trivia/library', [TriviaContentController::class, 'library']);
     Route::get('/servers', [AdminConfigController::class, 'servers']);
     Route::get('/servers/{serverId}/config', [AdminConfigController::class, 'show']);
     Route::put('/servers/{serverId}/config', [AdminConfigController::class, 'update']);
