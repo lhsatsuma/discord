@@ -10,7 +10,7 @@ export const isLocaleCode = (value: string): value is LocaleCode =>
   localeOptions.some(locale => locale.value === value)
 
 export type SettingGroup = 'autoban' | 'memes' | 'channels' | 'voice' | 'welcome' | 'locale' | 'trivia'
-export type Page = 'login' | 'home' | 'server' | SettingGroup | 'trivia-content' | 'trivia-library' | 'superadmin-status' | 'superadmin-logs' | 'superadmin-trivia' | 'privacy-policy' | 'terms-of-service' | 'callback'
+export type Page = 'login' | 'home' | 'server' | SettingGroup | 'trivia-content' | 'trivia-library' | 'superadmin-status' | 'superadmin-logs' | 'superadmin-trivia' | 'privacy-policy' | 'terms-of-service' | 'user-commands' | 'callback'
 export type TriviaCategory = { id: string; short_description: string; description: string; locale: LocaleCode; approved: boolean }
 
 export type Config = {

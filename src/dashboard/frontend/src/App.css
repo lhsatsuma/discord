@@ -44,6 +44,10 @@
 .markdown-document code { padding:2px 5px; border-radius:4px; color:#d4ccff; background:#27243b; font:12px ui-monospace,Consolas,monospace; }
 .markdown-document blockquote { margin:15px 0 20px; padding:12px 15px; border-left:3px solid #806ee4; border-radius:0 6px 6px 0; background:#211f30; color:#d1cced; }
 .markdown-document hr { height:1px; margin:24px 0; border:0; background:#30343f; }
+.markdown-document table { display:block; width:100%; margin:12px 0 18px; overflow-x:auto; border-collapse:collapse; font-size:13px; }
+.markdown-document th,.markdown-document td { padding:9px 11px; border:1px solid #383c48; text-align:left; vertical-align:top; }
+.markdown-document th { color:#e6e8ef; background:#20232d; font-weight:700; }
+.markdown-document td { color:#bdc2ce; }
 .markdown-document-links { display:flex; justify-content:flex-end; padding:18px 4px; font-size:13px; }
 .login-layout { min-height:590px; padding:52px 4.2% 34px; display:grid; grid-template-columns:1fr 390px; column-gap:9%; align-items:center; position:relative; }
 .eyebrow { display:flex; align-items:center; gap:10px; color:#8d82ca; font-size:9px; font-weight:700; letter-spacing:1.55px; }
@@ -239,6 +243,10 @@
 .superadmin-dropdown { position:absolute; top:calc(100% - 1px); left:-10px; z-index:5; min-width:180px; padding:7px; border:1px solid #353946; border-radius:9px; background:#1b1e26; box-shadow:0 14px 34px #0006; }
 .superadmin-dropdown button { display:block; width:100%; padding:10px 11px; border:0; border-radius:6px; text-align:left; color:#cbd0dc; background:transparent; font:500 13px 'DM Sans',sans-serif; }
 .superadmin-dropdown button:hover,.superadmin-dropdown button.selected { color:#c2b8ff; background:#29253f; }
+.user-guide-nav { height:100%; position:relative; display:flex; align-items:center; }
+.user-guide-dropdown { position:absolute; top:calc(100% - 1px); left:-10px; z-index:5; min-width:190px; padding:7px; border:1px solid #353946; border-radius:9px; background:#1b1e26; box-shadow:0 14px 34px #0006; }
+.user-guide-dropdown a { display:block; padding:10px 11px; border-radius:6px; color:#cbd0dc; text-decoration:none; font:500 13px 'DM Sans',sans-serif; white-space:nowrap; }
+.user-guide-dropdown a:hover { color:#c2b8ff; background:#29253f; }
 .superadmin-status-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:15px; }
 .process-card { padding:22px; }
 .process-card-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding-bottom:17px; border-bottom:1px solid #2d303a; }
@@ -259,7 +267,7 @@
 @media (max-width: 640px) {
   .superadmin-status-grid { grid-template-columns:1fr; }
   .superadmin-trigger { gap:4px; }
-  .superadmin-dropdown { left:auto; right:-5px; }
+  .superadmin-dropdown,.user-guide-dropdown { left:auto; right:-5px; }
   .process-card { padding:16px; }
   .process-details { gap:14px; }
 }

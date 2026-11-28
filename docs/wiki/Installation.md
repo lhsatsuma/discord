@@ -200,5 +200,6 @@ For a backend release, install production Composer dependencies, run any new mig
 
 - [Superadmin Guide](Superadmin-Guide)
 - [Admin Guide](Admin-Guide)
-- [User Commands](User-Commands)
 - [Architecture](Superadministrator-Architecture)
+
+Member commands are documented on the dashboard under **User Commands**.

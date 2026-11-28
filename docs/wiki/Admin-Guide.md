@@ -26,4 +26,4 @@ Saved settings are stored in PostgreSQL. The dashboard clears the bot's Redis se
 
 If a server is missing, confirm the bot is installed there and that your Discord account has the required permission. If sign-in or saving fails, contact the system owner and include the time of the error so they can check the backend logs.
 
-For member commands, see [User Commands](User-Commands).
+Member command guidance is available on the dashboard under **User Commands**.

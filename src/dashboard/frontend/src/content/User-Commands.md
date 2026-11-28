@@ -10,7 +10,7 @@ These commands are available in servers where the bot is installed. Some feature
 | `/birthday list` | Show birthdays saved for this server. |
 | `/birthday remove` | Remove a saved birthday. |
 
-Birthday announcements are sent daily at 08:00 in the bot's configured time zone. The server owner selects the announcement channels in the [Admin Guide](Admin-Guide).
+Birthday announcements are sent daily at 08:00 in the bot's configured time zone. Server owners choose the announcement channels in the dashboard.
 
 ## Games
 
@@ -42,4 +42,4 @@ The server administrator chooses the question categories and a daily limit of 1 
 
 ## Administrator-only command
 
-`/pinguser` is restricted to administrators. Server configuration is managed through the dashboard; the old `/admin config` and channel configuration commands have been removed. See the [Admin Guide](Admin-Guide).
+`/pinguser` is restricted to administrators. Server configuration is managed through the dashboard; the old `/admin config` and channel configuration commands have been removed.

@@ -26,7 +26,7 @@ function isBlockStart(line: string): boolean {
   return /^(#{1,6}\s|>\s?|[-*]\s|\d+\.\s|---+$)/.test(line)
 }
 
-function renderMarkdown(source: string): ReactNode[] {
+export function renderMarkdown(source: string): ReactNode[] {
   const lines = source.replace(/^#\s+[^\n]+\n+/, '').split(/\r?\n/)
   const blocks: ReactNode[] = []
   let index = 0
@@ -49,6 +49,20 @@ function renderMarkdown(source: string): ReactNode[] {
       const quote: string[] = []
       while (index < lines.length && lines[index].trim().startsWith('>')) quote.push(lines[index++].trim().replace(/^>\s?/, ''))
       blocks.push(<blockquote key={key}>{inlineMarkdown(quote.join(' '), `q${key}`)}</blockquote>)
+      key++; continue
+    }
+    const tableHeader = line.startsWith('|') && lines[index + 1]?.trim().startsWith('|')
+      ? line.replace(/^\||\|$/g, '').split('|').map(cell => cell.trim())
+      : null
+    const tableSeparator = lines[index + 1]?.trim().replace(/^\||\|$/g, '').split('|').every(cell => /^:?-{3,}:?$/.test(cell.trim()))
+    if (tableHeader && tableSeparator) {
+      const rows: string[][] = []
+      index += 2
+      while (index < lines.length && lines[index].trim().startsWith('|')) {
+        rows.push(lines[index].trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim()))
+        index++
+      }
+      blocks.push(<table key={key}><thead><tr>{tableHeader.map((cell, cellIndex) => <th key={cellIndex}>{inlineMarkdown(cell, `th${key}-${cellIndex}`)}</th>)}</tr></thead><tbody>{rows.map((row, rowIndex) => <tr key={rowIndex}>{tableHeader.map((_, cellIndex) => <td key={cellIndex}>{inlineMarkdown(row[cellIndex] || '', `td${key}-${rowIndex}-${cellIndex}`)}</td>)}</tr>)}</tbody></table>)
       key++; continue
     }
     const unordered = /^[-*]\s+/.test(line)
