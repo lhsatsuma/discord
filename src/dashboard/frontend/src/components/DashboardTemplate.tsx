@@ -36,7 +36,7 @@ export function DashboardTemplate({ user, active, children, onHome, onLogout, on
       </a>
       <nav className="top-nav">
         {user && <button className={active === 'home' ? 'nav-link active' : 'nav-link'} onClick={onHome}><Icon name="grid" size={17}/> My servers</button>}
-        {user && <button className={active === 'trivia-library' ? 'nav-link active' : 'nav-link'} onClick={onTriviaLibrary}>Trivia library</button>}
+        {user && <button className={['trivia-categories', 'trivia-questions'].includes(active) ? 'nav-link active' : 'nav-link'} onClick={onTriviaLibrary}>Trivia library</button>}
         <div className="user-guide-nav">
           <button type="button" className={`nav-link user-guide-trigger ${['privacy-policy', 'terms-of-service', 'user-commands'].includes(active) ? 'active' : ''}`} aria-haspopup="menu" aria-expanded={userGuideMenuOpen} onClick={() => setUserGuideMenuOpen(open => !open)}>
             User Guide <span className="menu-caret"/>
