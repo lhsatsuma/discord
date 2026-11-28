@@ -3,9 +3,9 @@ import { ErrorAlert } from '../components/ErrorAlert'
 import { Icon } from '../components/Icon'
 import { PageHeading } from '../components/PageHeading'
 import { api } from '../lib/api'
-import type { LocaleCode, Server, TriviaCategory } from '../types/dashboard'
+import type { LocaleCode, TriviaCategory } from '../types/dashboard'
 
-type Props = { token: string; servers: Server[]; onBack: () => void }
+type Props = { token: string; onBack: () => void }
 type Difficulty = 'easy' | 'medium' | 'hard'
 type QuestionInput = {
   category: string
@@ -17,8 +17,7 @@ type QuestionInput = {
 }
 const blankQuestion = (): QuestionInput => ({ category: '', difficulty: 'easy', question: '', correct: '', incorrects: ['', '', ''], explanation: '' })
 
-export function TriviaContentPage({ token, servers, onBack }: Props) {
-  const [serverId, setServerId] = useState(servers[0]?.id || '')
+export function TriviaContentPage({ token, onBack }: Props) {
   const [categories, setCategories] = useState<TriviaCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -31,30 +30,19 @@ export function TriviaContentPage({ token, servers, onBack }: Props) {
   const [importQuestions, setImportQuestions] = useState<unknown[] | null>(null)
 
   const loadCategories = useCallback(() => {
-    if (!serverId) {
-      setCategories([])
-      setLoading(false)
-      return
-    }
     setCategories([])
     setLoading(true)
     setError('')
-    api<{ categories: TriviaCategory[] }>(`/servers/${serverId}/trivia/content`, token)
+    api<{ categories: TriviaCategory[] }>('/trivia/submission-categories', token)
       .then(result => setCategories(result.categories))
       .catch(reason => {
         console.error('Could not load trivia categories for submissions.', reason)
         setError(reason instanceof Error ? reason.message : 'Could not load trivia categories.')
       })
       .finally(() => setLoading(false))
-  }, [serverId, token])
+  }, [token])
 
   useEffect(() => { loadCategories() }, [loadCategories])
-
-  useEffect(() => {
-    if (!servers.some(server => server.id === serverId)) {
-      setServerId(servers[0]?.id || '')
-    }
-  }, [servers, serverId])
 
   const submitCategory = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -62,7 +50,7 @@ export function TriviaContentPage({ token, servers, onBack }: Props) {
     setError('')
     setNotice('')
     try {
-      const result = await api<{ category: { id: string; description: string; locale: string } }>(`/servers/${serverId}/trivia/categories`, token, {
+      const result = await api<{ category: { id: string; description: string; locale: string } }>('/trivia/categories', token, {
         method: 'POST',
         body: JSON.stringify({ locale: categoryLocale, short_description: shortDescription, description: categoryDescription }),
       })
@@ -84,7 +72,7 @@ export function TriviaContentPage({ token, servers, onBack }: Props) {
     setError('')
     setNotice('')
     try {
-      await api(`/servers/${serverId}/trivia/questions`, token, { method: 'POST', body: JSON.stringify(question) })
+      await api('/trivia/questions', token, { method: 'POST', body: JSON.stringify(question) })
       setNotice('Question and alternatives were submitted for superadmin approval.')
       setQuestion(blankQuestion())
     } catch (reason) {
@@ -117,7 +105,7 @@ export function TriviaContentPage({ token, servers, onBack }: Props) {
     setError('')
     setNotice('')
     try {
-      const result = await api<{ submitted: number }>(`/servers/${serverId}/trivia/questions/import`, token, {
+      const result = await api<{ submitted: number }>('/trivia/questions/import', token, {
         method: 'POST',
         body: JSON.stringify({ questions: importQuestions }),
       })
@@ -144,8 +132,6 @@ export function TriviaContentPage({ token, servers, onBack }: Props) {
     <ErrorAlert message={error} className="page-alert"/>
     {notice && <div className="alert success" role="status">{notice}</div>}
 
-    {servers.length > 0 && <section className="settings-card trivia-submit-server"><label className="field"><span>Submit for server</span><select value={serverId} onChange={event => { setServerId(event.target.value); setQuestion(blankQuestion()); setImportQuestions(null) }}>{servers.map(server => <option value={server.id} key={server.id}>{server.name}</option>)}</select><small>Choose a server where you have permission to manage settings.</small></label></section>}
-    {servers.length === 0 || !servers.some(server => server.id === serverId) ? <div className="empty-state"><h3>No manageable servers</h3><p>You need access to at least one server with the bot installed to submit trivia content.</p></div> : <>
 
     <section className="settings-card">
       <div className="card-heading"><span className="card-icon violet"><Icon name="spark"/></span><div><h2>Create a category</h2><p>New categories stay unavailable to all servers until approved.</p></div></div>
@@ -190,6 +176,5 @@ export function TriviaContentPage({ token, servers, onBack }: Props) {
         {importQuestions && <div className="trivia-import-ready"><b>{importQuestions.length} question(s) ready to import.</b><button type="button" className="save-button" disabled={submitting} onClick={() => { void submitImport() }}>{submitting ? 'Importing…' : 'Submit for approval'}</button></div>}
       </div>
     </section>
-    </>}
   </div>
 }

@@ -285,7 +285,7 @@ function App() {
   }, [token, validatedToken, sessionCheckAttempt, expireSession, isPublicDocument])
 
   useEffect(() => {
-    if ((page !== 'home' && page !== 'trivia-library') || !sessionVerified || !token || loadedServersToken.current === token) return
+    if (page !== 'home' || !sessionVerified || !token || loadedServersToken.current === token) return
     let active = true
     queueMicrotask(() => { if (active) setLoading(true) })
     api<{ servers: Server[] }>('/servers', token)
@@ -423,7 +423,7 @@ function App() {
     {page === 'login' && <LoginPage error={!token ? error : ''}/>}
     {page === 'privacy-policy' && <MarkdownPage document="privacy-policy"/>}
     {page === 'terms-of-service' && <MarkdownPage document="terms-of-service"/>}
-    {page === 'trivia-library' && <TriviaLibraryPage token={token} servers={servers}/>}
+    {page === 'trivia-library' && <TriviaLibraryPage token={token}/>}
     {page === 'home' && <HomePage
       user={user}
       servers={servers}

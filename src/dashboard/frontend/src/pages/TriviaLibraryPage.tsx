@@ -3,7 +3,6 @@ import { ErrorAlert } from '../components/ErrorAlert'
 import { PageHeading } from '../components/PageHeading'
 import { api } from '../lib/api'
 import { TriviaContentPage } from './TriviaContentPage'
-import type { Server } from '../types/dashboard'
 
 type LibraryCategory = {
   id: string
@@ -34,11 +33,11 @@ type LibraryResponse = {
   }
 }
 
-type Props = { token: string; servers: Server[] }
+type Props = { token: string }
 
 const difficultyLabels: Record<number, string> = { 1: 'Easy', 2: 'Medium', 3: 'Hard' }
 
-export function TriviaLibraryPage({ token, servers }: Props) {
+export function TriviaLibraryPage({ token }: Props) {
   const [view, setView] = useState<'browse' | 'create'>('browse')
   const [locale, setLocale] = useState('')
   const [category, setCategory] = useState('')
@@ -47,6 +46,7 @@ export function TriviaLibraryPage({ token, servers }: Props) {
   const [result, setResult] = useState<LibraryResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [refreshKey, setRefreshKey] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -67,7 +67,7 @@ export function TriviaLibraryPage({ token, servers }: Props) {
       .finally(() => { if (active) setLoading(false) })
 
     return () => { active = false }
-  }, [token, locale, category, difficulty, page])
+  }, [token, locale, category, difficulty, page, refreshKey])
 
   const setLocaleFilter = (value: string) => {
     setLocale(value)
@@ -114,6 +114,6 @@ export function TriviaLibraryPage({ token, servers }: Props) {
         </article>)}</div> : <div className="empty-state"><h3>No questions found</h3><p>Try changing the locale, category, or difficulty filters.</p></div>}
       {result && result.questions.last_page > 1 && <div className="trivia-library-pagination"><button type="button" className="back-button" disabled={page <= 1 || loading} onClick={() => setPage(current => current - 1)}>Previous</button><span>Page {result.questions.current_page} of {result.questions.last_page}</span><button type="button" className="back-button" disabled={page >= result.questions.last_page || loading} onClick={() => setPage(current => current + 1)}>Next</button></div>}
     </section>
-    </> : <TriviaContentPage token={token} servers={servers} onBack={() => setView('browse')}/>}
+    </> : <TriviaContentPage token={token} onBack={() => { setView('browse'); setRefreshKey(current => current + 1) }}/>}
   </div>
 }

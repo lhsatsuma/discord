@@ -108,6 +108,119 @@ class TriviaContentController extends Controller
         }
     }
 
+    public function submissionCategories(Request $request, DashboardSuperadmin $dashboardSuperadmin): JsonResponse
+    {
+        try {
+            $userId = (string) $request->attributes->get('dashboard.session')['identity']['id'];
+            $includePending = $dashboardSuperadmin->isUser($userId);
+
+            return response()->json([
+                'categories' => TriviaCategory::query()
+                    ->where(static function ($query) use ($userId, $includePending): void {
+                        $query->where('approved', true)
+                            ->orWhere(static function ($pending) use ($userId, $includePending): void {
+                                $pending->where('approved', false);
+                                if (! $includePending) {
+                                    $pending->where('created_by', $userId);
+                                }
+                            });
+                    })
+                    ->orderBy('locale')
+                    ->orderBy('description')
+                    ->get(['id', 'locale', 'short_description', 'description', 'approved']),
+            ]);
+        } catch (Throwable $error) {
+            Log::error('Could not load global trivia categories for submissions.', [
+                'message' => $error->getMessage(),
+            ]);
+
+            return response()->json(['message' => 'Could not load trivia categories.'], 500);
+        }
+    }
+
+    public function storeLibraryCategory(Request $request): JsonResponse
+    {
+        try {
+            $data = $request->validate([
+                'locale' => ['required', 'in:en-US,pt-BR'],
+                'short_description' => ['required', 'string', 'max:30'],
+                'description' => ['required', 'string', 'max:80'],
+            ]);
+            $shortDescription = trim($data['short_description']);
+            $description = trim($data['description']);
+            $duplicate = TriviaCategory::query()
+                ->where('locale', $data['locale'])
+                ->where(static function ($query) use ($shortDescription, $description): void {
+                    $query->whereRaw('LOWER(short_description) = ?', [mb_strtolower($shortDescription)])
+                        ->orWhereRaw('LOWER(description) = ?', [mb_strtolower($description)]);
+                })
+                ->exists();
+            if ($duplicate) {
+                throw ValidationException::withMessages(['description' => 'A category with this name or short name already exists for that language.']);
+            }
+
+            $userId = (string) $request->attributes->get('dashboard.session')['identity']['id'];
+            $category = TriviaCategory::query()->create([
+                'id' => (string) Str::uuid(),
+                'created_by' => $userId,
+                'approved' => false,
+                'locale' => $data['locale'],
+                'short_description' => $shortDescription,
+                'description' => $description,
+            ]);
+
+            Log::info('Global trivia category submitted for superadmin approval.', [
+                'category_id' => $category->id,
+                'locale' => $category->locale,
+                'discord_user_id' => $userId,
+            ]);
+
+            return response()->json([
+                'ok' => true,
+                'pending_approval' => true,
+                'category' => [
+                    'id' => (string) $category->id,
+                    'locale' => (string) $category->locale,
+                    'description' => (string) $category->description,
+                ],
+            ], 201);
+        } catch (ValidationException $error) {
+            throw $error;
+        } catch (Throwable $error) {
+            Log::error('Could not submit global trivia category.', [
+                'message' => $error->getMessage(),
+            ]);
+
+            return response()->json(['message' => 'Could not submit trivia category.'], 500);
+        }
+    }
+
+    public function storeLibraryQuestion(Request $request, DashboardSuperadmin $dashboardSuperadmin): JsonResponse
+    {
+        $question = $request->validate($this->questionRules());
+        $userId = (string) $request->attributes->get('dashboard.session')['identity']['id'];
+
+        return $this->submitQuestionBatch($request, null, [$question], $dashboardSuperadmin->isUser($userId));
+    }
+
+    public function importLibraryQuestions(Request $request, DashboardSuperadmin $dashboardSuperadmin): JsonResponse
+    {
+        $data = $request->validate([
+            'questions' => ['required', 'array', 'min:1', 'max:200'],
+            'questions.*.category' => ['required', 'uuid'],
+            'questions.*.difficulty' => ['required', 'in:easy,medium,hard'],
+            'questions.*.question' => ['required', 'string', 'max:4096'],
+            'questions.*.correct' => ['required', 'string', 'max:255'],
+            'questions.*.incorrects' => ['required', 'array', 'size:3'],
+            'questions.*.incorrects.*' => ['required', 'string', 'max:255'],
+            'questions.*.explanation' => ['nullable', 'string', 'max:1024'],
+        ]);
+
+        $userId = (string) $request->attributes->get('dashboard.session')['identity']['id'];
+
+        return $this->submitQuestionBatch($request, null, $data['questions'], $dashboardSuperadmin->isUser($userId));
+    }
+
     public function storeCategory(Request $request, string $serverId, DashboardGuilds $dashboardGuilds): JsonResponse
     {
         if ($response = $this->authorizeServer($request, $serverId, $dashboardGuilds)) {
@@ -175,7 +288,7 @@ class TriviaContentController extends Controller
 
         $question = $request->validate($this->questionRules());
 
-        return $this->submitQuestionBatch($request, $serverId, [$question]);
+        return $this->submitQuestionBatch($request, $serverId, [$question], false);
     }
 
     public function importQuestions(Request $request, string $serverId, DashboardGuilds $dashboardGuilds): JsonResponse
@@ -195,7 +308,7 @@ class TriviaContentController extends Controller
             'questions.*.explanation' => ['nullable', 'string', 'max:1024'],
         ]);
 
-        return $this->submitQuestionBatch($request, $serverId, $data['questions']);
+        return $this->submitQuestionBatch($request, $serverId, $data['questions'], false);
     }
 
     /** @return array<string, list<string>> */
@@ -213,16 +326,21 @@ class TriviaContentController extends Controller
     }
 
     /** @param list<array<string, mixed>> $questions */
-    private function submitQuestionBatch(Request $request, string $serverId, array $questions): JsonResponse
+    private function submitQuestionBatch(Request $request, ?string $serverId, array $questions, bool $includeAllPendingCategories): JsonResponse
     {
         try {
             $userId = (string) $request->attributes->get('dashboard.session')['identity']['id'];
             $categoryIds = array_values(array_unique(array_map(static fn (array $question): string => (string) $question['category'], $questions)));
             $availableCategoryIds = TriviaCategory::query()
                 ->whereIn('id', $categoryIds)
-                ->where(static function ($query) use ($userId): void {
+                ->where(static function ($query) use ($userId, $includeAllPendingCategories): void {
                     $query->where('approved', true)
-                        ->orWhere(static fn ($pending) => $pending->where('approved', false)->where('created_by', $userId));
+                        ->orWhere(static function ($pending) use ($userId, $includeAllPendingCategories): void {
+                            $pending->where('approved', false);
+                            if (! $includeAllPendingCategories) {
+                                $pending->where('created_by', $userId);
+                            }
+                        });
                 })
                 ->pluck('id')
                 ->map(static fn ($id): string => (string) $id)

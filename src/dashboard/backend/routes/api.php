@@ -14,6 +14,10 @@ Route::middleware('dashboard.jwt')->group(function (): void {
     Route::get('/me', [DashboardAuthController::class, 'me']);
     Route::post('/logout', [DashboardAuthController::class, 'logout']);
     Route::get('/trivia/library', [TriviaContentController::class, 'library']);
+    Route::get('/trivia/submission-categories', [TriviaContentController::class, 'submissionCategories']);
+    Route::post('/trivia/categories', [TriviaContentController::class, 'storeLibraryCategory']);
+    Route::post('/trivia/questions', [TriviaContentController::class, 'storeLibraryQuestion']);
+    Route::post('/trivia/questions/import', [TriviaContentController::class, 'importLibraryQuestions']);
     Route::get('/servers', [AdminConfigController::class, 'servers']);
     Route::get('/servers/{serverId}/config', [AdminConfigController::class, 'show']);
     Route::put('/servers/{serverId}/config', [AdminConfigController::class, 'update']);
