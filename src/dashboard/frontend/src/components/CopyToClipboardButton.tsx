@@ -1,28 +1,25 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import { FeedbackModal } from './FeedbackModal'
 
 type Props = { value: string; label?: string; className?: string }
 
 export function CopyToClipboardButton({ value, label = 'Copy', className = '' }: Props) {
-  const [feedback, setFeedback] = useState('')
-  const resetTimer = useRef<number | null>(null)
-
-  useEffect(() => () => {
-    if (resetTimer.current !== null) window.clearTimeout(resetTimer.current)
-  }, [])
+  const [feedback, setFeedback] = useState<{ kind: 'success' | 'error'; title: string; message: string } | null>(null)
 
   const copy = async () => {
-    if (resetTimer.current !== null) window.clearTimeout(resetTimer.current)
     try {
       await navigator.clipboard.writeText(value)
-      setFeedback('Copied')
+      setFeedback({ kind: 'success', title: 'Copied to clipboard', message: 'The category ID is ready to paste.' })
     } catch (error) {
       console.warn('Could not copy text to the clipboard.', error)
-      setFeedback('Copy failed')
+      setFeedback({ kind: 'error', title: 'Could not copy ID', message: 'Clipboard access was denied. You can select and copy the ID manually.' })
     }
-    resetTimer.current = window.setTimeout(() => setFeedback(''), 1800)
   }
 
-  return <button type="button" className={`copy-to-clipboard-button ${className}`.trim()} onClick={() => { void copy() }} aria-label={`${feedback || label}: ${value}`}>
-    {feedback || label}
-  </button>
+  return <>
+    <button type="button" className={`copy-to-clipboard-button ${className}`.trim()} onClick={() => { void copy() }} aria-label={`${label}: ${value}`}>
+      {label}
+    </button>
+    {feedback && <FeedbackModal {...feedback} onClose={() => setFeedback(null)}/>}
+  </>
 }

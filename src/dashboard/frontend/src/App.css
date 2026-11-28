@@ -459,6 +459,10 @@
 .confirmation-actions button { min-height:38px; padding:0 14px; border-radius:6px; font-size:12px; font-weight:700; }
 .modal-cancel-button { color:#d4d7e0; border:1px solid #444957; background:#272a34; }
 .modal-confirm-button { display:flex; align-items:center; justify-content:center; gap:8px; color:#fff; border:1px solid #b64e58; background:#8f333d; }
+.feedback-mark.success { color:#8de0b2; border-color:#315b49; background:#1d3029; }
+.feedback-mark.error { color:#ffb2aa; }
+.feedback-close-button { min-width:100px; border-color:#6252bd; background:#6753d8; }
+.feedback-close-button:hover { background:#5945ca; }
 .confirmation-actions button:disabled { opacity:.65; cursor:wait; }
 
 @media (max-width: 640px) {

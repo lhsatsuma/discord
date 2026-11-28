@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ConfirmationModal } from '../components/ConfirmationModal'
-import { ErrorAlert } from '../components/ErrorAlert'
+import { FeedbackModal } from '../components/FeedbackModal'
 import { Icon } from '../components/Icon'
 import { PageHeading } from '../components/PageHeading'
 import { api } from '../lib/api'
@@ -50,20 +50,18 @@ export function SuperadminTriviaPage({ token }: Props) {
   const [questionPage, setQuestionPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState('')
-  const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
+  const [feedback, setFeedback] = useState<{ kind: 'success' | 'error'; title: string; message: string } | null>(null)
   const [rejecting, setRejecting] = useState<PendingRejection>(null)
   const [confirmApproveAll, setConfirmApproveAll] = useState(false)
   const [confirmRejectAll, setConfirmRejectAll] = useState(false)
 
   const refresh = useCallback(() => {
     setLoading(true)
-    setError('')
     api<ReviewQueue>(`/superadmin/trivia/review?category_page=${categoryPage}&question_page=${questionPage}&per_page=${PAGE_SIZE}`, token)
       .then(setQueue)
       .catch(reason => {
         console.error('Could not load trivia submissions.', reason)
-        setError(reason instanceof Error ? reason.message : 'Could not load trivia submissions.')
+        setFeedback({ kind: 'error', title: 'Could not load trivia submissions', message: reason instanceof Error ? reason.message : 'Could not load trivia submissions.' })
       })
       .finally(() => setLoading(false))
   }, [token, categoryPage, questionPage])
@@ -82,17 +80,16 @@ export function SuperadminTriviaPage({ token }: Props) {
 
   const update = async (kind: 'category' | 'question', id: string, action: 'approve' | 'reject') => {
     setBusy(`${kind}:${id}`)
-    setError('')
-    setNotice('')
+    setFeedback(null)
     try {
       const route = `/superadmin/trivia/${kind === 'category' ? 'categories' : 'questions'}/${id}`
       await api(route + (action === 'approve' ? '/approve' : ''), token, { method: action === 'approve' ? 'POST' : 'DELETE' })
-      setNotice(`${kind === 'category' ? 'Category' : 'Question'} ${action === 'approve' ? 'approved' : 'rejected'}.`)
+      setFeedback({ kind: 'success', title: `${kind === 'category' ? 'Category' : 'Question'} ${action === 'approve' ? 'approved' : 'rejected'}`, message: `${kind === 'category' ? 'Category' : 'Question'} ${action === 'approve' ? 'approved' : 'rejected'} successfully.` })
       setRejecting(null)
       refresh()
     } catch (reason) {
       console.error(`Could not ${action} trivia ${kind}.`, reason)
-      setError(reason instanceof Error ? reason.message : `Could not ${action} trivia ${kind}.`)
+      setFeedback({ kind: 'error', title: `Could not ${action} trivia ${kind}`, message: reason instanceof Error ? reason.message : `Could not ${action} trivia ${kind}.` })
     } finally {
       setBusy('')
     }
@@ -104,8 +101,7 @@ export function SuperadminTriviaPage({ token }: Props) {
     if (currentPageQuestions.length === 0) return
 
     setBusy('all-questions')
-    setError('')
-    setNotice('')
+    setFeedback(null)
     setConfirmApproveAll(false)
 
     const results = await Promise.allSettled(currentPageQuestions.map(question =>
@@ -115,11 +111,11 @@ export function SuperadminTriviaPage({ token }: Props) {
     const remaining = currentPageQuestions.length - approvedCount
 
     if (approvedCount > 0) {
-      setNotice(remaining === 0
+      setFeedback({ kind: 'success', title: 'Trivia approval complete', message: remaining === 0
         ? `All ${approvedCount} questions on this page were approved.`
-        : `${approvedCount} questions on this page were approved. ${remaining} remain pending; check their categories and alternatives.`)
+        : `${approvedCount} questions on this page were approved. ${remaining} remain pending; check their categories and alternatives.` })
     } else {
-      setError('No questions on this page could be approved. Check that their categories are approved and each question has four alternatives with one correct answer.')
+      setFeedback({ kind: 'error', title: 'No questions were approved', message: 'Check that their categories are approved and each question has four alternatives with one correct answer.' })
     }
 
     setBusy('')
@@ -132,8 +128,7 @@ export function SuperadminTriviaPage({ token }: Props) {
     if (currentPageQuestions.length === 0) return
 
     setBusy('all-reject-questions')
-    setError('')
-    setNotice('')
+    setFeedback(null)
     setConfirmRejectAll(false)
 
     const results = await Promise.allSettled(currentPageQuestions.map(question =>
@@ -148,11 +143,11 @@ export function SuperadminTriviaPage({ token }: Props) {
     })
 
     if (rejectedCount > 0) {
-      setNotice(remaining === 0
+      setFeedback({ kind: 'success', title: 'Trivia rejection complete', message: remaining === 0
         ? `All ${rejectedCount} questions on this page were rejected.`
-        : `${rejectedCount} questions on this page were rejected. ${remaining} could not be rejected and remain pending.`)
+        : `${rejectedCount} questions on this page were rejected. ${remaining} could not be rejected and remain pending.` })
     } else {
-      setError('No questions on this page could be rejected. Refresh the page and try again.')
+      setFeedback({ kind: 'error', title: 'No questions were rejected', message: 'Refresh the page and try again.' })
     }
 
     setBusy('')
@@ -164,8 +159,7 @@ export function SuperadminTriviaPage({ token }: Props) {
 
   return <div className="superadmin-trivia-page">
     <PageHeading eyebrow="SYSTEM SUPERADMIN" title={<>Trivia review<span className="heading-period">.</span></>} description="Review categories and questions submitted by server administrators." action={<button type="button" className="back-button" onClick={refresh}><Icon name="spark" size={16}/> Refresh</button>}/>
-    <ErrorAlert message={error} className="page-alert"/>
-    {notice && <div className="alert success" role="status">{notice}</div>}
+    {feedback && <FeedbackModal {...feedback} onClose={() => setFeedback(null)}/>}
     <div className="section-topline"><span className="section-title">Pending submissions</span><span className="section-hint">{pendingCount} waiting for review</span></div>
 
     {loading && pendingCount === 0 ? <div className="loading-state"><span className="spinner"/> Loading trivia submissions…</div> : pendingCount === 0
