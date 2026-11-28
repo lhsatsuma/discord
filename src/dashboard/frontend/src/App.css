@@ -171,7 +171,8 @@
   .top-nav>.nav-link,.user-guide-trigger,.superadmin-trigger { height:38px; min-height:38px; flex:none; gap:6px; padding:0 7px; font-size:12px; white-space:nowrap; }
   .user-guide-nav,.superadmin-nav { height:38px; }
   .profile-name { display:none; }.quiet-button { display:inline-flex; align-items:center; white-space:nowrap; font-size:11px; }.profile-area { grid-column:2; grid-row:1; gap:5px; margin-left:0; }
-  .user-guide-dropdown,.superadmin-dropdown { top:calc(100% - 1px); right:0; max-width:min(260px,90vw); }
+  .user-guide-dropdown { top:calc(100% - 1px); left:0; right:auto; max-width:min(260px,90vw); }
+  .superadmin-dropdown { top:calc(100% - 1px); left:0; right:auto; max-width:min(260px,90vw); }
   .page-content,.footer { width:90vw; }.page-content { padding:30px 0 45px; }.footer { min-height:60px; flex-wrap:wrap; gap:4px; padding:13px 0; }.footer-status { margin-left:10px; }.footer-right { display:none; }
   .login-layout { display:flex; flex-direction:column; align-items:stretch; gap:33px; padding:21px 0 52px; }.login-copy h1 { font-size:43px; }.login-description { font-size:13px; }.feature-list { gap:15px; margin-top:25px; }.login-card { padding:24px; }.login-stamp { left:0; bottom:13px; }
   .page-heading { align-items:flex-start; gap:12px; }.page-heading h1 { font-size:29px; letter-spacing:-1px; }.page-heading p { max-width:270px; line-height:1.6; }.back-button { padding:8px; white-space:nowrap; font-size:0; }.back-button svg { width:18px;height:18px; }
@@ -273,7 +274,8 @@
 @media (max-width: 640px) {
   .superadmin-status-grid { grid-template-columns:1fr; }
   .superadmin-trigger { gap:4px; }
-  .superadmin-dropdown,.user-guide-dropdown { left:auto; right:-5px; }
+  .superadmin-dropdown { left:0; right:auto; }
+  .user-guide-dropdown { left:0; right:auto; }
   .process-card { padding:16px; }
   .process-details { gap:14px; }
 }
