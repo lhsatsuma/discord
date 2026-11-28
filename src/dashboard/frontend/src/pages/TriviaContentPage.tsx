@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react'
 import { ErrorAlert } from '../components/ErrorAlert'
+import { FeedbackModal } from '../components/FeedbackModal'
 import { Icon } from '../components/Icon'
 import { PageHeading } from '../components/PageHeading'
 import { api } from '../lib/api'
 import type { LocaleCode, TriviaCategory } from '../types/dashboard'
 
 type Props = { token: string; onBack: () => void }
+type SubmissionFeedback = { kind: 'success' | 'error'; title: string; message: string }
 type Difficulty = 'easy' | 'medium' | 'hard'
 type QuestionInput = {
   category: string
@@ -22,7 +24,7 @@ export function TriviaContentPage({ token, onBack }: Props) {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
+  const [feedback, setFeedback] = useState<SubmissionFeedback | null>(null)
   const [categoryLocale, setCategoryLocale] = useState<LocaleCode>('en-US')
   const [shortDescription, setShortDescription] = useState('')
   const [categoryDescription, setCategoryDescription] = useState('')
@@ -48,19 +50,19 @@ export function TriviaContentPage({ token, onBack }: Props) {
     event.preventDefault()
     setSubmitting(true)
     setError('')
-    setNotice('')
+    setFeedback(null)
     try {
       const result = await api<{ category: { id: string; description: string; locale: string } }>('/trivia/categories', token, {
         method: 'POST',
         body: JSON.stringify({ locale: categoryLocale, short_description: shortDescription, description: categoryDescription }),
       })
-      setNotice(`Category “${result.category.description}” was submitted for superadmin approval. Submission ID: ${result.category.id}`)
+      setFeedback({ kind: 'success', title: 'Category submitted', message: `“${result.category.description}” was submitted for superadmin approval. Submission ID: ${result.category.id}` })
       setShortDescription('')
       setCategoryDescription('')
       loadCategories()
     } catch (reason) {
       console.error('Could not submit trivia category.', reason)
-      setError(reason instanceof Error ? reason.message : 'Could not submit trivia category.')
+      setFeedback({ kind: 'error', title: 'Category submission failed', message: reason instanceof Error ? reason.message : 'Could not submit trivia category.' })
     } finally {
       setSubmitting(false)
     }
@@ -70,14 +72,14 @@ export function TriviaContentPage({ token, onBack }: Props) {
     event.preventDefault()
     setSubmitting(true)
     setError('')
-    setNotice('')
+    setFeedback(null)
     try {
       await api('/trivia/questions', token, { method: 'POST', body: JSON.stringify(question) })
-      setNotice('Question and alternatives were submitted for superadmin approval.')
+      setFeedback({ kind: 'success', title: 'Question submitted', message: 'The question and its alternatives were submitted for superadmin approval.' })
       setQuestion(blankQuestion())
     } catch (reason) {
       console.error('Could not submit trivia question.', reason)
-      setError(reason instanceof Error ? reason.message : 'Could not submit trivia question.')
+      setFeedback({ kind: 'error', title: 'Question submission failed', message: reason instanceof Error ? reason.message : 'Could not submit trivia question.' })
     } finally {
       setSubmitting(false)
     }
@@ -86,7 +88,7 @@ export function TriviaContentPage({ token, onBack }: Props) {
   const selectImportFile = async (file?: File) => {
     setImportQuestions(null)
     setError('')
-    setNotice('')
+    setFeedback(null)
     if (!file) return
     try {
       const parsed: unknown = JSON.parse(await file.text())
@@ -95,7 +97,7 @@ export function TriviaContentPage({ token, onBack }: Props) {
       setImportQuestions(parsed)
     } catch (reason) {
       console.error('Could not read trivia JSON file.', reason)
-      setError(reason instanceof Error ? reason.message : 'Could not read this JSON file.')
+      setFeedback({ kind: 'error', title: 'Could not read JSON file', message: reason instanceof Error ? reason.message : 'Could not read this JSON file.' })
     }
   }
 
@@ -103,19 +105,19 @@ export function TriviaContentPage({ token, onBack }: Props) {
     if (!importQuestions) return
     setSubmitting(true)
     setError('')
-    setNotice('')
+    setFeedback(null)
     try {
       const result = await api<{ submitted: number }>('/trivia/questions/import', token, {
         method: 'POST',
         body: JSON.stringify({ questions: importQuestions }),
       })
-      setNotice(`${result.submitted} question(s) and their alternatives were submitted for superadmin approval.`)
+      setFeedback({ kind: 'success', title: 'Questions submitted', message: `${result.submitted} question(s) and their alternatives were submitted for superadmin approval.` })
       setImportQuestions(null)
       const input = document.getElementById('trivia-json-file') as HTMLInputElement | null
       if (input) input.value = ''
     } catch (reason) {
       console.error('Could not import trivia questions.', reason)
-      setError(reason instanceof Error ? reason.message : 'Could not import trivia questions.')
+      setFeedback({ kind: 'error', title: 'Import failed', message: reason instanceof Error ? reason.message : 'Could not import trivia questions.' })
     } finally {
       setSubmitting(false)
     }
@@ -130,7 +132,6 @@ export function TriviaContentPage({ token, onBack }: Props) {
   return <div className="trivia-content-page">
     <PageHeading eyebrow="TRIVIA SUBMISSIONS" title={<>Create trivia content<span className="heading-period">.</span></>} description="Submit categories and questions for review by the system superadmin." action={<button type="button" className="back-button" onClick={onBack}><Icon name="back" size={16}/> Back to library</button>}/>
     <ErrorAlert message={error} className="page-alert"/>
-    {notice && <div className="alert success" role="status">{notice}</div>}
 
 
     <section className="settings-card">
@@ -176,5 +177,6 @@ export function TriviaContentPage({ token, onBack }: Props) {
         {importQuestions && <div className="trivia-import-ready"><b>{importQuestions.length} question(s) ready to import.</b><button type="button" className="save-button" disabled={submitting} onClick={() => { void submitImport() }}>{submitting ? 'Importing…' : 'Submit for approval'}</button></div>}
       </div>
     </section>
+    {feedback && <FeedbackModal kind={feedback.kind} title={feedback.title} message={feedback.message} onClose={() => setFeedback(null)}/>}
   </div>
 }

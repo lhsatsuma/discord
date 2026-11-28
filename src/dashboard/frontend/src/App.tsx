@@ -378,7 +378,6 @@ function App() {
     } catch (reason) {
       console.warn('Could not save server settings.', reason)
       const message = reason instanceof Error ? reason.message : 'Could not save settings.'
-      setError(message)
       setSaveError(message)
     } finally {
       setSaving(false)
