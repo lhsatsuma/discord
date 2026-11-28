@@ -19,12 +19,39 @@ class TriviaContentController extends Controller
 {
     private const DIFFICULTIES = ['easy' => 1, 'medium' => 2, 'hard' => 3];
 
+    public function libraryCategories(Request $request, DashboardSuperadmin $dashboardSuperadmin): JsonResponse
+    {
+        $filters = $request->validate(['locale' => ['nullable', 'in:en-US,pt-BR']]);
+        $session = $request->attributes->get('dashboard.session');
+
+        try {
+            $includePending = $dashboardSuperadmin->isUser((string) $session['identity']['id']);
+            $categories = TriviaCategory::dashboardLibrary($includePending, isset($filters['locale']) ? (string) $filters['locale'] : null)
+                ->map(static fn (TriviaCategory $category): array => [
+                    'id' => (string) $category->id,
+                    'locale' => (string) $category->locale,
+                    'short_description' => (string) $category->short_description,
+                    'description' => (string) $category->description,
+                    'approved' => (bool) $category->approved,
+                ])->all();
+
+            return response()->json(['categories' => $categories]);
+        } catch (Throwable $error) {
+            Log::error('Could not load trivia categories for the dashboard library.', [
+                'discord_user_id' => (string) ($session['identity']['id'] ?? ''),
+                'message' => $error->getMessage(),
+            ]);
+
+            return response()->json(['message' => 'Could not load trivia categories.'], 500);
+        }
+    }
+
     public function library(Request $request, DashboardSuperadmin $dashboardSuperadmin): JsonResponse
     {
         $filters = $request->validate([
             'locale' => ['nullable', 'in:en-US,pt-BR'],
             'category' => ['nullable', 'uuid'],
-            'difficulty' => ['nullable', 'integer', 'between:1,3'],
+            'difficulty' => ['nullable', 'integer', 'between:1,5'],
             'page' => ['nullable', 'integer', 'min:1'],
         ]);
 
@@ -54,7 +81,7 @@ class TriviaContentController extends Controller
                     'id' => (string) $question->id,
                     'question' => (string) $question->question,
                     'difficulty' => (int) $question->difficulty,
-                    'explanation' => $question->explanation,
+                    'explanation' => $includePending ? $question->explanation : null,
                     'approved' => (bool) $question->approved,
                     'category' => [
                         'id' => (string) $question->triviaCategory->id,
@@ -62,11 +89,13 @@ class TriviaContentController extends Controller
                         'description' => (string) $question->triviaCategory->description,
                         'approved' => (bool) $question->triviaCategory->approved,
                     ],
-                    'alternatives' => $question->alternatives->map(static fn (TriviaAlternative $alternative): array => [
-                        'id' => (string) $alternative->id,
-                        'description' => (string) $alternative->description,
-                        'correct_answer' => (bool) $alternative->correct_answer,
-                    ])->all(),
+                    'alternatives' => $includePending
+                        ? $question->alternatives->map(static fn (TriviaAlternative $alternative): array => [
+                            'id' => (string) $alternative->id,
+                            'description' => (string) $alternative->description,
+                            'correct_answer' => (bool) $alternative->correct_answer,
+                        ])->all()
+                        : [],
                 ])->toArray(),
             ]);
         } catch (Throwable $error) {

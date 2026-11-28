@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { TriviaCategory, ServerSettingsPageProps } from '../../types/dashboard'
 import { localeOptions } from '../../types/dashboard'
 import { ConfirmationModal } from '../../components/ConfirmationModal'
+import { FeedbackModal } from '../../components/FeedbackModal'
 import { Icon } from '../../components/Icon'
 import { SaveBar } from '../../components/SaveBar'
 import { ServerSettingsLayout } from '../../components/ServerSettingsLayout'
@@ -11,8 +12,7 @@ type Props = ServerSettingsPageProps & { categories: TriviaCategory[]; onResetAn
 export function TriviaSettingsPage({ server, config, categories, loading, saving, error, saveError, notice, onBack, onDismissError, onConfigChange, onSave, onResetAnswers }: Props) {
   const [confirmReset, setConfirmReset] = useState(false)
   const [resetting, setResetting] = useState(false)
-  const [resetError, setResetError] = useState('')
-  const [resetNotice, setResetNotice] = useState('')
+  const [resetFeedback, setResetFeedback] = useState<{ kind: 'success' | 'error'; title: string; message: string } | null>(null)
   const localeCategories = categories.filter(category => category.locale === config.locale)
   const selected = new Set(config.trivia_categories)
   const localeLabel = localeOptions.find(locale => locale.value === config.locale)?.label ?? config.locale
@@ -26,17 +26,17 @@ export function TriviaSettingsPage({ server, config, categories, loading, saving
 
   const resetAnswers = async () => {
     setResetting(true)
-    setResetError('')
-    setResetNotice('')
+    setResetFeedback(null)
     try {
       const deletedAnswers = await onResetAnswers()
-      setResetNotice(deletedAnswers > 0
-        ? `Trivia progress was reset. ${deletedAnswers} record(s) were removed.`
-        : 'There was no trivia progress to reset.')
+      setResetFeedback({ kind: 'success', title: 'Trivia progress reset', message: deletedAnswers > 0
+        ? `${deletedAnswers} record(s) were removed.`
+        : 'There was no trivia progress to reset.' })
       setConfirmReset(false)
     } catch (reason) {
       console.error('Could not reset trivia answers.', reason)
-      setResetError(reason instanceof Error ? reason.message : 'Could not reset trivia progress.')
+      setConfirmReset(false)
+      setResetFeedback({ kind: 'error', title: 'Could not reset trivia progress', message: reason instanceof Error ? reason.message : 'Could not reset trivia progress.' })
     } finally {
       setResetting(false)
     }
@@ -51,8 +51,8 @@ export function TriviaSettingsPage({ server, config, categories, loading, saving
       <div className="card-fields">
         <label className="field trivia-count-field">
           <span>Questions per day</span>
-          <input type="number" min="1" max="5" value={config.trivia_questions_per_day} onChange={event => onConfigChange('trivia_questions_per_day', Number(event.target.value))}/>
-          <small>Choose between 1 and 5 questions each day.</small>
+          <input type="number" min="1" max="20" value={config.trivia_questions_per_day} onChange={event => onConfigChange('trivia_questions_per_day', Number(event.target.value))}/>
+          <small>Choose between 1 and 20 questions each day.</small>
         </label>
         <div className="trivia-categories-heading">
           <div><b>Enabled categories</b><small>Select at least one category for daily trivia.</small></div>
@@ -77,9 +77,7 @@ export function TriviaSettingsPage({ server, config, categories, loading, saving
       </div>
       <div className="trivia-reset-content">
         <p>This removes every player's trivia history and score. It cannot be undone.</p>
-        {resetError && <p className="trivia-reset-error" role="alert">{resetError}</p>}
-        {resetNotice && <p className="trivia-reset-notice" role="status">{resetNotice}</p>}
-        <button type="button" className="danger-button" onClick={() => { setResetError(''); setResetNotice(''); setConfirmReset(true) }} disabled={resetting}>
+        <button type="button" className="danger-button" onClick={() => { setResetFeedback(null); setConfirmReset(true) }} disabled={resetting}>
           Reset trivia answers
         </button>
       </div>
@@ -94,5 +92,6 @@ export function TriviaSettingsPage({ server, config, categories, loading, saving
       onConfirm={() => { void resetAnswers() }}
       onCancel={() => setConfirmReset(false)}
     />}
+    {resetFeedback && <FeedbackModal {...resetFeedback} onClose={() => setResetFeedback(null)}/>}
   </ServerSettingsLayout>
 }

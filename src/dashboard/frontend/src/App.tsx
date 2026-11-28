@@ -12,7 +12,8 @@ import { ServerOverviewPage } from './pages/ServerOverviewPage'
 import { SuperadminLogsPage } from './pages/SuperadminLogsPage'
 import { SuperadminStatusPage } from './pages/SuperadminStatusPage'
 import { SuperadminTriviaPage } from './pages/SuperadminTriviaPage'
-import { TriviaLibraryPage } from './pages/TriviaLibraryPage'
+import { TriviaCategoriesPage } from './pages/TriviaCategoriesPage'
+import { TriviaQuestionsPage } from './pages/TriviaQuestionsPage'
 import { LocaleSettingsPage } from './pages/settings/LocaleSettingsPage'
 import { AutoModerationPage } from './pages/settings/AutoModerationPage'
 import { ChannelRulesPage } from './pages/settings/ChannelRulesPage'
@@ -25,8 +26,33 @@ import { blankConfig, type Channel, type Config, type Page, type Server, type Se
 const TOKEN_KEY = 'guilddesk.jwt'
 const PROFILE_KEY = 'guilddesk.user'
 
+function readAuthValue(key: string): string | null {
+  const persistentValue = localStorage.getItem(key)
+  if (persistentValue) {
+    sessionStorage.removeItem(key)
+    return persistentValue
+  }
+
+  const previousTabValue = sessionStorage.getItem(key)
+  if (previousTabValue) {
+    localStorage.setItem(key, previousTabValue)
+    sessionStorage.removeItem(key)
+  }
+  return previousTabValue
+}
+
+function storeAuthValue(key: string, value: string): void {
+  localStorage.setItem(key, value)
+  sessionStorage.removeItem(key)
+}
+
+function removeAuthValue(key: string): void {
+  localStorage.removeItem(key)
+  sessionStorage.removeItem(key)
+}
+
 function readStoredUser(): User | null {
-  const serialized = sessionStorage.getItem(PROFILE_KEY)
+  const serialized = readAuthValue(PROFILE_KEY)
   if (!serialized) return null
   try {
     const user = JSON.parse(serialized) as Partial<User>
@@ -36,7 +62,7 @@ function readStoredUser(): User | null {
         : null
       : null
   } catch {
-    sessionStorage.removeItem(PROFILE_KEY)
+    removeAuthValue(PROFILE_KEY)
     return null
   }
 }
@@ -44,9 +70,15 @@ function readStoredUser(): User | null {
 function normalizeRoute(path: string): string {
   const legacyTriviaContentRoute = path.match(/^\/servers\/(\d+)\/trivia\/content\/?$/)
   if (legacyTriviaContentRoute) {
-    const libraryRoute = '/trivia/library'
+    const libraryRoute = '/trivia/library/questions'
     window.history.replaceState({}, '', libraryRoute)
     return libraryRoute
+  }
+
+  if (path === '/trivia/library' || path === '/trivia/library/') {
+    const questionsRoute = '/trivia/library/questions'
+    window.history.replaceState({}, '', questionsRoute)
+    return questionsRoute
   }
 
   const legacyServerRoute = path.match(/^\/servers\/config\/(\d+)\/?$/)
@@ -59,7 +91,7 @@ function normalizeRoute(path: string): string {
 
 function App() {
   const [path, setPath] = useState(() => normalizeRoute(window.location.pathname))
-  const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '')
+  const [token, setToken] = useState(() => readAuthValue(TOKEN_KEY) || '')
   const [user, setUser] = useState<User | null>(() => readStoredUser())
   const [validatedToken, setValidatedToken] = useState('')
   const [sessionCheckError, setSessionCheckError] = useState('')
@@ -84,7 +116,9 @@ function App() {
   const serverId = serverRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
     : path === '/home' ? 'home'
-      : path === '/trivia/library' ? 'trivia-library'
+      : path === '/trivia/library' || path === '/trivia/library/' ? 'trivia-questions'
+        : path === '/trivia/library/categories' ? 'trivia-categories'
+        : path === '/trivia/library/questions' ? 'trivia-questions'
       : path === '/privacy-policy' ? 'privacy-policy'
         : path === '/terms-of-service' ? 'terms-of-service'
       : path === '/user-commands' ? 'user-commands'
@@ -104,8 +138,8 @@ function App() {
   }, [])
 
   const expireSession = useCallback(() => {
-    sessionStorage.removeItem(TOKEN_KEY)
-    sessionStorage.removeItem(PROFILE_KEY)
+    removeAuthValue(TOKEN_KEY)
+    removeAuthValue(PROFILE_KEY)
     loadedServersToken.current = ''
     loadedConfigServerId.current = ''
     setToken('')
@@ -129,6 +163,39 @@ function App() {
     return () => window.removeEventListener(SESSION_EXPIRED_EVENT, expireSession)
   }, [expireSession])
 
+  useEffect(() => {
+    const syncSessionAcrossTabs = (event: StorageEvent) => {
+      if (event.storageArea !== localStorage) return
+
+      if (event.key === TOKEN_KEY) {
+        loadedServersToken.current = ''
+        loadedConfigServerId.current = ''
+        setValidatedToken('')
+        setServers([])
+        setServer(null)
+
+        if (!event.newValue) {
+          setToken('')
+          setUser(null)
+          window.history.replaceState({}, '', '/login')
+          setPath('/login')
+          setError('Your dashboard session ended in another tab. Sign in again to continue.')
+          return
+        }
+
+        setToken(event.newValue)
+        setUser(readStoredUser())
+        setError('')
+        return
+      }
+
+      if (event.key === PROFILE_KEY) setUser(readStoredUser())
+    }
+
+    window.addEventListener('storage', syncSessionAcrossTabs)
+    return () => window.removeEventListener('storage', syncSessionAcrossTabs)
+  }, [])
+
   useLayoutEffect(() => {
     // Discord must be able to return to this public route to finish OAuth login.
     if (path === '/auth/callback' || isPublicDocument) return
@@ -149,8 +216,8 @@ function App() {
     }
 
     if (!token) {
-      sessionStorage.removeItem(TOKEN_KEY)
-      sessionStorage.removeItem(PROFILE_KEY)
+      removeAuthValue(TOKEN_KEY)
+      removeAuthValue(PROFILE_KEY)
       window.history.replaceState({}, '', '/login')
       queueMicrotask(() => {
         setPath('/login')
@@ -175,8 +242,8 @@ function App() {
     const errorDescription = query.get('error_description') || hash.get('error_description')
 
     if (receivedToken) {
-      sessionStorage.setItem(TOKEN_KEY, receivedToken)
-      sessionStorage.removeItem(PROFILE_KEY)
+      storeAuthValue(TOKEN_KEY, receivedToken)
+      removeAuthValue(PROFILE_KEY)
       window.history.replaceState({}, '', '/home')
       queueMicrotask(() => {
         setUser(null)
@@ -200,8 +267,8 @@ function App() {
         }
         return response.json() as Promise<{ token: string; user: User }>
       }).then(result => {
-        sessionStorage.setItem(TOKEN_KEY, result.token)
-        sessionStorage.setItem(PROFILE_KEY, JSON.stringify(result.user))
+        storeAuthValue(TOKEN_KEY, result.token)
+        storeAuthValue(PROFILE_KEY, JSON.stringify(result.user))
         setUser(result.user)
         setSessionCheckError('')
         setValidatedToken(result.token)
@@ -269,7 +336,7 @@ function App() {
     api<{ user: User }>('/me', token)
       .then(profile => {
         if (active) {
-          sessionStorage.setItem(PROFILE_KEY, JSON.stringify(profile.user))
+          storeAuthValue(PROFILE_KEY, JSON.stringify(profile.user))
           setUser(profile.user)
           setValidatedToken(token)
         }
@@ -337,8 +404,8 @@ function App() {
   const logout = async () => {
     try { if (token) await api('/logout', token, { method: 'POST' }) }
     catch (reason) { console.warn('Could not end dashboard session cleanly.', reason) }
-    sessionStorage.removeItem(TOKEN_KEY)
-    sessionStorage.removeItem(PROFILE_KEY)
+    removeAuthValue(TOKEN_KEY)
+    removeAuthValue(PROFILE_KEY)
     loadedServersToken.current = ''
     loadedConfigServerId.current = ''
     setToken('')
@@ -369,7 +436,6 @@ function App() {
     } catch (reason) {
       console.warn('Could not save server settings.', reason)
       const message = reason instanceof Error ? reason.message : 'Could not save settings.'
-      setError(message)
       setSaveError(message)
     } finally {
       setSaving(false)
@@ -416,7 +482,7 @@ function App() {
     showHeader
     onHome={() => navigate(token ? '/home' : '/login')}
     onLogout={logout}
-    onTriviaLibrary={() => navigate('/trivia/library')}
+    onTriviaLibrary={() => navigate('/trivia/library/questions')}
     onSuperadminStatus={() => navigate('/superadmin/status')}
     onSuperadminLogs={() => navigate('/superadmin/logs')}
     onSuperadminTrivia={() => navigate('/superadmin/trivia/review')}
@@ -426,7 +492,8 @@ function App() {
     {page === 'privacy-policy' && <MarkdownPage document="privacy-policy"/>}
     {page === 'terms-of-service' && <MarkdownPage document="terms-of-service"/>}
     {page === 'user-commands' && <UserCommandsPage/>}
-    {page === 'trivia-library' && <TriviaLibraryPage token={token}/>}
+    {page === 'trivia-categories' && <TriviaCategoriesPage token={token} onNavigate={navigate}/>}
+    {page === 'trivia-questions' && <TriviaQuestionsPage token={token} isSuperadmin={Boolean(user?.is_superadmin)} onNavigate={navigate}/>}
     {page === 'home' && <HomePage
       user={user}
       servers={servers}

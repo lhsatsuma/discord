@@ -18,7 +18,7 @@ The dashboard checks your Discord server permissions before showing or saving se
 - **Meme settings:** set Reddit selection odds (0 disables Reddit) and list up to 100 subreddit names, separated by commas or new lines. Reddit credentials must be configured by the system owner.
 - **Voice notifications:** enable or disable join and leave messages.
 - **Welcome message:** enable the message, choose its channel, and edit its text. Use `[@user]` to mention the new member. The final message must fit Discord's 2,000-character limit.
-- **Trivia:** choose enabled question categories and set the daily question limit from 1 to 5 per player.
+- **Trivia:** choose enabled question categories and set the daily question limit from 1 to 20 per player.
 
 Saved settings are stored in PostgreSQL. The dashboard clears the bot's Redis settings cache after a successful save.
 

@@ -58,6 +58,6 @@ class TriviaQuestion extends Model
             ->when($categoryId !== null, static fn ($query) => $query->where('category', $categoryId))
             ->when($difficulty !== null, static fn ($query) => $query->where('difficulty', $difficulty))
             ->orderBy('question')
-            ->paginate(30, ['id', 'category', 'question', 'explanation', 'difficulty', 'approved'], 'page', $page);
+            ->paginate(20, ['id', 'category', 'question', 'explanation', 'difficulty', 'approved'], 'page', $page);
     }
 }

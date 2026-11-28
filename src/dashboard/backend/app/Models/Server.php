@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection as SupportCollection;
 
 #[Fillable(['id', 'created_at', 'updated_at', 'created_by', 'active', 'name'])]
 class Server extends Model
@@ -21,16 +22,16 @@ class Server extends Model
         return static::query()->whereKey($serverId)->where('active', true)->first();
     }
 
-    /** @return Collection<int, self> */
-    public static function activeForDashboard(): Collection
+    /** @return EloquentCollection<int, self> */
+    public static function activeForDashboard(): EloquentCollection
     {
         return static::query()->where('active', true)->orderBy('name')->get(['id', 'name']);
     }
 
     /** @param list<string> $serverIds
-     *  @return Collection<int, string>
+     *  @return SupportCollection<int, string>
      */
-    public static function activeIdsAmong(array $serverIds): Collection
+    public static function activeIdsAmong(array $serverIds): SupportCollection
     {
         if ($serverIds === []) return collect();
 
