@@ -51,8 +51,8 @@ export function TriviaSettingsPage({ server, config, categories, loading, saving
       <div className="card-fields">
         <label className="field trivia-count-field">
           <span>Questions per day</span>
-          <input type="number" min="1" max="5" value={config.trivia_questions_per_day} onChange={event => onConfigChange('trivia_questions_per_day', Number(event.target.value))}/>
-          <small>Choose between 1 and 5 questions each day.</small>
+          <input type="number" min="1" max="20" value={config.trivia_questions_per_day} onChange={event => onConfigChange('trivia_questions_per_day', Number(event.target.value))}/>
+          <small>Choose between 1 and 20 questions each day.</small>
         </label>
         <div className="trivia-categories-heading">
           <div><b>Enabled categories</b><small>Select at least one category for daily trivia.</small></div>

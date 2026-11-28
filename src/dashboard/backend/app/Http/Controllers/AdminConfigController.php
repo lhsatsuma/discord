@@ -138,7 +138,7 @@ class AdminConfigController extends Controller
                 'welcome_message' => ['nullable', 'string', 'max:'.self::MAX_WELCOME_MESSAGE],
                 'trivia_categories' => ['required', 'array', 'min:1', 'max:100'],
                 'trivia_categories.*' => ['required', 'string', 'uuid', 'distinct'],
-                'trivia_questions_per_day' => ['required', 'integer', 'between:1,5'],
+                'trivia_questions_per_day' => ['required', 'integer', 'between:1,20'],
                 'admin_channels' => ['sometimes', 'array', 'max:500'],
                 'admin_channels.*' => ['required', 'string', 'regex:/^[0-9]{17,20}$/', 'distinct'],
                 'forbidden_channels' => ['sometimes', 'array', 'max:500'],
