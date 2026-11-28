@@ -28,6 +28,7 @@ export function SuperadminTriviaPage({ token }: Props) {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [rejecting, setRejecting] = useState<PendingRejection>(null)
+  const [confirmApproveAll, setConfirmApproveAll] = useState(false)
 
   const refresh = useCallback(() => {
     setLoading(true)
@@ -65,13 +66,49 @@ export function SuperadminTriviaPage({ token }: Props) {
     }
   }
 
+  const approveAllQuestions = async () => {
+    const pendingQuestions = [...queue.questions]
+    if (pendingQuestions.length === 0) return
+
+    setBusy('all-questions')
+    setError('')
+    setNotice('')
+    setConfirmApproveAll(false)
+
+    const approvedIds: string[] = []
+    for (const question of pendingQuestions) {
+      try {
+        await api(`/superadmin/trivia/questions/${question.id}/approve`, token, { method: 'POST' })
+        approvedIds.push(question.id)
+      } catch (reason) {
+        console.error('Could not approve trivia question during bulk approval.', { questionId: question.id, reason })
+      }
+    }
+
+    setQueue(current => ({
+      ...current,
+      questions: current.questions.filter(question => !approvedIds.includes(question.id)),
+    }))
+
+    const remaining = pendingQuestions.length - approvedIds.length
+    if (approvedIds.length > 0) {
+      setNotice(remaining === 0
+        ? `All ${approvedIds.length} pending trivia questions were approved.`
+        : `${approvedIds.length} questions approved. ${remaining} remain pending; check that their categories are approved and each has four alternatives with one correct answer.`)
+    } else {
+      setError('No questions could be approved. Check that their categories are approved and each question has four alternatives with one correct answer.')
+    }
+
+    setBusy('')
+  }
+
   const pendingCount = queue.categories.length + queue.questions.length
 
   return <div className="superadmin-trivia-page">
     <PageHeading eyebrow="SYSTEM SUPERADMIN" title={<>Trivia review<span className="heading-period">.</span></>} description="Review categories and questions submitted by server administrators." action={<button type="button" className="back-button" onClick={refresh}><Icon name="spark" size={16}/> Refresh</button>}/>
     <ErrorAlert message={error} className="page-alert"/>
     {notice && <div className="alert success" role="status">{notice}</div>}
-    <div className="section-topline"><span className="section-title">Pending submissions</span><span className="section-hint">{pendingCount} waiting for review</span></div>
+    <div className="section-topline"><span className="section-title">Pending submissions</span><div className="trivia-review-toolbar"><span className="section-hint">{pendingCount} waiting for review</span>{queue.questions.length > 0 && <button type="button" className="approve-all-button" disabled={busy !== '' || loading} onClick={() => setConfirmApproveAll(true)}><Icon name="check" size={15}/> Approve all questions ({queue.questions.length})</button>}</div></div>
     {loading ? <div className="loading-state"><span className="spinner"/> Loading trivia submissions…</div> : pendingCount === 0
       ? <div className="empty-state"><span className="empty-icon"><Icon name="check" size={24}/></span><h3>Nothing to review</h3><p>New trivia submissions from server admins will appear here.</p></div>
       : <div className="trivia-review-list">
@@ -97,6 +134,15 @@ export function SuperadminTriviaPage({ token }: Props) {
       busy={busy !== ''}
       onConfirm={() => { void update(rejecting.kind, rejecting.id, 'reject') }}
       onCancel={() => setRejecting(null)}
+    />}
+    {confirmApproveAll && <ConfirmationModal
+      title="Approve all pending questions?"
+      message={`This will attempt to approve all ${queue.questions.length} pending trivia questions. Questions with unapproved categories or invalid alternatives will remain pending.`}
+      confirmLabel="Approve all questions"
+      busyLabel="Approving questions…"
+      busy={busy === 'all-questions'}
+      onConfirm={() => { void approveAllQuestions() }}
+      onCancel={() => setConfirmApproveAll(false)}
     />}
   </div>
 }

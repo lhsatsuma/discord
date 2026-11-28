@@ -5,7 +5,7 @@ import { PageHeading } from '../components/PageHeading'
 import { api } from '../lib/api'
 import type { LocaleCode, TriviaCategory } from '../types/dashboard'
 
-type Props = { token: string; serverId: string; onBack: () => void }
+type Props = { token: string; onBack: () => void }
 type Difficulty = 'easy' | 'medium' | 'hard'
 type QuestionInput = {
   category: string
@@ -17,7 +17,7 @@ type QuestionInput = {
 }
 const blankQuestion = (): QuestionInput => ({ category: '', difficulty: 'easy', question: '', correct: '', incorrects: ['', '', ''], explanation: '' })
 
-export function TriviaContentPage({ token, serverId, onBack }: Props) {
+export function TriviaContentPage({ token, onBack }: Props) {
   const [categories, setCategories] = useState<TriviaCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -30,16 +30,17 @@ export function TriviaContentPage({ token, serverId, onBack }: Props) {
   const [importQuestions, setImportQuestions] = useState<unknown[] | null>(null)
 
   const loadCategories = useCallback(() => {
+    setCategories([])
     setLoading(true)
     setError('')
-    api<{ categories: TriviaCategory[] }>(`/servers/${serverId}/trivia/content`, token)
+    api<{ categories: TriviaCategory[] }>('/trivia/submission-categories', token)
       .then(result => setCategories(result.categories))
       .catch(reason => {
         console.error('Could not load trivia categories for submissions.', reason)
         setError(reason instanceof Error ? reason.message : 'Could not load trivia categories.')
       })
       .finally(() => setLoading(false))
-  }, [serverId, token])
+  }, [token])
 
   useEffect(() => { loadCategories() }, [loadCategories])
 
@@ -49,7 +50,7 @@ export function TriviaContentPage({ token, serverId, onBack }: Props) {
     setError('')
     setNotice('')
     try {
-      const result = await api<{ category: { id: string; description: string; locale: string } }>(`/servers/${serverId}/trivia/categories`, token, {
+      const result = await api<{ category: { id: string; description: string; locale: string } }>('/trivia/categories', token, {
         method: 'POST',
         body: JSON.stringify({ locale: categoryLocale, short_description: shortDescription, description: categoryDescription }),
       })
@@ -71,7 +72,7 @@ export function TriviaContentPage({ token, serverId, onBack }: Props) {
     setError('')
     setNotice('')
     try {
-      await api(`/servers/${serverId}/trivia/questions`, token, { method: 'POST', body: JSON.stringify(question) })
+      await api('/trivia/questions', token, { method: 'POST', body: JSON.stringify(question) })
       setNotice('Question and alternatives were submitted for superadmin approval.')
       setQuestion(blankQuestion())
     } catch (reason) {
@@ -104,7 +105,7 @@ export function TriviaContentPage({ token, serverId, onBack }: Props) {
     setError('')
     setNotice('')
     try {
-      const result = await api<{ submitted: number }>(`/servers/${serverId}/trivia/questions/import`, token, {
+      const result = await api<{ submitted: number }>('/trivia/questions/import', token, {
         method: 'POST',
         body: JSON.stringify({ questions: importQuestions }),
       })
@@ -127,9 +128,10 @@ export function TriviaContentPage({ token, serverId, onBack }: Props) {
   }
 
   return <div className="trivia-content-page">
-    <PageHeading eyebrow="SERVER TRIVIA" title={<>Question library<span className="heading-period">.</span></>} description="Submit categories and questions for review by the system superadmin." action={<button type="button" className="back-button" onClick={onBack}><Icon name="back" size={16}/> Back to trivia settings</button>}/>
+    <PageHeading eyebrow="TRIVIA SUBMISSIONS" title={<>Create trivia content<span className="heading-period">.</span></>} description="Submit categories and questions for review by the system superadmin." action={<button type="button" className="back-button" onClick={onBack}><Icon name="back" size={16}/> Back to library</button>}/>
     <ErrorAlert message={error} className="page-alert"/>
     {notice && <div className="alert success" role="status">{notice}</div>}
+
 
     <section className="settings-card">
       <div className="card-heading"><span className="card-icon violet"><Icon name="spark"/></span><div><h2>Create a category</h2><p>New categories stay unavailable to all servers until approved.</p></div></div>

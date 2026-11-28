@@ -11,7 +11,7 @@ import { ServerOverviewPage } from './pages/ServerOverviewPage'
 import { SuperadminLogsPage } from './pages/SuperadminLogsPage'
 import { SuperadminStatusPage } from './pages/SuperadminStatusPage'
 import { SuperadminTriviaPage } from './pages/SuperadminTriviaPage'
-import { TriviaContentPage } from './pages/TriviaContentPage'
+import { TriviaLibraryPage } from './pages/TriviaLibraryPage'
 import { LocaleSettingsPage } from './pages/settings/LocaleSettingsPage'
 import { AutoModerationPage } from './pages/settings/AutoModerationPage'
 import { ChannelRulesPage } from './pages/settings/ChannelRulesPage'
@@ -41,6 +41,13 @@ function readStoredUser(): User | null {
 }
 
 function normalizeRoute(path: string): string {
+  const legacyTriviaContentRoute = path.match(/^\/servers\/(\d+)\/trivia\/content\/?$/)
+  if (legacyTriviaContentRoute) {
+    const libraryRoute = '/trivia/library'
+    window.history.replaceState({}, '', libraryRoute)
+    return libraryRoute
+  }
+
   const legacyServerRoute = path.match(/^\/servers\/config\/(\d+)\/?$/)
   if (!legacyServerRoute) return path
 
@@ -71,18 +78,17 @@ function App() {
   const callbackProcessed = useRef(false)
   const loadedServersToken = useRef('')
   const loadedConfigServerId = useRef('')
-  const triviaContentRoute = path.match(/^\/servers\/(\d+)\/trivia\/content\/?$/)
   const serverRoute = path.match(/^\/servers\/(\d+)(?:\/(autoban|memes|channels|voice|welcome|locale|trivia))?\/?$/)
-  const isServerRoute = serverRoute !== null || triviaContentRoute !== null
-  const serverId = serverRoute?.[1] || triviaContentRoute?.[1] || ''
+  const isServerRoute = serverRoute !== null
+  const serverId = serverRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
     : path === '/home' ? 'home'
+      : path === '/trivia/library' ? 'trivia-library'
       : path === '/privacy-policy' ? 'privacy-policy'
         : path === '/terms-of-service' ? 'terms-of-service'
       : path === '/superadmin/status' ? 'superadmin-status'
         : path === '/superadmin/logs' ? 'superadmin-logs'
             : path === '/superadmin/trivia/review' ? 'superadmin-trivia'
-              : triviaContentRoute ? 'trivia-content'
         : serverRoute ? (serverRoute[2] as SettingGroup | undefined) || 'server'
         : 'login'
   const isPublicDocument = page === 'privacy-policy' || page === 'terms-of-service'
@@ -392,7 +398,6 @@ function App() {
   }
 
   const openGroup = (group: SettingGroup) => navigate(`/servers/${serverId}/${group}`)
-  const manageTriviaQuestions = () => navigate(`/servers/${serverId}/trivia/content`)
   const settingsProps = {
     server, config, loading, saving, error, saveError, notice,
     onBack: () => navigate(`/servers/${serverId}`), onDismissError: () => setError(''),
@@ -409,6 +414,7 @@ function App() {
     showHeader={page !== 'login'}
     onHome={() => navigate(token ? '/home' : '/login')}
     onLogout={logout}
+    onTriviaLibrary={() => navigate('/trivia/library')}
     onSuperadminStatus={() => navigate('/superadmin/status')}
     onSuperadminLogs={() => navigate('/superadmin/logs')}
     onSuperadminTrivia={() => navigate('/superadmin/trivia/review')}
@@ -417,6 +423,7 @@ function App() {
     {page === 'login' && <LoginPage error={!token ? error : ''}/>}
     {page === 'privacy-policy' && <MarkdownPage document="privacy-policy"/>}
     {page === 'terms-of-service' && <MarkdownPage document="terms-of-service"/>}
+    {page === 'trivia-library' && <TriviaLibraryPage token={token}/>}
     {page === 'home' && <HomePage
       user={user}
       servers={servers}
@@ -434,8 +441,7 @@ function App() {
     {page === 'voice' && <VoiceUpdatesPage {...settingsProps}/>}
     {page === 'welcome' && <WelcomeMessagePage {...settingsProps} channels={channels}/>}
     {page === 'locale' && <LocaleSettingsPage {...settingsProps}/>}
-    {page === 'trivia' && <TriviaSettingsPage {...settingsProps} categories={triviaCategories} onResetAnswers={resetTriviaAnswers} onManageQuestions={manageTriviaQuestions}/>}
-    {page === 'trivia-content' && serverId && <TriviaContentPage token={token} serverId={serverId} onBack={() => navigate(`/servers/${serverId}/trivia`)}/>}
+    {page === 'trivia' && <TriviaSettingsPage {...settingsProps} categories={triviaCategories} onResetAnswers={resetTriviaAnswers}/>}
     {page === 'superadmin-status' && (user?.is_superadmin ? <SuperadminStatusPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     {page === 'superadmin-logs' && (user?.is_superadmin ? <SuperadminLogsPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
     {page === 'superadmin-trivia' && (user?.is_superadmin ? <SuperadminTriviaPage token={token}/> : <div className="loading-state"><span className="spinner"/> Verifying superadmin access…</div>)}
