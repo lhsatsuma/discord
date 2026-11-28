@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import type { User } from '../types/dashboard'
 import { Icon } from './Icon'
+import { getDashboardPublicLinks, type DashboardPublicLinks } from '../lib/publicConfig'
 
 type Props = {
   user: User | null
@@ -10,11 +11,21 @@ type Props = {
   onLogout: () => void
   onSuperadminStatus: () => void
   onSuperadminLogs: () => void
+  onSuperadminTrivia: () => void
   showHeader?: boolean
 }
 
-export function DashboardTemplate({ user, active, children, onHome, onLogout, onSuperadminStatus, onSuperadminLogs, showHeader = true }: Props) {
+export function DashboardTemplate({ user, active, children, onHome, onLogout, onSuperadminStatus, onSuperadminLogs, onSuperadminTrivia, showHeader = true }: Props) {
   const [superadminMenuOpen, setSuperadminMenuOpen] = useState(false)
+  const [publicLinks, setPublicLinks] = useState<DashboardPublicLinks>({ bot_invite: null, support_invite: null })
+
+  useEffect(() => {
+    let active = true
+    getDashboardPublicLinks()
+      .then(links => { if (active) setPublicLinks(links) })
+      .catch(error => console.warn('Could not load dashboard invite links.', error))
+    return () => { active = false }
+  }, [])
   return <div className="app-shell">
     {showHeader && <header className="topbar">
       <a className="brand" href="/home" onClick={event => { event.preventDefault(); onHome() }}>
@@ -30,12 +41,13 @@ export function DashboardTemplate({ user, active, children, onHome, onLogout, on
           {superadminMenuOpen && <div className="superadmin-dropdown" role="menu">
             <button type="button" role="menuitem" className={active === 'superadmin-status' ? 'selected' : ''} onClick={() => { setSuperadminMenuOpen(false); onSuperadminStatus() }}>Process status</button>
             <button type="button" role="menuitem" className={active === 'superadmin-logs' ? 'selected' : ''} onClick={() => { setSuperadminMenuOpen(false); onSuperadminLogs() }}>Bot logs</button>
+            <button type="button" role="menuitem" className={active === 'superadmin-trivia' ? 'selected' : ''} onClick={() => { setSuperadminMenuOpen(false); onSuperadminTrivia() }}>Trivia review</button>
           </div>}
         </div>}
       </nav>
       <div className="profile-area">{user ? <><span className="profile-name">{user.username}</span><span className="avatar">{user.avatar ? <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=64`} alt=""/> : user.username.slice(0, 1).toUpperCase()}</span><button className="quiet-button" onClick={onLogout}>Sign out</button></> : <span className="secure-label"><Icon name="lock" size={14}/> Secure login</span>}</div>
     </header>}
     <main className="page-content">{children}</main>
-    <footer className="footer"><span>Guilddesk <span className="footer-dot">·</span> Server management <span className="footer-dot">·</span> v{__DASHBOARD_VERSION__}</span><span className="footer-status"><i/> All systems operational</span><span className="footer-right">Your server, your settings.</span></footer>
+    <footer className="footer"><span>Guilddesk <span className="footer-dot">.</span> v{__DASHBOARD_VERSION__}</span><nav className="footer-legal" aria-label="Information"><a href="/privacy-policy">Privacy Policy</a><a href="/terms-of-service">Terms of Service</a>{publicLinks.bot_invite && <a href={publicLinks.bot_invite} target="_blank" rel="noreferrer">Invite bot</a>}{publicLinks.support_invite && <a href={publicLinks.support_invite} target="_blank" rel="noreferrer">Support server</a>}</nav><span className="footer-right">Your server, your settings.</span></footer>
   </div>
 }

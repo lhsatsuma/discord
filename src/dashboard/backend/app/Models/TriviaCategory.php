@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['id', 'created_at', 'updated_at', 'created_by', 'locale', 'short_description', 'description'])]
+#[Fillable(['id', 'created_at', 'updated_at', 'created_by', 'approved', 'locale', 'short_description', 'description'])]
 class TriviaCategory extends Model
 {
     protected $table = 'trivia_categorys';
@@ -21,6 +21,8 @@ class TriviaCategory extends Model
     {
         return static::query()
             ->select('trivia_categorys.id', 'trivia_categorys.short_description', 'trivia_categorys.description', 'trivia_categorys.locale')
+            ->where('trivia_categorys.approved', true)
+            ->whereHas('questions', static fn ($questions) => $questions->where('approved', true))
             ->orderBy('trivia_categorys.locale')
             ->orderBy('trivia_categorys.description')
             ->get();
@@ -31,6 +33,8 @@ class TriviaCategory extends Model
     {
         return static::query()
             ->where('locale', $locale)
+            ->where('approved', true)
+            ->whereHas('questions', static fn ($questions) => $questions->where('approved', true))
             ->orderBy('description')
             ->pluck('id')
             ->map(static fn ($id): string => (string) $id)
@@ -40,5 +44,10 @@ class TriviaCategory extends Model
     public function questions(): HasMany
     {
         return $this->hasMany(TriviaQuestion::class, 'category', 'id');
+    }
+
+    protected function casts(): array
+    {
+        return ['approved' => 'boolean'];
     }
 }

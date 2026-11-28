@@ -103,6 +103,7 @@ class AdminConfigController extends Controller
                     'short_description' => (string) $category->short_description,
                     'description' => (string) $category->description,
                     'locale' => (string) $category->locale,
+                    'approved' => (bool) $category->approved,
                 ])->all(),
                 'channels' => array_values(array_map(static fn (array $channel): array => [
                     'id' => (string) $channel['id'], 'name' => (string) $channel['name'],

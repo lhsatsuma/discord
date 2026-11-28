@@ -22,6 +22,29 @@
 .footer-status { display:flex; align-items:center; gap:7px; margin-left:36px; }
 .footer-status i,.save-bar>span i { width:6px; height:6px; border-radius:50%; background:#53b98a; box-shadow:0 0 0 3px #e2f5ec; }
 .footer-right { margin-left:auto; }
+.footer-legal,.login-legal-links { display:flex; align-items:center; gap:14px; }
+.footer-legal { margin-left:24px; }
+.footer-legal a,.login-legal-links a { color:#969baa; text-decoration:none; }
+.footer-legal a:hover,.login-legal-links a:hover { color:#a99aff; text-decoration:underline; }
+.login-legal-links { justify-content:center; margin-top:17px; font-size:11px; }
+.markdown-page { width:min(920px,100%); margin:0 auto; }
+.markdown-page .page-heading { margin-bottom:22px; }
+.markdown-back { display:flex; align-items:center; gap:7px; text-decoration:none; }
+.markdown-document { padding:30px clamp(20px,5vw,52px); border:1px solid #30343f; border-radius:12px; background:#1b1e26; color:#c4c9d4; font-size:14px; line-height:1.8; overflow-wrap:anywhere; }
+.markdown-document h2 { margin:34px 0 12px; padding-bottom:8px; border-bottom:1px solid #30343f; color:#f0f1f6; font:700 22px/1.4 'Manrope',sans-serif; }
+.markdown-document h3 { margin:27px 0 10px; color:#e7e9ef; font:700 17px/1.4 'Manrope',sans-serif; }
+.markdown-document h4 { margin:22px 0 8px; color:#e7e9ef; font:700 15px/1.4 'Manrope',sans-serif; }
+.markdown-document p { margin:0 0 15px; }
+.markdown-document p:last-child { margin-bottom:0; }
+.markdown-document ul,.markdown-document ol { display:grid; gap:9px; margin:0 0 18px; padding-left:24px; }
+.markdown-document li { padding-left:3px; }
+.markdown-document strong { color:#f0f1f6; }
+.markdown-document a,.markdown-document-links a { color:#b5aaff; text-underline-offset:3px; }
+.markdown-document a:hover,.markdown-document-links a:hover { color:#d1c9ff; }
+.markdown-document code { padding:2px 5px; border-radius:4px; color:#d4ccff; background:#27243b; font:12px ui-monospace,Consolas,monospace; }
+.markdown-document blockquote { margin:15px 0 20px; padding:12px 15px; border-left:3px solid #806ee4; border-radius:0 6px 6px 0; background:#211f30; color:#d1cced; }
+.markdown-document hr { height:1px; margin:24px 0; border:0; background:#30343f; }
+.markdown-document-links { display:flex; justify-content:flex-end; padding:18px 4px; font-size:13px; }
 .login-layout { min-height:590px; padding:52px 4.2% 34px; display:grid; grid-template-columns:1fr 390px; column-gap:9%; align-items:center; position:relative; }
 .eyebrow { display:flex; align-items:center; gap:10px; color:#8d82ca; font-size:9px; font-weight:700; letter-spacing:1.55px; }
 .eyebrow-line { width:21px; height:1px; background:#8876e8; }
@@ -57,6 +80,9 @@
 .section-title { color:#444b59; font-size:12px; font-weight:700; }
 .section-title span { display:inline-grid; place-items:center; width:22px; height:20px; margin-left:6px; color:#7868d6; background:#f0eeff; border-radius:6px; font-size:9px; }
 .section-hint { display:flex; align-items:center; gap:6px; color:#959aa7; font-size:10px; }
+.home-list-actions { display:flex; align-items:center; gap:16px; }
+.invite-bot-link { display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid #454168; border-radius:7px; color:#c4baff; background:#211f30; font-size:11px; font-weight:700; text-decoration:none; transition:background .2s,border-color .2s; }
+.invite-bot-link:hover { border-color:#7669bd; background:#2a2740; }
 .server-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
 .server-card { width:100%; min-height:83px; display:flex; align-items:center; gap:14px; text-align:left; border:1px solid #e8eaf0; border-radius:10px; padding:15px 16px; background:#fff; transition:transform .18s,border .18s,box-shadow .18s; }
 .server-card:hover { border-color:#d2cdf4; transform:translateY(-2px); box-shadow:0 9px 23px #353b4a0b; }
@@ -139,7 +165,7 @@
   .page-content,.footer { width:90vw; }.page-content { padding:30px 0 45px; }.footer { min-height:60px; flex-wrap:wrap; gap:4px; padding:13px 0; }.footer-status { margin-left:10px; }.footer-right { display:none; }
   .login-layout { display:flex; flex-direction:column; align-items:stretch; gap:33px; padding:21px 0 52px; }.login-copy h1 { font-size:43px; }.login-description { font-size:13px; }.feature-list { gap:15px; margin-top:25px; }.login-card { padding:24px; }.login-stamp { left:0; bottom:13px; }
   .page-heading { align-items:flex-start; gap:12px; }.page-heading h1 { font-size:29px; letter-spacing:-1px; }.page-heading p { max-width:270px; line-height:1.6; }.back-button { padding:8px; white-space:nowrap; font-size:0; }.back-button svg { width:18px;height:18px; }
-  .server-grid { grid-template-columns:1fr; gap:9px; }.server-card { min-height:74px; }.server-arrow { opacity:1; }.section-hint { font-size:0; }.section-hint svg { width:16px;height:16px; }
+  .server-grid { grid-template-columns:1fr; gap:9px; }.server-card { min-height:74px; }.server-arrow { opacity:1; }.section-hint { font-size:0; }.section-hint svg { width:16px;height:16px; }.home-list-actions { gap:8px; }.invite-bot-link { padding:6px 8px; font-size:10px; }
   .settings-card { padding:15px; }.card-heading { gap:9px; }.card-icon { width:33px;height:33px; }.card-heading p { max-width:240px; }.field-row { grid-template-columns:1fr; gap:14px; }.input-suffix.compact { max-width:none; }.save-bar { gap:8px; align-items:flex-end; }.save-bar>span { max-width:145px; line-height:1.5; }.save-button { min-width:120px; }
 }
 
@@ -322,6 +348,33 @@
 .trivia-category-option small { overflow:hidden; color:#969baa; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
 .trivia-categories-empty { margin:0; color:#a0a5b4; font-size:13px; line-height:1.6; }
 .trivia-reset-card { border-color:#4a3337; }
+.trivia-content-page,.superadmin-trivia-page { display:grid; gap:15px; }
+.trivia-content-page .page-heading,.superadmin-trivia-page .page-heading { margin-bottom:4px; }
+.trivia-content-page .card-fields { gap:17px; }
+.trivia-content-page .field-row { align-items:start; }
+.trivia-content-page .save-button { justify-self:start; }
+.trivia-import-ready { display:flex; align-items:center; justify-content:space-between; gap:15px; padding:13px; border:1px solid #393d49; border-radius:7px; background:#13151b; color:#e0e3ec; font-size:12px; }
+.trivia-json-example { color:#c5c9d3; font-size:12px; }
+.trivia-json-example summary { width:max-content; color:#b5aaff; cursor:pointer; }
+.trivia-json-example pre { max-width:100%; overflow:auto; margin:10px 0 0; padding:12px; border:1px solid #30343f; border-radius:7px; background:#13151b; color:#d9dce5; font:11px/1.6 ui-monospace,Consolas,monospace; }
+.trivia-review-list { display:grid; gap:12px; }
+.trivia-review-card { display:grid; gap:14px; }
+.trivia-review-title { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
+.trivia-review-title small { color:#a99aff; font-size:10px; font-weight:800; letter-spacing:.8px; }
+.trivia-review-title h2 { margin:6px 0 0; color:#edf0f7; font:700 17px/1.5 'Manrope',sans-serif; overflow-wrap:anywhere; }
+.review-kind { flex:none; padding:5px 8px; border:1px solid #39344f; border-radius:20px; color:#c2b8ff; background:#211f30; font-size:10px; font-weight:700; }
+.trivia-review-meta { display:flex; flex-wrap:wrap; gap:9px 22px; margin:0; }
+.trivia-review-meta div { min-width:130px; }
+.trivia-review-meta dt { color:#8f96a6; font-size:10px; }
+.trivia-review-meta dd { margin:4px 0 0; color:#d9dce5; font:11px ui-monospace,Consolas,monospace; overflow-wrap:anywhere; }
+.trivia-review-category,.trivia-review-explanation { margin:0; color:#c5c9d3; font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
+.trivia-review-category b,.trivia-review-explanation b { color:#edf0f7; }
+.trivia-review-options { display:grid; gap:7px; margin:0; padding-left:25px; color:#c9cdd7; font-size:12px; line-height:1.6; }
+.trivia-review-options li { padding-left:3px; overflow-wrap:anywhere; }
+.trivia-review-options li.correct { color:#8de0b2; }
+.trivia-review-actions { display:flex; flex-wrap:wrap; gap:9px; padding-top:3px; }
+.trivia-review-actions .save-button,.trivia-review-actions .danger-button { min-width:142px; }
+.trivia-content-link-card .trivia-reset-content { display:flex; }
 .trivia-reset-content { display:grid; justify-items:start; gap:13px; padding-top:15px; }
 .trivia-reset-content>p { margin:0; color:#a0a5b4; font-size:13px; line-height:1.55; }
 .trivia-reset-content .trivia-reset-error { color:#ffaaaa; }
@@ -345,4 +398,12 @@
   .channel-rules-header span { padding:0 6px; font-size:10px; }
   .channel-rule-name { padding:0 8px; font-size:12px; }
   .trivia-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .trivia-content-page .field-row { grid-template-columns:1fr; }
+  .trivia-import-ready { align-items:flex-start; flex-direction:column; }
+  .trivia-review-title { flex-direction:column; gap:8px; }
+  .trivia-review-meta { display:grid; grid-template-columns:1fr; }
+  .footer { align-items:flex-start; }
+  .footer-legal { width:100%; order:3; margin:4px 0 0; }
+  .footer-status { margin-left:auto; }
+  .markdown-document { padding:22px 18px; font-size:13px; }
 }

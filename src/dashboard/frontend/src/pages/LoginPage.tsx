@@ -19,6 +19,7 @@ export function LoginPage({ error }: { error: string }) {
       {error && <div className="alert error" role="alert">{error}</div>}
       <a className="discord-button" href="/api/auth/discord"><Icon name="discord" size={20}/> Continue with Discord <Icon name="arrow" size={17}/></a>
       <div className="trust-note"><Icon name="lock" size={14}/> We never ask for your Discord password</div>
+      <nav className="login-legal-links" aria-label="Legal information"><a href="/privacy-policy">Privacy Policy</a><a href="/terms-of-service">Terms of Service</a></nav>
     </div>
     <div className="login-stamp"><span>01</span><i/> PRIVATE BY DESIGN</div>
   </section>

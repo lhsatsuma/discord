@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TriviaAlternative;
+use App\Models\TriviaCategory;
+use App\Models\TriviaQuestion;
 use App\Services\DashboardSuperadmin;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -76,6 +80,148 @@ class SuperadminController extends Controller
                 'message' => $error->getMessage(),
             ]);
             return response()->json(['message' => 'Could not load bot logs.'], 500);
+        }
+    }
+
+    public function triviaReview(Request $request): JsonResponse
+    {
+        if ($response = $this->authorizeSuperadmin($request)) return $response;
+
+        try {
+            return response()->json([
+                'categories' => TriviaCategory::query()
+                    ->where('approved', false)
+                    ->orderBy('created_at')
+                    ->get(['id', 'created_by', 'created_at', 'locale', 'short_description', 'description']),
+                'questions' => TriviaQuestion::query()
+                    ->where('approved', false)
+                    ->with([
+                        'triviaCategory:id,locale,description,approved',
+                        'alternatives:id,question,description,correct_answer',
+                    ])
+                    ->orderBy('created_at')
+                    ->get(['id', 'created_by', 'created_at', 'category', 'question', 'difficulty', 'explanation'])
+                    ->map(static fn (TriviaQuestion $question): array => [
+                        'id' => (string) $question->id,
+                        'created_by' => (string) $question->created_by,
+                        'created_at' => $question->created_at,
+                        'question' => (string) $question->question,
+                        'difficulty' => (int) $question->difficulty,
+                        'explanation' => $question->explanation,
+                        'category' => $question->triviaCategory ? [
+                            'id' => (string) $question->triviaCategory->id,
+                            'locale' => (string) $question->triviaCategory->locale,
+                            'description' => (string) $question->triviaCategory->description,
+                            'approved' => (bool) $question->triviaCategory->approved,
+                        ] : null,
+                        'alternatives' => $question->alternatives->map(static fn (TriviaAlternative $alternative): array => [
+                            'id' => (string) $alternative->id,
+                            'description' => (string) $alternative->description,
+                            'correct_answer' => (bool) $alternative->correct_answer,
+                        ])->all(),
+                    ])->all(),
+            ]);
+        } catch (Throwable $error) {
+            Log::error('Could not load trivia approval queue.', ['message' => $error->getMessage()]);
+            return response()->json(['message' => 'Could not load trivia submissions.'], 500);
+        }
+    }
+
+    public function approveTriviaCategory(Request $request, string $categoryId): JsonResponse
+    {
+        if ($response = $this->authorizeSuperadmin($request)) return $response;
+
+        try {
+            $category = TriviaCategory::query()->findOrFail($categoryId);
+            $category->approved = true;
+            $category->save();
+            Log::info('Superadmin approved trivia category.', [
+                'category_id' => $categoryId,
+                'discord_user_id' => (string) $request->attributes->get('dashboard.session')['identity']['id'],
+            ]);
+            return response()->json(['ok' => true]);
+        } catch (Throwable $error) {
+            Log::error('Could not approve trivia category.', ['category_id' => $categoryId, 'message' => $error->getMessage()]);
+            return response()->json(['message' => 'Could not approve trivia category.'], 500);
+        }
+    }
+
+    public function rejectTriviaCategory(Request $request, string $categoryId): JsonResponse
+    {
+        if ($response = $this->authorizeSuperadmin($request)) return $response;
+
+        try {
+            $category = TriviaCategory::query()->findOrFail($categoryId);
+            if ($category->approved) return response()->json(['message' => 'Approved categories cannot be rejected from the pending queue.'], 409);
+            if (TriviaQuestion::query()->where('category', $categoryId)->where('approved', true)->exists()) {
+                return response()->json(['message' => 'A category with an approved question cannot be rejected.'], 409);
+            }
+
+            DB::transaction(function () use ($category): void {
+                $questionIds = TriviaQuestion::query()->where('category', $category->id)->pluck('id');
+                TriviaAlternative::query()->whereIn('question', $questionIds)->delete();
+                TriviaQuestion::query()->whereIn('id', $questionIds)->delete();
+                $category->delete();
+            });
+
+            Log::info('Superadmin rejected trivia category.', [
+                'category_id' => $categoryId,
+                'discord_user_id' => (string) $request->attributes->get('dashboard.session')['identity']['id'],
+            ]);
+            return response()->json(['ok' => true]);
+        } catch (Throwable $error) {
+            Log::error('Could not reject trivia category.', ['category_id' => $categoryId, 'message' => $error->getMessage()]);
+            return response()->json(['message' => 'Could not reject trivia category.'], 500);
+        }
+    }
+
+    public function approveTriviaQuestion(Request $request, string $questionId): JsonResponse
+    {
+        if ($response = $this->authorizeSuperadmin($request)) return $response;
+
+        try {
+            $question = TriviaQuestion::query()->with(['triviaCategory', 'alternatives'])->findOrFail($questionId);
+            if (! $question->triviaCategory?->approved) {
+                return response()->json(['message' => 'Approve the question category before approving this question.'], 409);
+            }
+            if ($question->alternatives->count() !== 4 || $question->alternatives->where('correct_answer', true)->count() !== 1) {
+                return response()->json(['message' => 'This question must have exactly four alternatives and one correct answer.'], 409);
+            }
+
+            $question->approved = true;
+            $question->save();
+            Log::info('Superadmin approved trivia question.', [
+                'question_id' => $questionId,
+                'discord_user_id' => (string) $request->attributes->get('dashboard.session')['identity']['id'],
+            ]);
+            return response()->json(['ok' => true]);
+        } catch (Throwable $error) {
+            Log::error('Could not approve trivia question.', ['question_id' => $questionId, 'message' => $error->getMessage()]);
+            return response()->json(['message' => 'Could not approve trivia question.'], 500);
+        }
+    }
+
+    public function rejectTriviaQuestion(Request $request, string $questionId): JsonResponse
+    {
+        if ($response = $this->authorizeSuperadmin($request)) return $response;
+
+        try {
+            $question = TriviaQuestion::query()->findOrFail($questionId);
+            if ($question->approved) return response()->json(['message' => 'Approved questions cannot be rejected from the pending queue.'], 409);
+
+            DB::transaction(function () use ($question): void {
+                TriviaAlternative::query()->where('question', $question->id)->delete();
+                $question->delete();
+            });
+
+            Log::info('Superadmin rejected trivia question.', [
+                'question_id' => $questionId,
+                'discord_user_id' => (string) $request->attributes->get('dashboard.session')['identity']['id'],
+            ]);
+            return response()->json(['ok' => true]);
+        } catch (Throwable $error) {
+            Log::error('Could not reject trivia question.', ['question_id' => $questionId, 'message' => $error->getMessage()]);
+            return response()->json(['message' => 'Could not reject trivia question.'], 500);
         }
     }
 

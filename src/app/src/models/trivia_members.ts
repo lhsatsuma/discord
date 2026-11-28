@@ -144,7 +144,7 @@ export default class model_trivia_members extends model_base
                 `SELECT q.difficulty::int AS difficulty
                  FROM trivia_questions AS q
                  INNER JOIN trivia_categorys AS c ON c.id = q.category
-                 WHERE c.locale = $1
+                 WHERE c.locale = $1 AND c.approved = true AND q.approved = true
                    AND q.category = ANY($2::uuid[])
                    AND NOT EXISTS (
                        SELECT 1
@@ -170,7 +170,7 @@ export default class model_trivia_members extends model_base
                     `SELECT q.id, q.question, q.explanation, q.category, q.difficulty, c.description AS category_name
                      FROM trivia_questions AS q
                      INNER JOIN trivia_categorys AS c ON c.id = q.category
-                     WHERE c.locale = $1
+                     WHERE c.locale = $1 AND c.approved = true AND q.approved = true
                        AND q.difficulty = $2
                        AND q.category = ANY($3::uuid[])
                        AND NOT EXISTS (
@@ -189,7 +189,7 @@ export default class model_trivia_members extends model_base
                     `SELECT q.id, q.question, q.explanation, q.category, q.difficulty, c.description AS category_name
                      FROM trivia_questions AS q
                      INNER JOIN trivia_categorys AS c ON c.id = q.category
-                     WHERE c.locale = $1 AND q.difficulty = $2 AND q.category = ANY($3::uuid[])
+                     WHERE c.locale = $1 AND c.approved = true AND q.approved = true AND q.difficulty = $2 AND q.category = ANY($3::uuid[])
                      ORDER BY random()
                      LIMIT 1`,
                     [fields.locale, fields.difficulty, fields.categoryIds]
