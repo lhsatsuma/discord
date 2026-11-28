@@ -436,7 +436,7 @@ function App() {
     {page === 'terms-of-service' && <MarkdownPage document="terms-of-service"/>}
     {page === 'user-commands' && <UserCommandsPage/>}
     {page === 'trivia-categories' && <TriviaCategoriesPage token={token} onNavigate={navigate}/>}
-    {page === 'trivia-questions' && <TriviaQuestionsPage token={token} onNavigate={navigate}/>}
+    {page === 'trivia-questions' && <TriviaQuestionsPage token={token} isSuperadmin={Boolean(user?.is_superadmin)} onNavigate={navigate}/>}
     {page === 'home' && <HomePage
       user={user}
       servers={servers}

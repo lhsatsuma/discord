@@ -1,7 +1,7 @@
 import { TriviaLibraryPage } from './TriviaLibraryPage'
 
-type Props = { token: string; onNavigate: (path: string) => void }
+type Props = { token: string; isSuperadmin: boolean; onNavigate: (path: string) => void }
 
-export function TriviaQuestionsPage({ token, onNavigate }: Props) {
-  return <TriviaLibraryPage token={token} section="questions" onNavigate={onNavigate}/>
+export function TriviaQuestionsPage({ token, isSuperadmin, onNavigate }: Props) {
+  return <TriviaLibraryPage token={token} section="questions" isSuperadmin={isSuperadmin} onNavigate={onNavigate}/>
 }

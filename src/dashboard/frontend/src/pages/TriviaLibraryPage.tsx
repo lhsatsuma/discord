@@ -36,12 +36,13 @@ type CategoriesResponse = { categories: LibraryCategory[] }
 type Props = {
   token: string
   section: 'categories' | 'questions'
+  isSuperadmin: boolean
   onNavigate: (path: string) => void
 }
 
 const difficultyLabels: Record<number, string> = { 1: 'Easy', 2: 'Medium', 3: 'Hard', 4: 'Super hard', 5: 'Extreme' }
 
-export function TriviaLibraryPage({ token, section, onNavigate }: Props) {
+export function TriviaLibraryPage({ token, section, isSuperadmin, onNavigate }: Props) {
   const [view, setView] = useState<'browse' | 'create'>('browse')
   const [locale, setLocale] = useState('')
   const [category, setCategory] = useState('')
@@ -144,10 +145,10 @@ export function TriviaLibraryPage({ token, section, onNavigate }: Props) {
           {loading && questions.length === 0 ? <div className="loading-state"><span className="spinner"/> Loading questions…</div>
             : questions.length > 0 ? <div className="trivia-library-question-list">{questions.map(item => <article className="trivia-library-question-row" key={item.id}>
               <div className="trivia-library-question-heading"><div><small>{item.category.locale} · {item.category.description} · {difficultyLabels[item.difficulty] || `Level ${item.difficulty}`}</small><h2>{item.question}</h2></div><span className={`trivia-library-status ${item.approved ? 'approved' : 'pending'}`}>{item.approved ? 'Approved' : 'Pending review'}</span></div>
-              <details className="trivia-library-question-details"><summary>Show answers and explanation</summary>
+              {isSuperadmin && <details className="trivia-library-question-details"><summary>Show answer key and explanation</summary>
                 <ol className="trivia-library-alternatives">{item.alternatives.map(alternative => <li className={alternative.correct_answer ? 'correct' : ''} key={alternative.id}>{alternative.description}{alternative.correct_answer && <b> · Correct answer</b>}</li>)}</ol>
                 {item.explanation && <p className="trivia-library-explanation"><b>Explanation:</b> {item.explanation}</p>}
-              </details>
+              </details>}
             </article>)}</div> : <div className="empty-state"><h3>No questions found</h3><p>Try changing the language, category, or difficulty filters.</p></div>}
           {questionsResult && questionsResult.last_page > 1 && <div className="trivia-library-pagination"><button type="button" className="back-button" disabled={page <= 1 || loading} onClick={() => setPage(current => current - 1)}>Previous</button><span>Page {questionsResult.current_page} of {questionsResult.last_page}</span><button type="button" className="back-button" disabled={page >= questionsResult.last_page || loading} onClick={() => setPage(current => current + 1)}>Next</button></div>}
         </section>

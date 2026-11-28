@@ -81,7 +81,7 @@ class TriviaContentController extends Controller
                     'id' => (string) $question->id,
                     'question' => (string) $question->question,
                     'difficulty' => (int) $question->difficulty,
-                    'explanation' => $question->explanation,
+                    'explanation' => $includePending ? $question->explanation : null,
                     'approved' => (bool) $question->approved,
                     'category' => [
                         'id' => (string) $question->triviaCategory->id,
@@ -89,11 +89,13 @@ class TriviaContentController extends Controller
                         'description' => (string) $question->triviaCategory->description,
                         'approved' => (bool) $question->triviaCategory->approved,
                     ],
-                    'alternatives' => $question->alternatives->map(static fn (TriviaAlternative $alternative): array => [
-                        'id' => (string) $alternative->id,
-                        'description' => (string) $alternative->description,
-                        'correct_answer' => (bool) $alternative->correct_answer,
-                    ])->all(),
+                    'alternatives' => $includePending
+                        ? $question->alternatives->map(static fn (TriviaAlternative $alternative): array => [
+                            'id' => (string) $alternative->id,
+                            'description' => (string) $alternative->description,
+                            'correct_answer' => (bool) $alternative->correct_answer,
+                        ])->all()
+                        : [],
                 ])->toArray(),
             ]);
         } catch (Throwable $error) {
