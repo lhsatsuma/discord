@@ -7,6 +7,7 @@ import { CallbackPage } from './pages/CallbackPage'
 import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { MarkdownPage } from './pages/MarkdownPage'
+import { UserCommandsPage } from './pages/UserCommandsPage'
 import { ServerOverviewPage } from './pages/ServerOverviewPage'
 import { SuperadminLogsPage } from './pages/SuperadminLogsPage'
 import { SuperadminStatusPage } from './pages/SuperadminStatusPage'
@@ -86,12 +87,13 @@ function App() {
       : path === '/trivia/library' ? 'trivia-library'
       : path === '/privacy-policy' ? 'privacy-policy'
         : path === '/terms-of-service' ? 'terms-of-service'
+      : path === '/user-commands' ? 'user-commands'
       : path === '/superadmin/status' ? 'superadmin-status'
         : path === '/superadmin/logs' ? 'superadmin-logs'
             : path === '/superadmin/trivia/review' ? 'superadmin-trivia'
         : serverRoute ? (serverRoute[2] as SettingGroup | undefined) || 'server'
         : 'login'
-  const isPublicDocument = page === 'privacy-policy' || page === 'terms-of-service'
+  const isPublicDocument = page === 'privacy-policy' || page === 'terms-of-service' || page === 'user-commands'
 
   const navigate = useCallback((to: string) => {
     window.history.pushState({}, '', to)
@@ -411,7 +413,7 @@ function App() {
   return <DashboardTemplate
     user={user}
     active={page}
-    showHeader={page !== 'login'}
+    showHeader
     onHome={() => navigate(token ? '/home' : '/login')}
     onLogout={logout}
     onTriviaLibrary={() => navigate('/trivia/library')}
@@ -423,6 +425,7 @@ function App() {
     {page === 'login' && <LoginPage error={!token ? error : ''}/>}
     {page === 'privacy-policy' && <MarkdownPage document="privacy-policy"/>}
     {page === 'terms-of-service' && <MarkdownPage document="terms-of-service"/>}
+    {page === 'user-commands' && <UserCommandsPage/>}
     {page === 'trivia-library' && <TriviaLibraryPage token={token}/>}
     {page === 'home' && <HomePage
       user={user}
