@@ -12,7 +12,8 @@ import { ServerOverviewPage } from './pages/ServerOverviewPage'
 import { SuperadminLogsPage } from './pages/SuperadminLogsPage'
 import { SuperadminStatusPage } from './pages/SuperadminStatusPage'
 import { SuperadminTriviaPage } from './pages/SuperadminTriviaPage'
-import { TriviaLibraryPage } from './pages/TriviaLibraryPage'
+import { TriviaCategoriesPage } from './pages/TriviaCategoriesPage'
+import { TriviaQuestionsPage } from './pages/TriviaQuestionsPage'
 import { LocaleSettingsPage } from './pages/settings/LocaleSettingsPage'
 import { AutoModerationPage } from './pages/settings/AutoModerationPage'
 import { ChannelRulesPage } from './pages/settings/ChannelRulesPage'
@@ -44,9 +45,15 @@ function readStoredUser(): User | null {
 function normalizeRoute(path: string): string {
   const legacyTriviaContentRoute = path.match(/^\/servers\/(\d+)\/trivia\/content\/?$/)
   if (legacyTriviaContentRoute) {
-    const libraryRoute = '/trivia/library'
+    const libraryRoute = '/trivia/library/questions'
     window.history.replaceState({}, '', libraryRoute)
     return libraryRoute
+  }
+
+  if (path === '/trivia/library' || path === '/trivia/library/') {
+    const questionsRoute = '/trivia/library/questions'
+    window.history.replaceState({}, '', questionsRoute)
+    return questionsRoute
   }
 
   const legacyServerRoute = path.match(/^\/servers\/config\/(\d+)\/?$/)
@@ -84,7 +91,9 @@ function App() {
   const serverId = serverRoute?.[1] || ''
   const page: Page = path === '/auth/callback' ? 'callback'
     : path === '/home' ? 'home'
-      : path === '/trivia/library' ? 'trivia-library'
+      : path === '/trivia/library' || path === '/trivia/library/' ? 'trivia-questions'
+        : path === '/trivia/library/categories' ? 'trivia-categories'
+        : path === '/trivia/library/questions' ? 'trivia-questions'
       : path === '/privacy-policy' ? 'privacy-policy'
         : path === '/terms-of-service' ? 'terms-of-service'
       : path === '/user-commands' ? 'user-commands'
@@ -416,7 +425,7 @@ function App() {
     showHeader
     onHome={() => navigate(token ? '/home' : '/login')}
     onLogout={logout}
-    onTriviaLibrary={() => navigate('/trivia/library')}
+    onTriviaLibrary={() => navigate('/trivia/library/questions')}
     onSuperadminStatus={() => navigate('/superadmin/status')}
     onSuperadminLogs={() => navigate('/superadmin/logs')}
     onSuperadminTrivia={() => navigate('/superadmin/trivia/review')}
@@ -426,7 +435,8 @@ function App() {
     {page === 'privacy-policy' && <MarkdownPage document="privacy-policy"/>}
     {page === 'terms-of-service' && <MarkdownPage document="terms-of-service"/>}
     {page === 'user-commands' && <UserCommandsPage/>}
-    {page === 'trivia-library' && <TriviaLibraryPage token={token}/>}
+    {page === 'trivia-categories' && <TriviaCategoriesPage token={token} onNavigate={navigate}/>}
+    {page === 'trivia-questions' && <TriviaQuestionsPage token={token} isSuperadmin={Boolean(user?.is_superadmin)} onNavigate={navigate}/>}
     {page === 'home' && <HomePage
       user={user}
       servers={servers}
