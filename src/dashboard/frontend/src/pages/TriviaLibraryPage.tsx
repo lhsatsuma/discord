@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ErrorAlert } from '../components/ErrorAlert'
 import { PageHeading } from '../components/PageHeading'
+import { CopyToClipboardButton } from '../components/CopyToClipboardButton'
 import { api } from '../lib/api'
 import { TriviaContentPage } from './TriviaContentPage'
 
@@ -130,6 +131,7 @@ export function TriviaLibraryPage({ token, section, isSuperadmin, onNavigate }: 
         {loading && categories.length === 0 ? <div className="loading-state"><span className="spinner"/> Loading categories…</div>
           : filteredCategories.length > 0 ? <div className="trivia-library-category-list">{filteredCategories.map(item => <article className="trivia-library-category-row" key={item.id}>
             <div className="trivia-library-category-main"><span className="trivia-library-category-locale">{item.locale}</span><h2>{item.description}</h2><span className="trivia-library-category-short">{item.short_description}</span></div>
+            <div className="trivia-library-category-id"><code title={item.id}>{item.id}</code><CopyToClipboardButton value={item.id} label="Copy ID"/></div>
             <span className={`trivia-library-status ${item.approved ? 'approved' : 'pending'}`}>{item.approved ? 'Approved' : 'Pending review'}</span>
           </article>)}</div> : <div className="empty-state"><h3>No categories found</h3><p>Try a different language or search term.</p></div>}
       </> : <>

@@ -368,10 +368,14 @@
 .trivia-library-category-list,.trivia-library-question-list { display:grid; gap:9px; }
 .trivia-library-category-row,.trivia-library-question-row { min-width:0; padding:15px 17px; border:1px solid #343844; border-radius:8px; background:#1b1e26; }
 .trivia-library-category-row { display:flex; align-items:center; justify-content:space-between; gap:16px; }
-.trivia-library-category-main { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:3px 12px; min-width:0; }
+.trivia-library-category-main { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:3px 12px; min-width:0; flex:1; }
 .trivia-library-category-locale { grid-row:span 2; align-self:center; color:#a99aff; font-size:11px; font-weight:700; }
 .trivia-library-category-main h2 { margin:0; color:#edf0f7; font:700 14px/1.4 'Manrope',sans-serif; overflow-wrap:anywhere; }
 .trivia-library-category-short { color:#a0a5b4; font-size:11px; }
+.trivia-library-category-id { display:flex; align-items:center; gap:8px; min-width:0; }
+.trivia-library-category-id code { max-width:220px; overflow:hidden; color:#aeb3c0; font:11px ui-monospace,Consolas,monospace; text-overflow:ellipsis; white-space:nowrap; }
+.copy-to-clipboard-button { min-height:29px; padding:0 9px; border:1px solid #414653; border-radius:6px; color:#c7cbd5; background:#252832; font-size:10px; font-weight:700; white-space:nowrap; cursor:pointer; }
+.copy-to-clipboard-button:hover { border-color:#6e60b4; color:#d4ccff; background:#302a4a; }
 .trivia-library-empty { margin:0; color:#a0a5b4; font-size:12px; }
 .trivia-library-question-row { display:grid; gap:10px; }
 .trivia-library-question-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
@@ -466,6 +470,8 @@
   .trivia-library-category-row { align-items:flex-start; }
   .trivia-library-category-main { grid-template-columns:1fr; }
   .trivia-library-category-locale { grid-row:auto; }
+  .trivia-library-category-id { max-width:100%; }
+  .trivia-library-category-id code { max-width:min(52vw,220px); }
   .trivia-review-toolbar { align-items:flex-end; flex-direction:column; gap:8px; }
   .trivia-review-meta { display:grid; grid-template-columns:1fr; }
   .footer { align-items:flex-start; }
