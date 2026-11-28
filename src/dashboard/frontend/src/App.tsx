@@ -26,8 +26,33 @@ import { blankConfig, type Channel, type Config, type Page, type Server, type Se
 const TOKEN_KEY = 'guilddesk.jwt'
 const PROFILE_KEY = 'guilddesk.user'
 
+function readAuthValue(key: string): string | null {
+  const persistentValue = localStorage.getItem(key)
+  if (persistentValue) {
+    sessionStorage.removeItem(key)
+    return persistentValue
+  }
+
+  const previousTabValue = sessionStorage.getItem(key)
+  if (previousTabValue) {
+    localStorage.setItem(key, previousTabValue)
+    sessionStorage.removeItem(key)
+  }
+  return previousTabValue
+}
+
+function storeAuthValue(key: string, value: string): void {
+  localStorage.setItem(key, value)
+  sessionStorage.removeItem(key)
+}
+
+function removeAuthValue(key: string): void {
+  localStorage.removeItem(key)
+  sessionStorage.removeItem(key)
+}
+
 function readStoredUser(): User | null {
-  const serialized = sessionStorage.getItem(PROFILE_KEY)
+  const serialized = readAuthValue(PROFILE_KEY)
   if (!serialized) return null
   try {
     const user = JSON.parse(serialized) as Partial<User>
@@ -37,7 +62,7 @@ function readStoredUser(): User | null {
         : null
       : null
   } catch {
-    sessionStorage.removeItem(PROFILE_KEY)
+    removeAuthValue(PROFILE_KEY)
     return null
   }
 }
@@ -66,7 +91,7 @@ function normalizeRoute(path: string): string {
 
 function App() {
   const [path, setPath] = useState(() => normalizeRoute(window.location.pathname))
-  const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY) || '')
+  const [token, setToken] = useState(() => readAuthValue(TOKEN_KEY) || '')
   const [user, setUser] = useState<User | null>(() => readStoredUser())
   const [validatedToken, setValidatedToken] = useState('')
   const [sessionCheckError, setSessionCheckError] = useState('')
@@ -113,8 +138,8 @@ function App() {
   }, [])
 
   const expireSession = useCallback(() => {
-    sessionStorage.removeItem(TOKEN_KEY)
-    sessionStorage.removeItem(PROFILE_KEY)
+    removeAuthValue(TOKEN_KEY)
+    removeAuthValue(PROFILE_KEY)
     loadedServersToken.current = ''
     loadedConfigServerId.current = ''
     setToken('')
@@ -138,6 +163,39 @@ function App() {
     return () => window.removeEventListener(SESSION_EXPIRED_EVENT, expireSession)
   }, [expireSession])
 
+  useEffect(() => {
+    const syncSessionAcrossTabs = (event: StorageEvent) => {
+      if (event.storageArea !== localStorage) return
+
+      if (event.key === TOKEN_KEY) {
+        loadedServersToken.current = ''
+        loadedConfigServerId.current = ''
+        setValidatedToken('')
+        setServers([])
+        setServer(null)
+
+        if (!event.newValue) {
+          setToken('')
+          setUser(null)
+          window.history.replaceState({}, '', '/login')
+          setPath('/login')
+          setError('Your dashboard session ended in another tab. Sign in again to continue.')
+          return
+        }
+
+        setToken(event.newValue)
+        setUser(readStoredUser())
+        setError('')
+        return
+      }
+
+      if (event.key === PROFILE_KEY) setUser(readStoredUser())
+    }
+
+    window.addEventListener('storage', syncSessionAcrossTabs)
+    return () => window.removeEventListener('storage', syncSessionAcrossTabs)
+  }, [])
+
   useLayoutEffect(() => {
     // Discord must be able to return to this public route to finish OAuth login.
     if (path === '/auth/callback' || isPublicDocument) return
@@ -158,8 +216,8 @@ function App() {
     }
 
     if (!token) {
-      sessionStorage.removeItem(TOKEN_KEY)
-      sessionStorage.removeItem(PROFILE_KEY)
+      removeAuthValue(TOKEN_KEY)
+      removeAuthValue(PROFILE_KEY)
       window.history.replaceState({}, '', '/login')
       queueMicrotask(() => {
         setPath('/login')
@@ -184,8 +242,8 @@ function App() {
     const errorDescription = query.get('error_description') || hash.get('error_description')
 
     if (receivedToken) {
-      sessionStorage.setItem(TOKEN_KEY, receivedToken)
-      sessionStorage.removeItem(PROFILE_KEY)
+      storeAuthValue(TOKEN_KEY, receivedToken)
+      removeAuthValue(PROFILE_KEY)
       window.history.replaceState({}, '', '/home')
       queueMicrotask(() => {
         setUser(null)
@@ -209,8 +267,8 @@ function App() {
         }
         return response.json() as Promise<{ token: string; user: User }>
       }).then(result => {
-        sessionStorage.setItem(TOKEN_KEY, result.token)
-        sessionStorage.setItem(PROFILE_KEY, JSON.stringify(result.user))
+        storeAuthValue(TOKEN_KEY, result.token)
+        storeAuthValue(PROFILE_KEY, JSON.stringify(result.user))
         setUser(result.user)
         setSessionCheckError('')
         setValidatedToken(result.token)
@@ -278,7 +336,7 @@ function App() {
     api<{ user: User }>('/me', token)
       .then(profile => {
         if (active) {
-          sessionStorage.setItem(PROFILE_KEY, JSON.stringify(profile.user))
+          storeAuthValue(PROFILE_KEY, JSON.stringify(profile.user))
           setUser(profile.user)
           setValidatedToken(token)
         }
@@ -346,8 +404,8 @@ function App() {
   const logout = async () => {
     try { if (token) await api('/logout', token, { method: 'POST' }) }
     catch (reason) { console.warn('Could not end dashboard session cleanly.', reason) }
-    sessionStorage.removeItem(TOKEN_KEY)
-    sessionStorage.removeItem(PROFILE_KEY)
+    removeAuthValue(TOKEN_KEY)
+    removeAuthValue(PROFILE_KEY)
     loadedServersToken.current = ''
     loadedConfigServerId.current = ''
     setToken('')
