@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { User } from '../types/dashboard'
 import { Icon } from './Icon'
 import { getDashboardPublicLinks, type DashboardPublicLinks } from '../lib/publicConfig'
@@ -19,6 +19,8 @@ type Props = {
 export function DashboardTemplate({ user, active, children, onHome, onLogout, onTriviaLibrary, onSuperadminStatus, onSuperadminLogs, onSuperadminTrivia, showHeader = true }: Props) {
   const [superadminMenuOpen, setSuperadminMenuOpen] = useState(false)
   const [userGuideMenuOpen, setUserGuideMenuOpen] = useState(false)
+  const userGuideMenuRef = useRef<HTMLDivElement>(null)
+  const superadminMenuRef = useRef<HTMLDivElement>(null)
   const [publicLinks, setPublicLinks] = useState<DashboardPublicLinks>({ bot_invite: null, support_invite: null })
 
   useEffect(() => {
@@ -28,6 +30,30 @@ export function DashboardTemplate({ user, active, children, onHome, onLogout, on
       .catch(error => console.warn('Could not load dashboard invite links.', error))
     return () => { active = false }
   }, [])
+
+  useEffect(() => {
+    if (!userGuideMenuOpen && !superadminMenuOpen) return
+
+    const closeOnOutsideClick = (event: PointerEvent) => {
+      const target = event.target
+      if (!(target instanceof Node)) return
+      if (userGuideMenuOpen && !userGuideMenuRef.current?.contains(target)) setUserGuideMenuOpen(false)
+      if (superadminMenuOpen && !superadminMenuRef.current?.contains(target)) setSuperadminMenuOpen(false)
+    }
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setUserGuideMenuOpen(false)
+      setSuperadminMenuOpen(false)
+    }
+
+    document.addEventListener('pointerdown', closeOnOutsideClick)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [userGuideMenuOpen, superadminMenuOpen])
+
   return <div className="app-shell">
     {showHeader && <header className="topbar">
       <a className="brand" href="/home" onClick={event => { event.preventDefault(); onHome() }}>
@@ -37,8 +63,8 @@ export function DashboardTemplate({ user, active, children, onHome, onLogout, on
       <nav className="top-nav">
         {user && <button className={active === 'home' ? 'nav-link active' : 'nav-link'} onClick={onHome}><Icon name="grid" size={17}/> My servers</button>}
         {user && <button className={['trivia-categories', 'trivia-questions'].includes(active) ? 'nav-link active' : 'nav-link'} onClick={onTriviaLibrary}>Trivia library</button>}
-        <div className="user-guide-nav">
-          <button type="button" className={`nav-link user-guide-trigger ${['privacy-policy', 'terms-of-service', 'user-commands'].includes(active) ? 'active' : ''}`} aria-haspopup="menu" aria-expanded={userGuideMenuOpen} onClick={() => setUserGuideMenuOpen(open => !open)}>
+        <div className="user-guide-nav" ref={userGuideMenuRef}>
+          <button type="button" className={`nav-link user-guide-trigger ${['privacy-policy', 'terms-of-service', 'user-commands'].includes(active) ? 'active' : ''}`} aria-haspopup="menu" aria-expanded={userGuideMenuOpen} onClick={() => { setSuperadminMenuOpen(false); setUserGuideMenuOpen(open => !open) }}>
             User Guide <span className="menu-caret"/>
           </button>
           {userGuideMenuOpen && <div className="user-guide-dropdown" role="menu">
@@ -50,8 +76,8 @@ export function DashboardTemplate({ user, active, children, onHome, onLogout, on
           </div>}
         </div>
         {!user && <a className={`nav-link ${active === 'login' ? 'active' : ''}`} href="/login">Login</a>}
-        {user?.is_superadmin && <div className="superadmin-nav">
-          <button type="button" className={`nav-link superadmin-trigger ${active.startsWith('superadmin-') ? 'active' : ''}`} aria-haspopup="menu" aria-expanded={superadminMenuOpen} onClick={() => setSuperadminMenuOpen(open => !open)}>
+        {user?.is_superadmin && <div className="superadmin-nav" ref={superadminMenuRef}>
+          <button type="button" className={`nav-link superadmin-trigger ${active.startsWith('superadmin-') ? 'active' : ''}`} aria-haspopup="menu" aria-expanded={superadminMenuOpen} onClick={() => { setUserGuideMenuOpen(false); setSuperadminMenuOpen(open => !open) }}>
             <Icon name="shield" size={17}/> Superadmin <span className="menu-caret"/>
           </button>
           {superadminMenuOpen && <div className="superadmin-dropdown" role="menu">
